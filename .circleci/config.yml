@@ -1,13 +1,52 @@
-# Use the latest 2.1 version of CircleCI pipeline process engine. See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
-# Use a package of configuration called an orb.
-orbs:
-  # Declare a dependency on the welcome-orb
-  welcome: circleci/welcome-orb@0.4.1
-# Orchestrate or schedule a set of jobs
+
+aliases:
+  - &working_directory ~/code-library-project
+
+  - &save_git_cache
+    key: source-v1-{{ .Branch }}-{{ .Revision }}
+    paths:
+      - ".git"
+
+  - &restore_git_cache
+    keys:
+      - source-v1-{{ .Branch }}-{{ .Revision }}
+      - source-v1-{{ .Branch }}-
+      - source-v1-
+
+  - &save_cargo_cache
+    key: v4-cargo-cache-{{ arch }}-{{ checksum "Cargo.lock" }}
+    paths:
+      - /usr/local/cargo/registry
+      - target/debug/.fingerprint
+      - target/debug/build
+      - target/debug/deps
+
+  - &restore_cargo_cache
+    key: v4-cargo-cache-{{ arch }}-{{ checksum "Cargo.lock" }}
+
+executors:
+  rust-executor:
+    docker:
+      - image: rust:1
+    working_directory: *working_directory
+
+jobs:
+  test:
+    executor: rust-executor
+    steps:
+      - checkout
+      - restore_cache: *restore_git_cache
+      - restore_cache: *restore_cargo_cache
+      - run:
+          name: Run tests
+          command: cargo test --all
+      - save_cache: *save_git_cache
+      - save_cache: *save_cargo_cache
+
 workflows:
-  # Name the workflow "welcome"
-  welcome:
-    # Run the welcome/run job in its own container
+  version: 2.1
+  build:
     jobs:
-      - welcome/run
+      - test
+
