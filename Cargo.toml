@@ -27,4 +27,3 @@ name = "api"
 path = "src/api/main.rs"
 
 [dependencies]
-hyper="0.12"
