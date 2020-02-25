@@ -27,3 +27,5 @@ name = "api"
 path = "src/api/main.rs"
 
 [dependencies]
+futures = "0.1"
+hyper = "0.12"
