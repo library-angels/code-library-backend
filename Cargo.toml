@@ -27,5 +27,7 @@ name = "api"
 path = "src/api/main.rs"
 
 [dependencies]
+tokio = { version = "0.2", features = ["macros"] }
+warp = "0.2"
 futures = "0.1"
 hyper = "0.12"
