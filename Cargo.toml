@@ -15,12 +15,12 @@ name = "book"
 path = "src/book/main.rs"
 
 [[bin]]
-name = "loan"
-path = "src/loan/main.rs"
+name = "borrow"
+path = "src/borrow/main.rs"
 
 [[bin]]
-name = "message"
-path = "src/message/main.rs"
+name = "notification"
+path = "src/notification/main.rs"
 
 [[bin]]
 name = "api"
