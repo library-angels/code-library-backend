@@ -29,3 +29,6 @@ path = "src/api/main.rs"
 [dependencies]
 futures = "0.1"
 hyper = "0.12"
+slab = "0.4.2"
+lazy_static = "1.4.0"
+regex = "1.3.4"
