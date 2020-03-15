@@ -1,6 +1,7 @@
 use warp::Filter;
 
 mod router;
+mod endpoints;
 
 
 #[tokio::main]
