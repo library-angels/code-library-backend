@@ -98,30 +98,12 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and_then(super::endpoints::book::book_retrieve_designations)
             )
 
-        // GET - /book/<u32>/designations/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("designations"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_designations_retrieve)
-            )
-
         // GET - /book/<u32>/tags
         .or(warp::path::param::<u32>()
             .and(warp::path("tags"))
             .and(warp::path::end())
             .and(warp::get())
             .and_then(super::endpoints::book::book_retrieve_tags)
-            )
-        
-        // GET - /book/<u32>/tags/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("tags"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_tags_retrieve)
             )
 
         // GET - /book/<u32>/publishers
@@ -132,30 +114,12 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and_then(super::endpoints::book::book_retrieve_publishers)
             )
 
-        // GET - /book/<u32>/publishers/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("publishers"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_publishers_retrieve)
-            )
-
         // GET - /book/<u32>/authors
         .or(warp::path::param::<u32>()
             .and(warp::path("authors"))
             .and(warp::path::end())
             .and(warp::get())
             .and_then(super::endpoints::book::book_retrieve_authors)
-            )
-
-        // GET - /book/<u32>/authors/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("authors"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_authors_retrieve)
             )
 
         // GET - /book/<u32>/editors
@@ -166,30 +130,12 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and_then(super::endpoints::book::book_retrieve_editors)
             )
 
-        // GET - /book/<u32>/editors/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("editors"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_editors_retrieve)
-            )
-
         // GET - /book/<u32>/series
         .or(warp::path::param::<u32>()
             .and(warp::path("series"))
             .and(warp::path::end())
             .and(warp::get())
             .and_then(super::endpoints::book::book_retrieve_series)
-            )
-
-        // GET - /book/<u32>/series/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("series"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_series_retrieve)
             )
 
         // GET - /book/<u32>/languages
@@ -200,30 +146,12 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and_then(super::endpoints::book::book_retrieve_languages)
             )
 
-        // GET - /book/<u32>/languages/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("languages"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_languages_retrieve)
-            )
-
         // GET - /book/<u32>/physical_sizes
         .or(warp::path::param::<u32>()
             .and(warp::path("physical_sizes"))
             .and(warp::path::end())
             .and(warp::get())
             .and_then(super::endpoints::book::book_retrieve_physical_sizes)
-            )
-
-        // GET - /book/<u32>/physical_sizes/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("physical_sizes"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_physical_sizes_retrieve)
             )
 
         // GET - /book/<u32>/subject_areas
@@ -234,15 +162,6 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and_then(super::endpoints::book::book_retrieve_subject_areas)
             )
 
-        // GET - /book/<u32>/subject_areas/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("subject_areas"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_subject_areas_retrieve)
-            )
-
         // GET - /book/<u32>/copies
         .or(warp::path::param::<u32>()
             .and(warp::path("copies"))
@@ -251,14 +170,6 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and_then(super::endpoints::book::book_retrieve_copies)
             )
         
-        // GET - /book/<u32>/copies/<u32>
-        .or(warp::path::param::<u32>()
-            .and(warp::path("copies"))
-            .and(warp::path::param::<u32>())
-            .and(warp::path::end())
-            .and(warp::get())
-            .and_then(super::endpoints::book::book_retrieve_copies_retrieve)
-            )
 
         // GET - /book/designations
         .or(warp::path("designations")

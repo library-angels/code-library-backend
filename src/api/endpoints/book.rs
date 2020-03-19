@@ -14,80 +14,40 @@ pub async fn book_retrieve_designations(book_id: u32) -> Result<impl warp::Reply
     Ok(format!("book id: {} - designations index", book_id))
 }
 
-pub async fn book_retrieve_designations_retrieve(book_id: u32, designation_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - designation id: {}", book_id, designation_id))
-}
-
 pub async fn book_retrieve_tags(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - tag index", book_id))
-}
-
-pub async fn book_retrieve_tags_retrieve(book_id: u32, tag_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - tag id: {}", book_id, tag_id))
 }
 
 pub async fn book_retrieve_publishers(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - publisher index", book_id))
 }
 
-pub async fn book_retrieve_publishers_retrieve(book_id: u32, publisher_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - publisher id: {}", book_id, publisher_id))
-}
-
 pub async fn book_retrieve_authors(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - author index", book_id))
-}
-
-pub async fn book_retrieve_authors_retrieve(book_id: u32, author_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - author id: {}", book_id, author_id))
 }
 
 pub async fn book_retrieve_editors(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - editor index", book_id))
 }
 
-pub async fn book_retrieve_editors_retrieve(book_id: u32, editor_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - editor id: {}", book_id, editor_id))
-}
-
 pub async fn book_retrieve_series(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - series index", book_id))
-}
-
-pub async fn book_retrieve_series_retrieve(book_id: u32, series_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - series id: {}", book_id, series_id))
 }
 
 pub async fn book_retrieve_languages(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - language index", book_id))
 }
 
-pub async fn book_retrieve_languages_retrieve(book_id: u32, language_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - language id: {}", book_id, language_id))
-}
-
 pub async fn book_retrieve_physical_sizes(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - physical sizes index", book_id))
-}
-
-pub async fn book_retrieve_physical_sizes_retrieve(book_id: u32, physical_size_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - physical sizes id: {}", book_id, physical_size_id))
 }
 
 pub async fn book_retrieve_subject_areas(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - subject area index", book_id))
 }
 
-pub async fn book_retrieve_subject_areas_retrieve(book_id: u32, subject_area_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - subject area id: {}", book_id, subject_area_id))
-}
-
 pub async fn book_retrieve_copies(book_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("book id: {} - copy index", book_id))
-}
-
-pub async fn book_retrieve_copies_retrieve(book_id: u32, copy_id: u32) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("book id: {} - copy id: {}", book_id, copy_id))
 }
 
 pub async fn designations_list(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
