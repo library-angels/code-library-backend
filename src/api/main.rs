@@ -6,6 +6,8 @@ mod endpoints;
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
+
     let routes = router::root()
         .or(router::identity())
         .or(router::book())
@@ -13,6 +15,6 @@ async fn main() {
         .or(router::notification());
 
     warp::serve(routes)
-        .run(([127, 0, 0, 1], 8080))
+        .try_bind(([127, 0, 0, 1], 8080))
         .await;
 }
