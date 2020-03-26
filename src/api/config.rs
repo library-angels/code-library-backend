@@ -1,7 +1,7 @@
 use dotenv::dotenv;
 use std::env;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
-use log::debug;
+use log::{debug, info};
 
 
 const HTTP_HOST_DEFAULT: IpAddr = IpAddr::V4(Ipv4Addr::new(127, 0, 0, 1));
@@ -53,5 +53,10 @@ impl Config {
 
     pub fn http_socket(&self) -> SocketAddr {
         SocketAddr::new(self.http_host.unwrap(), self.http_port.unwrap())
+    }
+
+    pub fn log_info_configuration(&self) {
+        info!("'HTTP_HOST' - {}", self.http_host.unwrap());
+        info!("'HTTP_PORT' - {}", self.http_port.unwrap());
     }
 }

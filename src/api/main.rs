@@ -22,6 +22,7 @@ async fn main() {
             process::exit(1);
         }
     };
+    config.log_info_configuration();
 
     let routes = router::root()
         .or(router::identity())
