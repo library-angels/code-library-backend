@@ -3,6 +3,7 @@ use envconfig::Envconfig;
 use std::process;
 use log::error;
 use std::net::SocketAddr;
+use dotenv::dotenv;
 
 mod config;
 mod router;
@@ -13,6 +14,7 @@ mod endpoints;
 async fn main() {
     env_logger::init();
 
+    dotenv().ok();
     let config = match config::Config::init() {
         Ok(val) => val,
         Err(e) => {
