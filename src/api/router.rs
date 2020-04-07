@@ -1,5 +1,5 @@
 use warp::{Filter, filters::BoxedFilter, Reply};
-
+use crate::db::db_connection::{Db, with_db_state};
 
 pub fn root() -> BoxedFilter<(impl Reply,)> {
     // GET - /
@@ -75,18 +75,37 @@ pub fn identity() -> BoxedFilter<(impl Reply,)> {
         )).boxed()
 }
 
-pub fn book() -> BoxedFilter<(impl Reply,)> {
+pub fn book(db_state: Db) -> BoxedFilter<(impl Reply,)> {
+    use super::query_models::book::BookQuery;
     warp::path("book").and(
         // GET - /book/
         warp::path::end()
             .and(warp::get())
-            .and(warp::query())
+            .and(warp::query::<BookQuery>())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_list)
         
+        //POST - /book/
+        .or(warp::path::end()
+            .and(warp::post())
+            .and(warp::body::json())
+            .and(with_db_state(db_state.clone()))
+            .and_then(super::endpoints::book::create_book)
+            )
+
+        //DELETE - /book/<u32>
+        .or(warp::path::param::<u32>()
+            .and(warp::path::end())
+            .and(warp::delete())
+            .and(with_db_state(db_state.clone()))
+            .and_then(super::endpoints::book::delete_book)
+            )
+
         // GET - /book/<u32>
         .or(warp::path::param::<u32>()
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve)
             )
 
@@ -95,6 +114,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("designations"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_designations)
             )
 
@@ -103,6 +123,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("tags"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_tags)
             )
 
@@ -111,6 +132,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("publishers"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_publishers)
             )
 
@@ -119,6 +141,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("authors"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_authors)
             )
 
@@ -127,6 +150,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("editors"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_editors)
             )
 
@@ -135,6 +159,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("series"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_series)
             )
 
@@ -143,6 +168,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("languages"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_languages)
             )
 
@@ -151,6 +177,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("physical_sizes"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_physical_sizes)
             )
 
@@ -159,6 +186,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("subject_areas"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_subject_areas)
             )
 
@@ -167,15 +195,24 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path("copies"))
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_retrieve_copies)
             )
-        
+
+        // GET - /book/<u32>/status
+        .or(warp::path::param::<u32>()
+            .and(warp::path("status"))
+            .and(warp::path::end())
+            .and(warp::get())
+            .and(with_db_state(db_state.clone()))
+            .and_then(super::endpoints::book::book_retrieve_status)
+            )
 
         // GET - /book/designations
         .or(warp::path("designations")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::designations_list)
             )
 
@@ -184,6 +221,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::designations_retrieve)
             )
 
@@ -191,7 +229,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("tags")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::tags_list)
             )
 
@@ -200,6 +238,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::tags_retrieve)
             )
 
@@ -207,7 +246,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("publishers")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::publishers_list)
             )
         
@@ -216,22 +255,33 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::publishers_retrieve)
+            )
+
+        // POST - /book/publishers/
+        .or(warp::path("publishers")
+            .and(warp::path::end())
+            .and(warp::post())
+            .and(warp::body::json())
+            .and(with_db_state(db_state.clone()))
+            .and_then(super::endpoints::book::create_publisher)
             )
 
         // GET - /book/authors
         .or(warp::path("authors")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::authors_list)
             )
-        
+
         // GET - /book/authors/<u32>
         .or(warp::path("authors")
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+            .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::authors_retrieve)
             )
 
@@ -239,7 +289,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("editors")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::editors_list)
             )
 
@@ -248,6 +298,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::editors_retrieve)
             )
 
@@ -255,7 +306,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("series")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::series_list)
             )
 
@@ -264,6 +315,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::series_retrieve)
             )
 
@@ -271,7 +323,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("languages")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::languages_list)
             )
 
@@ -280,6 +332,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::languages_retrieve)
             )
 
@@ -287,7 +340,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("physical_sizes")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::physical_sizes_list)
             )
 
@@ -296,6 +349,7 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::physical_sizes_retrieve)
             )
 
@@ -303,15 +357,16 @@ pub fn book() -> BoxedFilter<(impl Reply,)> {
         .or(warp::path("subject_areas")
             .and(warp::path::end())
             .and(warp::get())
-            .and(warp::query())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::subject_areas_list)
             )
-        
+
         // GET - /book/subject_areas/<u32>
         .or(warp::path("subject_areas")
             .and(warp::path::param::<u32>())
             .and(warp::path::end())
             .and(warp::get())
+	        .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::subject_areas_retrieve)
             )
     ).boxed()

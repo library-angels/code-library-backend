@@ -1,0 +1,3 @@
+[print_schema]
+file = "src/api/db/schema.rs"
+
