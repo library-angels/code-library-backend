@@ -1,6 +1,13 @@
 use std::convert::Infallible;
 use std::collections::HashMap;
+use std::sync::Arc;
+use serde::Serialize;
 
+
+#[derive(Serialize)]
+struct OauthClientIdentifier {
+    client_identifier: String,
+}
 
 pub async fn users_index(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users_index"))
@@ -18,8 +25,8 @@ pub async fn roles_id(role_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("roles id: {}", role_id))
 }
 
-pub async fn oauth_client_identifier() -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("oauth_client_identifier"))
+pub async fn oauth_client_identifier(config: Arc<Box<super::super::config::Config>>) -> Result<impl warp::Reply, Infallible> {
+    Ok(warp::reply::json(&OauthClientIdentifier{client_identifier: config.oauth_client_identifier.clone()}))
 }
 
 pub async fn oauth_authorization_code_exchange(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {

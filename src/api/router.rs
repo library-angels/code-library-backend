@@ -11,6 +11,8 @@ pub fn root() -> BoxedFilter<(impl Reply,)> {
 }
 
 pub fn identity(config: Arc<Box<super::config::Config>>) -> BoxedFilter<(impl Reply,)> {
+    let config = warp::any().map(move || config.clone());
+    
     warp::path("identity").and(
         // GET - /identity/users
         warp::path("users")
@@ -48,6 +50,7 @@ pub fn identity(config: Arc<Box<super::config::Config>>) -> BoxedFilter<(impl Re
             warp::path("client_identifier")
                 .and(warp::path::end())
                 .and(warp::get())
+                .and(config.clone())
                 .and_then(super::endpoints::identity::oauth_client_identifier)
 
             // GET - /identity/oauth/authorization_code_exchange

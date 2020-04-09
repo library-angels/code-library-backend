@@ -36,3 +36,4 @@ env_logger = "0.7.1"
 envconfig = "0.8"
 envconfig_derive = "0.8"
 dotenv = "0.15"
+serde = { version = "1.0", features = ["derive"] }
