@@ -4,6 +4,7 @@ use std::process;
 use log::error;
 use std::net::SocketAddr;
 use dotenv::dotenv;
+use std::sync::Arc;
 
 mod config;
 mod router;
@@ -23,6 +24,7 @@ async fn main() {
         }
     };
 
+    let config = Arc::new(Box::new(config));
     let routes = router::root()
         .or(router::identity())
         .or(router::book())
