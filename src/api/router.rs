@@ -1,4 +1,5 @@
 use warp::{Filter, filters::BoxedFilter, Reply};
+use std::sync::Arc;
 
 
 pub fn root() -> BoxedFilter<(impl Reply,)> {
@@ -9,7 +10,7 @@ pub fn root() -> BoxedFilter<(impl Reply,)> {
         .boxed()
 }
 
-pub fn identity() -> BoxedFilter<(impl Reply,)> {
+pub fn identity(config: Arc<Box<super::config::Config>>) -> BoxedFilter<(impl Reply,)> {
     warp::path("identity").and(
         // GET - /identity/users
         warp::path("users")

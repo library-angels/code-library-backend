@@ -26,7 +26,7 @@ async fn main() {
 
     let config = Arc::new(Box::new(config));
     let routes = router::root()
-        .or(router::identity())
+        .or(router::identity(config.clone()))
         .or(router::book())
         .or(router::borrow())
         .or(router::notification());
