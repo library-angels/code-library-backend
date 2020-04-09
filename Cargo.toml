@@ -30,7 +30,7 @@ path = "src/api/main.rs"
 tokio = { version = "0.2", features = ["macros"] }
 warp = "0.2"
 futures = "0.1"
-hyper = "0.12"
+hyper = "0.13"
 log = "0.4.0"
 env_logger = "0.7.1"
 envconfig = "0.8"
