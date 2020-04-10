@@ -13,4 +13,13 @@ pub struct Config {
 
     #[envconfig(from = "OAUTH_CLIENT_IDENTIFIER")]
     pub oauth_client_identifier: String,
+
+    #[envconfig(from = "OAUTH_CLIENT_SECRET")]
+    pub oauth_client_secret: String,
+
+    #[envconfig(from = "OAUTH_CLIENT_REDIRECT")]
+    pub oauth_client_redirect: String,
+
+    #[envconfig(from = "JWT_SECRET")]
+    pub jwt_secret: String,
 }

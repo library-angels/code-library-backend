@@ -37,3 +37,8 @@ envconfig = "0.8"
 envconfig_derive = "0.8"
 dotenv = "0.15"
 serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_urlencoded = "0.6"
+hyper-tls = "0.4"
+bytes = "0.5"
+jsonwebtoken = "7"
