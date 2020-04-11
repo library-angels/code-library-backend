@@ -1,37 +1,38 @@
-#[macro_use] 
+#[macro_use]
 extern crate diesel;
-extern crate dotenv;
-extern crate chrono;
-use std::net::SocketAddr;
 use dotenv::dotenv;
+use envconfig::Envconfig;
+use log::error;
+use std::net::SocketAddr;
+use std::process;
 use warp::Filter;
-use std::env;
 
-mod query_models;
-mod endpoints;
-mod router;
+mod config;
 mod db;
+mod endpoints;
+mod query_models;
+mod router;
 
 #[tokio::main]
 async fn main() {
-    dotenv().ok();
     env_logger::init();
-    env::set_var("RUST_BACKTRACE", "1");
-    env::set_var("RUST_LOG", "info");
-
-    let address: SocketAddr = env::var("SERVER_ADDRESS_TEST")
-        .expect("env var is not set").parse()
-        .expect("can't parse env var");
-
+    dotenv().ok();
     let db_state = db::db_connection::start_db().await;
+    let config = match config::Config::init() {
+        Ok(val) => val,
+        Err(e) => {
+            error!("{}", e);
+            process::exit(1);
+        }
+    };
 
     let routes = router::root()
         .or(router::identity())
         .or(router::book(db_state))
         .or(router::borrow())
         .or(router::notification());
-        
+
     warp::serve(routes)
-        .run(address)
+        .try_bind(SocketAddr::new(config.http_host, config.http_port))
         .await;
 }
