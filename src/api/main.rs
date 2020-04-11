@@ -17,7 +17,6 @@ mod router;
 async fn main() {
     env_logger::init();
     dotenv().ok();
-    let db_state = db::db_connection::start_db().await;
     let config = match config::Config::init() {
         Ok(val) => val,
         Err(e) => {
@@ -25,6 +24,8 @@ async fn main() {
             process::exit(1);
         }
     };
+
+    let db_state = db::db_connection::start_db(config.database_url).await;
 
     let routes = router::root()
         .or(router::identity())

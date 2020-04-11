@@ -2,7 +2,6 @@ use diesel::r2d2::{ConnectionManager, Pool, PooledConnection, Builder};
 use diesel::pg::PgConnection;
 use warp::Filter;
 use log::info;
-use std::env;
 
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 pub type PgConnectionBuilder = Builder<ConnectionManager<PgConnection>>;
@@ -20,16 +19,15 @@ impl Db {
     pub fn get_connection(&self) -> PgPooledConnection {
         self.pool.get().unwrap()
     }
-    fn init_pool(db_url: &str, builder: PgConnectionBuilder) -> Self {
+    pub fn init_pool(db_url: &str, builder: PgConnectionBuilder) -> Self {
         let manager = ConnectionManager::<PgConnection>::new(db_url);
         let pool = builder.build(manager).expect("can't create db pool");
         Db{ pool }
     }
 }
 
-pub async fn start_db() -> Db {
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-    info!("Starting db from: {}", env::var("DATABASE_URL").unwrap());
+pub async fn start_db(db_url: String) -> Db {
+    info!("Starting db from: {}", db_url);
     self::Db::new(&db_url)
 }
 
