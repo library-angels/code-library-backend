@@ -27,9 +27,8 @@ impl Db {
     }
 }
 
-pub async fn start_db() -> Db {
-    let db_url = env::var("DATABASE_URL").expect("DATABASE_URL is not set");
-    info!("Starting db from: {}", env::var("DATABASE_URL").unwrap());
+pub async fn start_db(db_url: String) -> Db {
+    info!("Starting db from: {}", db_url);
     self::Db::new(&db_url)
 }
 
