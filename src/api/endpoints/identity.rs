@@ -7,7 +7,7 @@ use warp::http::{Response, StatusCode};
 use hyper::{Body, header::CONTENT_TYPE, Client, Uri, Request};
 use hyper_tls::HttpsConnector;
 use bytes::buf::BufExt;
-use jsonwebtoken::{dangerous_unsafe_decode, encode, EncodingKey, Header};
+use jsonwebtoken::{dangerous_unsafe_decode, encode, decode, EncodingKey, DecodingKey, Header, Validation};
 use std::time::{SystemTime, Duration};
 use log::{debug, error};
 
@@ -144,7 +144,7 @@ pub struct OauthIdToken {
     picture: String,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Jwt {
     sub: String,
     email: String,
@@ -179,6 +179,11 @@ impl Jwt{
 pub struct JwtSet {
     access_token: String,
     refresh_token: String,
+}
+
+#[derive(Deserialize)]
+pub struct RefreshToken {
+    token: String,
 }
 
 pub async fn users_index(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
@@ -273,6 +278,32 @@ pub async fn jwt_info() -> Result<impl warp::Reply, Infallible> {
     Ok(format!("jwt_info"))
 }
 
-pub async fn jwt_refresh(body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("jwt_refresh"))
+pub async fn jwt_refresh(config: Arc<Box<super::super::config::Config>>, body: RefreshToken) -> Result<impl warp::Reply, Infallible> {
+    let refresh_token = match decode::<Jwt>(&body.token, &DecodingKey::from_secret(config.jwt_secret.to_owned().as_ref()), &Validation::default()) {
+        Ok(val) => val,
+        Err(e) => {
+            let error_message = serde_json::to_string(&ErrorMessage{message: "Invalid refresh token".to_string()}).unwrap();
+            return Ok(Response::builder()
+                .status(StatusCode::BAD_REQUEST)
+                .header(CONTENT_TYPE, "application/json")
+                .body(Body::from(error_message))
+                .unwrap())
+        }
+    };
+
+    let access_token = Jwt::new(
+        refresh_token.claims.sub.to_owned(),
+        refresh_token.claims.email.to_owned(),
+        refresh_token.claims.name.to_owned(),
+        refresh_token.claims.given_name.to_owned(),
+        refresh_token.claims.family_name.to_owned(),
+        refresh_token.claims.picture.to_owned(),
+        3600).encode(config.jwt_secret.to_owned()
+    );
+
+    Ok(Response::builder()
+        .status(StatusCode::OK)
+        .header("content-type", "application/json")
+        .body(Body::from(serde_json::to_string(&access_token).unwrap()))
+        .unwrap())
 }
