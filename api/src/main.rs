@@ -7,10 +7,10 @@ use std::net::SocketAddr;
 use std::process;
 use warp::Filter;
 
-mod config;
 mod db;
 mod endpoints;
 mod query_models;
+mod config;
 mod router;
 
 #[tokio::main]

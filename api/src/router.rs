@@ -84,7 +84,7 @@ pub fn book(db_state: Db) -> BoxedFilter<(impl Reply,)> {
             .and(warp::query::<BookQuery>())
             .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::book_list)
-        
+
         //POST - /book/
         .or(warp::path::end()
             .and(warp::post())
@@ -249,7 +249,7 @@ pub fn book(db_state: Db) -> BoxedFilter<(impl Reply,)> {
             .and(with_db_state(db_state.clone()))
             .and_then(super::endpoints::book::publishers_list)
             )
-        
+
         // GET - /book/publishers/<u32>
         .or(warp::path("publishers")
             .and(warp::path::param::<u32>())

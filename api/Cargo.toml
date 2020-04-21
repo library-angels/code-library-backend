@@ -1,0 +1,25 @@
+[package]
+name = "api"
+version = "0.1.0"
+authors = ["Markus Merklinger <markus.merklinger@code.berlin>","Alexey Bityukov <alexey.bityukov@code.berlin>"]
+edition = "2018"
+
+# [lib]
+# name = "api"
+# path = "src/lib.rs"
+
+[dependencies]
+tokio = { version = "0.2.13", features = ["macros"] }
+warp = "0.2.2"
+futures = "0.3.4"
+log = "0.4.8"
+env_logger = "0.7.1"
+envconfig = "0.8"
+envconfig_derive = "0.8"
+dotenv = "0.15.0"
+diesel = { version = "1.4.4", features = ["postgres", "r2d2", "chrono"] }
+serde = "1.0.105"
+serde_derive = "1.0.105"
+serde_json = "1.0.48"
+chrono = { version = "0.4.11", features = ["serde"] }
+

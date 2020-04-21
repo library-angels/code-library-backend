@@ -2,7 +2,7 @@ use std::convert::Infallible;
 use std::collections::HashMap;
 
 
-pub async fn users_index(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
+pub async fn users_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users_index"))
 }
 
@@ -10,7 +10,7 @@ pub async fn users_id(user_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users id: {}", user_id))
 }
 
-pub async fn roles_index(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
+pub async fn roles_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("roles index"))
 }
 
@@ -30,6 +30,6 @@ pub async fn jwt_info() -> Result<impl warp::Reply, Infallible> {
     Ok(format!("jwt_info"))
 }
 
-pub async fn jwt_refresh(body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
+pub async fn jwt_refresh(_body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("jwt_refresh"))
 }
