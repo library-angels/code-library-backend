@@ -2,7 +2,6 @@ use diesel::r2d2::{ConnectionManager, Pool, PooledConnection, Builder};
 use diesel::pg::PgConnection;
 use warp::Filter;
 use log::info;
-use std::env;
 
 pub type PgPooledConnection = PooledConnection<ConnectionManager<PgConnection>>;
 pub type PgConnectionBuilder = Builder<ConnectionManager<PgConnection>>;

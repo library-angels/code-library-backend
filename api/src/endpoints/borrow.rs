@@ -6,7 +6,7 @@ pub async fn active_list() -> Result<impl warp::Reply, Infallible> {
     Ok(format!("active index"))
 }
 
-pub async fn active_create(body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
+pub async fn active_create(_body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("active index post"))
 }
 
