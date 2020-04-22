@@ -24,12 +24,17 @@ async fn main() {
         }
     };
 
+
     let config = Arc::new(Box::new(config));
     let routes = router::root()
         .or(router::identity(config.clone()))
         .or(router::book())
         .or(router::borrow())
-        .or(router::notification());
+        .or(router::notification())
+        .with(warp::cors()
+        .allow_any_origin()
+        .allow_methods(vec!["GET", "POST", "DELETE"])
+    );
 
     warp::serve(routes)
         .try_bind(SocketAddr::new(config.http_host, config.http_port))
