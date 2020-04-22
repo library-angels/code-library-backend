@@ -194,7 +194,7 @@ pub async fn users_id(user_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users id: {}", user_id))
 }
 
-pub async fn roles_index(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
+pub async fn roles_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("roles index"))
 }
 
