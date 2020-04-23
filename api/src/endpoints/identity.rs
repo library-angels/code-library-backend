@@ -104,18 +104,17 @@ pub enum OauthError {
 
 #[derive(Deserialize)]
 pub struct OauthDiscoveryDocument {
-    issuer: String,
+//    issuer: String,
     token_endpoint: String,
-    userinfo_endpoint: String,
-    jwks_uri: String,
+//    jwks_uri: String,
 }
 
 #[derive(Deserialize)]
 pub struct OauthTokenSet {
-    access_token: String,
-    expires_in: u32,
-    scope: String,
-    token_type: String,
+//    access_token: String,
+//    expires_in: u32,
+//    scope: String,
+//    token_type: String,
     id_token: String,
 }
 
@@ -123,7 +122,13 @@ impl OauthTokenSet {
     pub fn id_token(&self) -> Result<OauthIdToken, OauthError> {
         let id_token = dangerous_unsafe_decode::<OauthIdToken>(&self.id_token);
         match id_token {
-            Ok(val) => return Ok(val.claims),
+            Ok(val) => {
+                if val.claims.is_valid() {
+                    return Ok(val.claims)
+                } else {
+                    return Err(OauthError::IdTokenDeserializeError)
+                }
+            },
             Err(_) => return Err(OauthError::IdTokenDeserializeError)
         }
     }
@@ -132,16 +137,26 @@ impl OauthTokenSet {
 #[derive(Deserialize)]
 pub struct OauthIdToken {
     iss: String,
-    aud: String,
+//    aud: String,
     sub: String,
-    iat: u64,
-    exp: u64,
+//    iat: u64,
+//    exp: u64,
     email: String,
     name: String,
     given_name: String,
     family_name: String,
     hd: String,
     picture: String,
+}
+
+impl OauthIdToken {
+    fn is_valid(&self) -> bool {
+        if self.iss == "https://accounts.google.com".to_string() || self.iss == "accounts.google.com".to_string() && self.hd == "code.berlin".to_string() {
+                return true;
+            } else {
+                return false;
+            }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -186,7 +201,7 @@ pub struct RefreshToken {
     token: String,
 }
 
-pub async fn users_index(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
+pub async fn users_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users_index"))
 }
 
@@ -281,7 +296,7 @@ pub async fn jwt_info() -> Result<impl warp::Reply, Infallible> {
 pub async fn jwt_refresh(config: Arc<Box<super::super::config::Config>>, body: RefreshToken) -> Result<impl warp::Reply, Infallible> {
     let refresh_token = match decode::<Jwt>(&body.token, &DecodingKey::from_secret(config.jwt_secret.to_owned().as_ref()), &Validation::default()) {
         Ok(val) => val,
-        Err(e) => {
+        Err(_) => {
             let error_message = serde_json::to_string(&ErrorMessage{message: "Invalid refresh token".to_string()}).unwrap();
             return Ok(Response::builder()
                 .status(StatusCode::BAD_REQUEST)
