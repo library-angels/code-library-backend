@@ -1,3 +1,2 @@
 [workspace]
 members = ["api", "book", "borrow", "identity", "notification"]
-

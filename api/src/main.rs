@@ -4,6 +4,7 @@ use dotenv::dotenv;
 use envconfig::Envconfig;
 use log::error;
 use std::net::SocketAddr;
+use std::sync::Arc;
 use std::process;
 use warp::Filter;
 
@@ -25,12 +26,18 @@ async fn main() {
         }
     };
 
-    let db_state = db::db_connection::start_db(config.database_url).await;
+
+    let config = Arc::new(Box::new(config));
+    let db_state = db::db_connection::start_db(config.database_url.clone()).await;
     let routes = router::root()
-        .or(router::identity())
+        .or(router::identity(config.clone()))
         .or(router::book(db_state))
         .or(router::borrow())
-        .or(router::notification());
+        .or(router::notification())
+        .with(warp::cors()
+        .allow_any_origin()
+        .allow_methods(vec!["GET", "POST", "DELETE"])
+    );
 
     warp::serve(routes)
         .try_bind(SocketAddr::new(config.http_host, config.http_port))

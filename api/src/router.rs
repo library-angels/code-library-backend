@@ -1,5 +1,7 @@
 use warp::{Filter, filters::BoxedFilter, Reply};
+use std::sync::Arc;
 use crate::db::db_connection::{Db, with_db_state};
+
 
 pub fn root() -> BoxedFilter<(impl Reply,)> {
     // GET - /
@@ -9,7 +11,9 @@ pub fn root() -> BoxedFilter<(impl Reply,)> {
         .boxed()
 }
 
-pub fn identity() -> BoxedFilter<(impl Reply,)> {
+pub fn identity(config: Arc<Box<super::config::Config>>) -> BoxedFilter<(impl Reply,)> {
+    let config = warp::any().map(move || config.clone());
+    
     warp::path("identity").and(
         // GET - /identity/users
         warp::path("users")
@@ -47,12 +51,14 @@ pub fn identity() -> BoxedFilter<(impl Reply,)> {
             warp::path("client_identifier")
                 .and(warp::path::end())
                 .and(warp::get())
+                .and(config.clone())
                 .and_then(super::endpoints::identity::oauth_client_identifier)
 
             // GET - /identity/oauth/authorization_code_exchange
             .or(warp::path("authorization_code_exchange")
                 .and(warp::path::end())
                 .and(warp::get())
+                .and(config.clone())
                 .and(warp::query())
                 .and_then(super::endpoints::identity::oauth_authorization_code_exchange)
             ))
@@ -69,6 +75,7 @@ pub fn identity() -> BoxedFilter<(impl Reply,)> {
             .or(warp::path("refresh")
                 .and(warp::path::end())
                 .and(warp::post())
+                .and(config.clone())
                 .and(warp::body::json())
                 .and_then(super::endpoints::identity::jwt_refresh)
             ))
