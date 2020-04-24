@@ -221,9 +221,9 @@ pub async fn oauth_client_identifier(config: Arc<Box<super::super::config::Confi
     Ok(warp::reply::json(&OauthClientIdentifier{client_identifier: config.oauth_client_identifier.clone()}))
 }
 
-pub async fn oauth_authorization_code_exchange(config: Arc<Box<super::super::config::Config>>, query: OauthAuthorizationCode) -> Result<Response<Body>, Infallible> {
-    if !query.is_valid() {
-        let error_message = serde_json::to_string(&ErrorMessage{message: "Invalid query string".to_string()}).unwrap();
+pub async fn oauth_authorization_code_exchange(config: Arc<Box<super::super::config::Config>>, body: OauthAuthorizationCode) -> Result<Response<Body>, Infallible> {
+    if !body.is_valid() {
+        let error_message = serde_json::to_string(&ErrorMessage{message: "Invalid body string".to_string()}).unwrap();
         return Ok(Response::builder()
             .status(StatusCode::BAD_REQUEST)
             .header(CONTENT_TYPE, "application/json")
@@ -232,7 +232,7 @@ pub async fn oauth_authorization_code_exchange(config: Arc<Box<super::super::con
     }
 
     let token_request = OauthTokenRequest {
-        code: query.code,
+        code: body.code,
         client_id: config.oauth_client_identifier.clone(),
         client_secret: config.oauth_client_secret.clone(),
         redirect_uri: config.oauth_client_redirect.clone(),

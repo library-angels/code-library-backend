@@ -35,9 +35,9 @@ async fn main() {
         .or(router::borrow())
         .or(router::notification())
         .with(warp::cors()
-        .allow_any_origin()
-        .allow_methods(vec!["GET", "POST", "DELETE"])
-    );
+            .allow_any_origin()
+            .allow_methods(vec!["GET", "POST", "DELETE"])
+            .allow_headers(vec!["Content-Type"]));
 
     warp::serve(routes)
         .try_bind(SocketAddr::new(config.http_host, config.http_port))
