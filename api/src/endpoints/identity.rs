@@ -1,17 +1,15 @@
 use std::convert::Infallible;
-use std::collections::HashMap;
 
-
-pub async fn users_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("users_index"))
+pub async fn users_index(_query: String) -> Result<impl warp::Reply, Infallible> {
+    Ok("users_index".to_string())
 }
 
 pub async fn users_id(user_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users id: {}", user_id))
 }
 
-pub async fn roles_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("roles index"))
+pub async fn roles_index(_query: String) -> Result<impl warp::Reply, Infallible> {
+    Ok("roles index".to_string())
 }
 
 pub async fn roles_id(role_id: u32) -> Result<impl warp::Reply, Infallible> {
@@ -19,17 +17,22 @@ pub async fn roles_id(role_id: u32) -> Result<impl warp::Reply, Infallible> {
 }
 
 pub async fn oauth_client_identifier() -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("oauth_client_identifier"))
+    Ok("oauth_client_identifier".to_string())
 }
 
-pub async fn oauth_authorization_code_exchange(query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("oauth_authorization_code_exchange - code: {}", query["code"]))
+pub async fn oauth_authorization_code_exchange(
+    query: String,
+) -> Result<impl warp::Reply, Infallible> {
+    Ok(format!(
+        "oauth_authorization_code_exchange - code: {}",
+        query
+    ))
 }
 
 pub async fn jwt_info() -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("jwt_info"))
+    Ok("jwt_info".to_string())
 }
 
-pub async fn jwt_refresh(_body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("jwt_refresh"))
+pub async fn jwt_refresh(_body: String) -> Result<impl warp::Reply, Infallible> {
+    Ok("jwt_refresh".to_string())
 }

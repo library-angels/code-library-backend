@@ -1,2 +1,2 @@
-pub mod test_db;
-pub mod book_endpoint_tests;
+pub mod db_tests;
+pub mod test_db_connection;

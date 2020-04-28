@@ -1,5 +1,5 @@
-use serde_derive::{Serialize, Deserialize};
 use crate::db::schema::publishers;
+use serde_derive::{Deserialize, Serialize};
 #[derive(Serialize, Deserialize, AsChangeset)]
 #[table_name = "publishers"]
 pub struct PublisherRequest {
@@ -14,6 +14,6 @@ pub struct NewPublisher {
 
 impl From<PublisherRequest> for NewPublisher {
     fn from(query: PublisherRequest) -> Self {
-       Self { name: query.name } 
+        Self { name: query.name }
     }
 }

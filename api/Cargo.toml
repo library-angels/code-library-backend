@@ -4,10 +4,6 @@ version = "0.1.0"
 authors = ["Markus Merklinger <markus.merklinger@code.berlin>","Alexey Bityukov <alexey.bityukov@code.berlin>"]
 edition = "2018"
 
-# [lib]
-# name = "api"
-# path = "src/lib.rs"
-
 [dependencies]
 tokio = { version = "0.2.13", features = ["macros"] }
 warp = "0.2.2"

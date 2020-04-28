@@ -1,10 +1,11 @@
-use crate::db::db_connection::Db;
+use crate::{config::initialize_config, db::db_connection::Db};
 use diesel::r2d2::{CustomizeConnection, Pool};
 use log::error;
 
 #[allow(dead_code)]
 pub fn test_db() -> Db {
-    let db_url = std::env::var("DATABASE_URL_DEV").expect("can't find database url");
+    let config = initialize_config().unwrap();
+    let db_url = config.database_url.clone();
     let customizer = TestConnectionCustomizer {};
     let builder = Pool::builder().connection_customizer(Box::new(customizer));
     Db::init_pool(&db_url, builder)

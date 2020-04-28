@@ -1,7 +1,11 @@
 version: 2.1
 
 aliases:
-  - &working_directory ~/code-library-project
+  - &working_directory ~/code-library-backend-api
+ 
+  - &attach_workspace
+    attach_workspace:
+      at: *working_directory
 
   - &save_git_cache
     key: source-v1-{{ .Branch }}-{{ .Revision }}
@@ -25,22 +29,56 @@ aliases:
   - &restore_cargo_cache
     key: v4-cargo-cache-{{ arch }}-{{ checksum "Cargo.lock" }}
 
+working_directory: *working_directory
+
 executors:
-  rust-executor:
+  rust:
     docker:
       - image: rust:1
-    working_directory: *working_directory
+  rust-with-pg:
+    docker:
+      - image: rust:1
+        environment:
+          DATABASE_URL: postgresql://postgres:password@localhost:5432/test_db
+      - image: circleci/postgres:9.6.9-alpine-ram
+        command: postgres -c max_connections=300
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
 
 jobs:
-  test:
-    executor: rust-executor
+  fmt:
+    executor: rust
     steps:
       - checkout
       - restore_cache: *restore_git_cache
       - restore_cache: *restore_cargo_cache
       - run:
+          name: Run fmt
+          command: |
+            rustup component add rustfmt
+            cargo fmt -- --check
+  clippy:
+    executor: rust
+    steps:
+      - checkout
+      - run:
+          name: Run clippy
+          command: |
+            rustup component add clippy
+            cargo clippy --bin api --all-targets --all-features -- -D warnings
+  tests:
+    executor: rust-with-pg
+    steps:
+      - checkout
+      - run:
+          name: Set up postgres
+          command: |
+            apt update && apt -y install postgresql-client
+            psql -h localhost -p 5432 -U postgres -f ./api/src/db/tests/db.sql
+      - run:
           name: Run tests
-          command: cargo test --all
+          command: cargo test --bin api && cargo test --test book_endpoint_tests
       - save_cache: *save_git_cache
       - save_cache: *save_cargo_cache
 
@@ -48,5 +86,9 @@ workflows:
   version: 2.1
   build:
     jobs:
-      - test
-
+      - fmt
+      - clippy
+      - tests:
+          requires:
+            - fmt
+            - clippy
