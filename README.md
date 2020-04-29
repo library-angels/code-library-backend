@@ -56,3 +56,8 @@ Each command has to be executed relative to the repository root directory.
 
 To build a Docker image of a microservice, execute `docker build -f <service>/Dockerfile -t code-library-<service> .`,
 which requires the substitution of `<service>` with the respective service name.
+
+## Development
+The development must happen in feature branches.
+The `master` branch requires pull requests for merging (squash and merge).
+To merge a pull request, at least one approving review is required.
