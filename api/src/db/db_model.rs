@@ -2,14 +2,16 @@
 #![allow(clippy::all)]
 
 use super::schema::*;
-use diesel::prelude::*;
-use diesel::pg::PgConnection;
-use diesel::prelude::Queryable;
-use diesel::pg::data_types::PgInterval;
 use chrono::naive::{NaiveDate, NaiveDateTime};
+use diesel::{
+    pg::{data_types::PgInterval, PgConnection},
+    prelude::{Queryable, *},
+};
+use serde::{
+    self,
+    ser::{Serialize, SerializeStruct, Serializer},
+};
 use serde_derive::{Deserialize, Serialize};
-use serde::ser::{Serialize, Serializer, SerializeStruct};
-use serde;
 
 #[derive(Serialize, Deserialize, Queryable, Debug, PartialEq)]
 pub struct Book {

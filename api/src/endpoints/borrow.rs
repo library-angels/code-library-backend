@@ -1,6 +1,5 @@
-use std::convert::Infallible;
 use std::collections::HashMap;
-
+use std::convert::Infallible;
 
 pub async fn active_list() -> Result<impl warp::Reply, Infallible> {
     Ok(format!("active index"))
