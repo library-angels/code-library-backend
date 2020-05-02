@@ -66,7 +66,7 @@ pub fn identity(config: Arc<Box<super::config::Config>>) -> BoxedFilter<(impl Re
                         .or(warp::path("refresh")
                             .and(warp::path::end())
                             .and(warp::post())
-                            .and(config.clone())
+                            .and(config)
                             .and(warp::body::json())
                             .and_then(super::endpoints::identity::jwt_refresh)),
                 )),
@@ -301,7 +301,7 @@ pub fn book(db_state: Db) -> BoxedFilter<(impl Reply,)> {
                     .and(warp::path::param::<u32>())
                     .and(warp::path::end())
                     .and(warp::get())
-                    .and(with_db_state(db_state.clone()))
+                    .and(with_db_state(db_state))
                     .and_then(super::endpoints::book::subject_areas_retrieve)),
         )
         .boxed()

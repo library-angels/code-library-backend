@@ -6,8 +6,7 @@ use jsonwebtoken::{
 };
 use log::{debug, error};
 use serde::{Deserialize, Serialize};
-use serde_json;
-use std::collections::HashMap;
+
 use std::convert::Infallible;
 use std::sync::Arc;
 use std::time::{Duration, SystemTime};
@@ -25,7 +24,7 @@ pub struct OauthAuthorizationCode {
 
 impl OauthAuthorizationCode {
     pub fn is_valid(&self) -> bool {
-        if self.code.len() < 1 || self.code.len() > 256 {
+        if self.code.is_empty() || self.code.len() > 256 {
             return false;
         }
 
@@ -34,7 +33,7 @@ impl OauthAuthorizationCode {
                 return false;
             }
         }
-        return true;
+        true
     }
 }
 
@@ -93,10 +92,10 @@ impl OauthTokenRequest {
         let token_set: Result<OauthTokenSet, serde_json::error::Error> =
             serde_json::from_reader(token_set_response_body.reader());
         match token_set {
-            Ok(val) => return Ok(val),
+            Ok(val) => Ok(val),
             Err(_) => {
                 error!("Could not deserialize token set");
-                return Err(OauthError::TokenSetDeserializeError);
+                Err(OauthError::TokenSetDeserializeError)
             }
         }
     }
@@ -132,12 +131,12 @@ impl OauthTokenSet {
         match id_token {
             Ok(val) => {
                 if val.claims.is_valid() {
-                    return Ok(val.claims);
+                    Ok(val.claims)
                 } else {
-                    return Err(OauthError::IdTokenDeserializeError);
+                    Err(OauthError::IdTokenDeserializeError)
                 }
             }
-            Err(_) => return Err(OauthError::IdTokenDeserializeError),
+            Err(_) => Err(OauthError::IdTokenDeserializeError),
         }
     }
 }
@@ -159,13 +158,8 @@ pub struct OauthIdToken {
 
 impl OauthIdToken {
     fn is_valid(&self) -> bool {
-        if self.iss == "https://accounts.google.com".to_string()
-            || self.iss == "accounts.google.com".to_string() && self.hd == "code.berlin".to_string()
-        {
-            return true;
-        } else {
-            return false;
-        }
+        self.iss == "https://accounts.google.com"
+            || self.iss == "accounts.google.com" && self.hd == "code.berlin"
     }
 }
 
@@ -191,13 +185,13 @@ impl Jwt {
         picture: String,
         jwt_validity: u64,
     ) -> Jwt {
-        return Jwt {
-            sub: sub,
-            email: email,
-            name: name,
-            given_name: given_name,
-            family_name: family_name,
-            picture: picture,
+        Jwt {
+            sub,
+            email,
+            name,
+            given_name,
+            family_name,
+            picture,
             iat: SystemTime::now()
                 .duration_since(SystemTime::UNIX_EPOCH)
                 .unwrap()
@@ -208,7 +202,7 @@ impl Jwt {
                 .duration_since(SystemTime::UNIX_EPOCH)
                 .unwrap()
                 .as_secs(),
-        };
+        }
     }
 
     pub fn encode(&self, secret: String) -> String {
@@ -232,16 +226,16 @@ pub struct RefreshToken {
     token: String,
 }
 
-pub async fn users_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("users_index"))
+pub async fn users_index(_query: String) -> Result<impl warp::Reply, Infallible> {
+    Ok("users_index".to_string())
 }
 
 pub async fn users_id(user_id: u32) -> Result<impl warp::Reply, Infallible> {
     Ok(format!("users id: {}", user_id))
 }
 
-pub async fn roles_index(_query: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("roles index"))
+pub async fn roles_index(_query: String) -> Result<impl warp::Reply, Infallible> {
+    Ok("roles index".to_string())
 }
 
 pub async fn roles_id(role_id: u32) -> Result<impl warp::Reply, Infallible> {
@@ -327,7 +321,7 @@ pub async fn oauth_authorization_code_exchange(
             id_token.name.clone(),
             id_token.given_name.clone(),
             id_token.family_name.clone(),
-            id_token.picture.clone(),
+            id_token.picture,
             86400,
         )
         .encode(config.jwt_secret.clone()),
@@ -341,7 +335,7 @@ pub async fn oauth_authorization_code_exchange(
 }
 
 pub async fn jwt_info() -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("jwt_info"))
+    Ok("jwt_info".to_string())
 }
 
 pub async fn jwt_refresh(
@@ -373,7 +367,7 @@ pub async fn jwt_refresh(
         refresh_token.claims.name.to_owned(),
         refresh_token.claims.given_name.to_owned(),
         refresh_token.claims.family_name.to_owned(),
-        refresh_token.claims.picture.to_owned(),
+        refresh_token.claims.picture,
         3600,
     )
     .encode(config.jwt_secret.to_owned());
