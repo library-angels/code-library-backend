@@ -8,6 +8,7 @@ pub struct BookQuery {
     pub limit: Option<i64>,
     pub offset: Option<i64>,
     pub publisher_id: Option<i32>,
+    pub designation_id: Option<i32>,
 }
 
 #[derive(Serialize, Deserialize, AsChangeset)]
