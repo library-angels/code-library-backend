@@ -49,9 +49,9 @@ pub fn identity(config: Arc<Box<super::config::Config>>) -> BoxedFilter<(impl Re
                         // GET - /identity/oauth/authorization_code_exchange
                         .or(warp::path("authorization_code_exchange")
                             .and(warp::path::end())
-                            .and(warp::get())
+                            .and(warp::post())
                             .and(config.clone())
-                            .and(warp::query())
+                            .and(warp::body::json())
                             .and_then(
                                 super::endpoints::identity::oauth_authorization_code_exchange,
                             )),
