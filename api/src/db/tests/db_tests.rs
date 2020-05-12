@@ -14,7 +14,6 @@ mod tests {
             limit: Some(2),
             offset: None,
             publisher_id: None,
-            designation_id: None,
         };
         let results = find_books(query, &db_state).unwrap();
 
@@ -25,17 +24,17 @@ mod tests {
     async fn retrieve_books_with_offset() {
         let db_state = test_db();
         let query = BookQuery {
-            limit: Some(2),
+            limit: None,
             offset: Some(1),
             publisher_id: None,
-            designation_id: None,
         };
-        let result = find_books(query, &db_state)
+        let result: Vec<Book> = find_books(query, &db_state)
             .unwrap()
             .into_iter()
-            .all(|book| book.id == 2 || book.id == 3);
+            .filter(|book| book.id == 1)
+            .collect();
 
-        assert!(result);
+        assert!(result.is_empty());
     }
 
     #[tokio::test]
@@ -45,48 +44,14 @@ mod tests {
             limit: None,
             offset: None,
             publisher_id: Some(2),
-            designation_id: None,
         };
-        let result = find_books(query, &db_state)
+        let result: Vec<Book> = find_books(query, &db_state)
             .unwrap()
             .into_iter()
-            .all(|book| book.publisher_id == 2);
+            .filter(|book| book.publisher_id == 2)
+            .collect();
 
-        assert!(result);
-    }
-
-    #[tokio::test]
-    async fn retrieve_books_with_designation() {
-        let db_state = test_db();
-        let query = BookQuery {
-            limit: None,
-            offset: None,
-            publisher_id: None,
-            designation_id: Some(2),
-        };
-        let result = find_books(query, &db_state)
-            .unwrap()
-            .into_iter()
-            .all(|book| book.designation_id == 2);
-
-        assert!(result);
-    }
-
-    #[tokio::test]
-    async fn retrieve_books_with_queries() {
-        let db_state = test_db();
-        let query = BookQuery {
-            limit: None,
-            offset: None,
-            publisher_id: Some(2),
-            designation_id: Some(2),
-        };
-        let result = find_books(query, &db_state)
-            .unwrap()
-            .into_iter()
-            .all(|book| book.publisher_id == 2 && book.designation_id == 2);
-
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
@@ -109,99 +74,108 @@ mod tests {
     #[tokio::test]
     async fn retrieve_book() {
         let db_state = test_db();
-        let result = find_book(1, &db_state).into_iter().all(|book| book.id == 1);
+        let result: Vec<Book> = find_book(1, &db_state)
+            .into_iter()
+            .filter(|book| book.id == 1)
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_designations() {
         let db_state = test_db();
-        let result = find_book_designations(1, &db_state)
+        let result: Vec<Designation> = find_book_designations(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|designation| designation.name == "DH");
+            .filter(|designation| designation.name == "DH")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_publishers() {
         let db_state = test_db();
-        let result = find_book_publishers(1, &db_state)
+        let result: Vec<Publisher> = find_book_publishers(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|publisher| publisher.id == 1);
+            .filter(|publisher| publisher.id == 1)
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_authors() {
         let db_state = test_db();
-        let result = find_book_authors(1, &db_state)
+        let result: Vec<Person> = find_book_authors(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|person| person.id == 1);
+            .filter(|person| person.id == 1)
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_languages() {
         let db_state = test_db();
-        let result = find_book_languages(1, &db_state)
+        let result: Vec<Language> = find_book_languages(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|language| language.language_name == "English");
+            .filter(|language| language.language_name == "English")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_physical_sizes() {
         let db_state = test_db();
-        let result = find_book_physical_sizes(1, &db_state)
+        let result: Vec<PhysicalSize> = find_book_physical_sizes(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|physical_size| physical_size.id == 1);
+            .filter(|physical_size| physical_size.id == 1)
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_subject_areas() {
         let db_state = test_db();
-        let result = find_book_subject_areas(3, &db_state)
+        let result: Vec<SubjectArea> = find_book_subject_areas(3, &db_state)
             .unwrap()
             .into_iter()
-            .all(|subject_area| {
-                subject_area.name == "Computer Science" || subject_area.name == "Philosophy"
-            });
+            .filter(|subject_area| subject_area.name == "Computer Science")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_copies() {
         let db_state = test_db();
-        let result = find_book_copies(1, &db_state)
+        let result: Vec<Copy> = find_book_copies(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|copies| copies.code_identifier_copy_id == Some(1));
+            .filter(|copies| copies.code_identifier_copy_id == Some(1))
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
     async fn retrieve_book_status() {
         let db_state = test_db();
-        let result = find_book_status(1, &db_state)
+        let result: Vec<Status> = find_book_status(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|status| status.available);
+            .filter(|status| status.available)
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
@@ -215,12 +189,13 @@ mod tests {
     #[tokio::test]
     async fn retrieve_designation() {
         let db_state = test_db();
-        let result = find_designation_by_id(2, &db_state)
+        let result: Vec<Designation> = find_designation_by_id(2, &db_state)
             .unwrap()
             .into_iter()
-            .all(|designation| designation.name == "SE");
+            .filter(|designation| designation.name == "SE")
+            .collect();
 
-        assert!(result);
+        assert_eq!(result.len(), 1);
     }
 
     #[tokio::test]
@@ -234,12 +209,13 @@ mod tests {
     #[tokio::test]
     async fn retrieve_publisher() {
         let db_state = test_db();
-        let result = find_publisher_by_id(3, &db_state)
+        let result: Vec<Publisher> = find_publisher_by_id(3, &db_state)
             .unwrap()
             .into_iter()
-            .all(|publisher| publisher.name == "FREEMAN and Company");
+            .filter(|publisher| publisher.name == "FREEMAN and Company")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
@@ -264,12 +240,13 @@ mod tests {
     #[tokio::test]
     async fn retrieve_author() {
         let db_state = test_db();
-        let result = find_author_by_id(1, &db_state)
+        let result: Vec<Person> = find_author_by_id(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|author| author.last_name == Some("Goldhill".to_string()));
+            .filter(|author| author.last_name == Some("Goldhill".to_string()))
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
@@ -283,12 +260,13 @@ mod tests {
     #[tokio::test]
     async fn retrieve_language() {
         let db_state = test_db();
-        let result = find_language_by_id(1, &db_state)
+        let result: Vec<Language> = find_language_by_id(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|language| language.language_name == "English");
+            .filter(|language| language.language_name == "English")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
@@ -302,12 +280,13 @@ mod tests {
     #[tokio::test]
     async fn retrieve_physical_size() {
         let db_state = test_db();
-        let result = find_physical_size_by_id(1, &db_state)
+        let result: Vec<PhysicalSize> = find_physical_size_by_id(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|physical_size| physical_size.name == "normal");
+            .filter(|physical_size| physical_size.name == "normal")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 
     #[tokio::test]
@@ -321,11 +300,12 @@ mod tests {
     #[tokio::test]
     async fn retrieve_subject_area() {
         let db_state = test_db();
-        let result = find_subject_area_by_id(1, &db_state)
+        let result: Vec<SubjectArea> = find_subject_area_by_id(1, &db_state)
             .unwrap()
             .into_iter()
-            .all(|subject_area| subject_area.name == "Health Care");
+            .filter(|subject_area| subject_area.name == "Health Care")
+            .collect();
 
-        assert!(result);
+        assert!(!result.is_empty());
     }
 }

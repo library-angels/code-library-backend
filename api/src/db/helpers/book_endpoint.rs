@@ -13,19 +13,11 @@ pub fn find_books(query: BookQuery, db_state: &Db) -> Result<Vec<Book>, Error> {
             .into_boxed()
             .limit(query.limit.unwrap_or(20))
             .offset(query.offset.unwrap_or(0));
-
         let b = if let Some(p) = query.publisher_id {
             b.filter(publisher_id.eq(p))
         } else {
             b
         };
-
-        let b = if let Some(p) = query.designation_id {
-            b.filter(designation_id.eq(p))
-        } else {
-            b
-        };
-
         b.load::<Book>(&connection)
             .expect("can't load the list of books")
     };
