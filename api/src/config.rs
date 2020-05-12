@@ -1,3 +1,4 @@
+use dotenv::dotenv;
 use envconfig::{Envconfig, Error};
 use envconfig_derive::Envconfig;
 use log::error;
@@ -28,6 +29,7 @@ pub struct Config {
 }
 
 pub fn initialize_config() -> Result<Arc<Box<Config>>, Error> {
+    dotenv().ok();
     match Config::init() {
         Ok(val) => Ok(Arc::new(Box::new(val))),
         Err(e) => {
