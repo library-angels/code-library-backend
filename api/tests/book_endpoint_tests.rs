@@ -29,6 +29,7 @@ mod tests {
                 limit: Some(1),
                 offset: None,
                 publisher_id: None,
+                designation_id: None,
             })
             .reply(&filter)
             .await;
@@ -47,6 +48,7 @@ mod tests {
                 limit: None,
                 offset: Some(1),
                 publisher_id: None,
+                designation_id: None,
             })
             .reply(&filter)
             .await;
@@ -65,6 +67,7 @@ mod tests {
                 limit: None,
                 offset: None,
                 publisher_id: Some(2),
+                designation_id: None,
             })
             .reply(&filter)
             .await;
