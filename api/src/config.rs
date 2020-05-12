@@ -1,7 +1,8 @@
-use envconfig::Envconfig;
+use dotenv::dotenv;
+use envconfig::{Envconfig, Error};
 use envconfig_derive::Envconfig;
-use std::net::IpAddr;
-
+use log::error;
+use std::{net::IpAddr, process, sync::Arc};
 
 #[derive(Envconfig)]
 pub struct Config {
@@ -25,4 +26,15 @@ pub struct Config {
 
     #[envconfig(from = "JWT_SECRET")]
     pub jwt_secret: String,
+}
+
+pub fn initialize_config() -> Result<Arc<Box<Config>>, Error> {
+    dotenv().ok();
+    match Config::init() {
+        Ok(val) => Ok(Arc::new(Box::new(val))),
+        Err(e) => {
+            error!("{}", e);
+            process::exit(1);
+        }
+    }
 }
