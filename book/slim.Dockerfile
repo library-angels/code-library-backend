@@ -1,7 +1,7 @@
 FROM rust:alpine3.11 as builder
 LABEL stage=code-library-intermediate
 WORKDIR /usr/src/code-library-book
-COPY . .
+COPY book .
 RUN apk add gcc musl-dev
 ENV RUSTFLAGS="-C target-feature=-crt-static"
 RUN cargo install --path .
