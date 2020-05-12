@@ -1,13 +1,11 @@
 use std::convert::Infallible;
-use std::collections::HashMap;
-
 
 pub async fn active_list() -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("active index"))
+    Ok("active index".to_string())
 }
 
-pub async fn active_create(_body: HashMap<String, String>) -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("active index post"))
+pub async fn active_create(_body: String) -> Result<impl warp::Reply, Infallible> {
+    Ok("active index post".to_string())
 }
 
 pub async fn active_retrieve(borrow_id: u32) -> Result<impl warp::Reply, Infallible> {
@@ -15,7 +13,7 @@ pub async fn active_retrieve(borrow_id: u32) -> Result<impl warp::Reply, Infalli
 }
 
 pub async fn history_list() -> Result<impl warp::Reply, Infallible> {
-    Ok(format!("history index"))
+    Ok("history index".to_string())
 }
 
 pub async fn history_retrieve(borrow_id: u32) -> Result<impl warp::Reply, Infallible> {
