@@ -24,7 +24,7 @@ async fn main() {
             warp::cors()
                 .allow_any_origin()
                 .allow_methods(vec!["GET", "POST", "DELETE"])
-                .allow_headers(vec!["Content-Type"])
+                .allow_headers(vec!["Content-Type"]),
         );
 
     warp::serve(routes)
