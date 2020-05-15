@@ -1,7 +1,7 @@
 FROM rust:alpine3.11 as builder
 LABEL stage=code-library-intermediate
 WORKDIR /usr/src/code-library-api
-COPY api .
+COPY . .
 RUN apk add gcc musl-dev openssl-dev postgresql-dev
 ENV RUSTFLAGS="-C target-feature=-crt-static"
 RUN cargo install --path .
