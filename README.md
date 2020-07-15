@@ -68,3 +68,10 @@ All development has to happen inside of separate branches. Every branch name is 
 The used prefixes are the same as the Github labels for pull requests.
 The `master` branch is protected and requires pull request and an approval of at least one reviewer.
 The used merge method is squash and merge.
+
+
+# 4. Contributors
+
+alexeybi -> Database access and book endpoints
+code-mm -> Endpoint setup, logging, CORS and identity endpoints (mostly OAuth 2.0 authentication)
+
