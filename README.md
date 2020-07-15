@@ -18,7 +18,8 @@ The table below provides an overview of the services.
 | notification | Notification functionalities (e.g., email, Slack). |
 | api | REST API for user access. |
 
-For more detailed information about each service, refer to the README file in the service directory.
+For more detailed information about how the services work together, refer to `ARCHITECTURE.md`.
+Specific implementation details about an individual service can be found in the `README.md`, of the respective service directory.
 
 
 ## 2. Building
