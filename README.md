@@ -41,7 +41,7 @@ Execute `cargo build` to build all services or `cargo build --bin <service>` com
 
 #### 2.1.1 External Dependencies
 
-The table below, provides an overview of the required build dependencies. 
+The table below, provides an overview of the required build dependencies.
 
 | Dependency name | Minimum version | Description |
 | --- | --- | --- |
@@ -72,6 +72,8 @@ The used merge method is squash and merge.
 
 # 4. Contributors
 
-alexeybi -> Database access and book endpoints
-code-mm -> Endpoint setup, logging, CORS and identity endpoints (mostly OAuth 2.0 authentication)
+|User|Work done|
+|---|---|
+|alexeybi|Database access and book endpoints|
+|code-mm|Endpoint setup, logging, CORS and identity endpoints|
 
