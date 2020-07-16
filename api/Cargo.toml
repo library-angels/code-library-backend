@@ -9,7 +9,7 @@ tokio = { version = "0.2.21", features = ["macros"] }
 warp = "0.2.3"
 futures = "0.3.5"
 hyper = "0.13"
-log = "0.4.8"
+log = "0.4.11"
 env_logger = "0.7.1"
 envconfig = "0.8"
 envconfig_derive = "0.8"
