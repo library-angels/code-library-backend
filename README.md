@@ -70,7 +70,7 @@ The `master` branch is protected and requires pull request and an approval of at
 The used merge method is squash and merge.
 
 
-# 4. Contributors
+## 4. Contributors
 
 |User|Work done|
 |---|---|
