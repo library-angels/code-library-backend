@@ -22,7 +22,8 @@ lazy_static! {
     };
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     println!(
         "SERVICE: {} | VERSION: {}\n",
         PKG_NAME.unwrap_or("<unknown>"),
