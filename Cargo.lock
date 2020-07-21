@@ -99,6 +99,7 @@ dependencies = [
 name = "book"
 version = "0.1.0"
 dependencies = [
+ "diesel",
  "dotenv",
  "env_logger",
  "envconfig",
@@ -112,6 +113,7 @@ dependencies = [
 name = "borrow"
 version = "0.1.0"
 dependencies = [
+ "diesel",
  "dotenv",
  "env_logger",
  "envconfig",
@@ -577,6 +579,7 @@ dependencies = [
 name = "identity"
 version = "0.1.0"
 dependencies = [
+ "diesel",
  "dotenv",
  "env_logger",
  "envconfig",
@@ -833,6 +836,7 @@ dependencies = [
 name = "notification"
 version = "0.1.0"
 dependencies = [
+ "diesel",
  "dotenv",
  "env_logger",
  "envconfig",
