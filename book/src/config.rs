@@ -22,11 +22,10 @@ pub struct Config {
 
 impl Config {
     pub fn db_connection_url(&self) -> String {
-        format!("postgres://{}:{}@{}/{}",
-            self.db_user,
-            self.db_secret,
-            self.db_host_ip,
-            self.db_name
-        ).to_string()
+        format!(
+            "postgres://{}:{}@{}/{}",
+            self.db_user, self.db_secret, self.db_host_ip, self.db_name
+        )
+        .to_string()
     }
 }
