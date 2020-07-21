@@ -99,7 +99,11 @@ dependencies = [
 name = "book"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
 ]
 
@@ -107,7 +111,11 @@ dependencies = [
 name = "borrow"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
 ]
 
@@ -541,8 +549,6 @@ dependencies = [
  "http-body",
  "httparse",
  "itoa",
- "log 0.4.11",
- "net2",
  "pin-project",
  "socket2",
  "time",
@@ -569,7 +575,11 @@ dependencies = [
 name = "identity"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
 ]
 
@@ -820,7 +830,11 @@ dependencies = [
 name = "notification"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
 ]
 
