@@ -98,10 +98,18 @@ dependencies = [
 [[package]]
 name = "book"
 version = "0.1.0"
+dependencies = [
+ "env_logger",
+ "log 0.4.11",
+]
 
 [[package]]
 name = "borrow"
 version = "0.1.0"
+dependencies = [
+ "env_logger",
+ "log 0.4.11",
+]
 
 [[package]]
 name = "buf_redux"
@@ -533,6 +541,8 @@ dependencies = [
  "http-body",
  "httparse",
  "itoa",
+ "log 0.4.11",
+ "net2",
  "pin-project",
  "socket2",
  "time",
@@ -558,6 +568,10 @@ dependencies = [
 [[package]]
 name = "identity"
 version = "0.1.0"
+dependencies = [
+ "env_logger",
+ "log 0.4.11",
+]
 
 [[package]]
 name = "idna"
@@ -805,6 +819,10 @@ dependencies = [
 [[package]]
 name = "notification"
 version = "0.1.0"
+dependencies = [
+ "env_logger",
+ "log 0.4.11",
+]
 
 [[package]]
 name = "num-bigint"
