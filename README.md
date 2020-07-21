@@ -18,7 +18,8 @@ The table below provides an overview of the services.
 | notification | Notification functionalities (e.g., email, Slack). |
 | api | REST API for user access. |
 
-For more detailed information about each service, refer to the README file in the service directory.
+For more detailed information about how the services work together, refer to `ARCHITECTURE.md`.
+Specific implementation details about an individual service can be found in the `README.md`, of the respective service directory.
 
 
 ## 2. Building
@@ -40,7 +41,7 @@ Execute `cargo build` to build all services or `cargo build --bin <service>` com
 
 #### 2.1.1 External Dependencies
 
-The table below, provides an overview of the required build dependencies. 
+The table below, provides an overview of the required build dependencies.
 
 | Dependency name | Minimum version | Description |
 | --- | --- | --- |
@@ -67,3 +68,12 @@ All development has to happen inside of separate branches. Every branch name is 
 The used prefixes are the same as the Github labels for pull requests.
 The `master` branch is protected and requires pull request and an approval of at least one reviewer.
 The used merge method is squash and merge.
+
+
+## 4. Contributors
+
+|User|Work done|
+|---|---|
+|alexeybi|Database access and book endpoints|
+|code-mm|Endpoint setup, logging, CORS and identity endpoints|
+

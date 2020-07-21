@@ -2,7 +2,7 @@ use bytes::buf::BufExt;
 use hyper::{header::CONTENT_TYPE, Body, Client, Request, Uri};
 use hyper_tls::HttpsConnector;
 use jsonwebtoken::{
-    dangerous_unsafe_decode, decode, encode, DecodingKey, EncodingKey, Header, Validation,
+    dangerous_insecure_decode, decode, encode, DecodingKey, EncodingKey, Header, Validation,
 };
 use log::{debug, error};
 use serde::{Deserialize, Serialize};
@@ -127,7 +127,7 @@ pub struct OauthTokenSet {
 
 impl OauthTokenSet {
     pub fn id_token(&self) -> Result<OauthIdToken, OauthError> {
-        let id_token = dangerous_unsafe_decode::<OauthIdToken>(&self.id_token);
+        let id_token = dangerous_insecure_decode::<OauthIdToken>(&self.id_token);
         match id_token {
             Ok(val) => {
                 if val.claims.is_valid() {
