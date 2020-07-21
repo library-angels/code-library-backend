@@ -101,6 +101,7 @@ version = "0.1.0"
 dependencies = [
  "env_logger",
  "log 0.4.11",
+ "tokio",
 ]
 
 [[package]]
@@ -109,6 +110,7 @@ version = "0.1.0"
 dependencies = [
  "env_logger",
  "log 0.4.11",
+ "tokio",
 ]
 
 [[package]]
@@ -541,8 +543,6 @@ dependencies = [
  "http-body",
  "httparse",
  "itoa",
- "log 0.4.11",
- "net2",
  "pin-project",
  "socket2",
  "time",
@@ -571,6 +571,7 @@ version = "0.1.0"
 dependencies = [
  "env_logger",
  "log 0.4.11",
+ "tokio",
 ]
 
 [[package]]
@@ -822,6 +823,7 @@ version = "0.1.0"
 dependencies = [
  "env_logger",
  "log 0.4.11",
+ "tokio",
 ]
 
 [[package]]
