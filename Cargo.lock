@@ -99,7 +99,11 @@ dependencies = [
 name = "book"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
  "tokio",
 ]
@@ -108,7 +112,11 @@ dependencies = [
 name = "borrow"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
  "tokio",
 ]
@@ -569,7 +577,11 @@ dependencies = [
 name = "identity"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
  "tokio",
 ]
@@ -821,7 +833,11 @@ dependencies = [
 name = "notification"
 version = "0.1.0"
 dependencies = [
+ "dotenv",
  "env_logger",
+ "envconfig",
+ "envconfig_derive",
+ "lazy_static",
  "log 0.4.11",
  "tokio",
 ]
