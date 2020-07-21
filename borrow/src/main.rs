@@ -3,7 +3,6 @@ use dotenv::dotenv;
 use envconfig::Envconfig;
 use lazy_static::lazy_static;
 use std::process;
-#[macro_use]
 extern crate diesel;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
