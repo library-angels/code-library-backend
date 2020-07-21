@@ -26,6 +26,5 @@ impl Config {
             "postgres://{}:{}@{}/{}",
             self.db_user, self.db_secret, self.db_host_ip, self.db_name
         )
-        .to_string()
     }
 }
