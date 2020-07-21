@@ -12,3 +12,4 @@ dotenv = "0.15.0"
 envconfig = "0.8.0"
 envconfig_derive = "0.8.0"
 tokio = "0.2"
+diesel = { version = "1.4.5", features = ["postgres", "r2d2" ] }

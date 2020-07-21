@@ -3,6 +3,10 @@ use dotenv::dotenv;
 use envconfig::Envconfig;
 use lazy_static::lazy_static;
 use std::process;
+#[macro_use]
+extern crate diesel;
+use diesel::prelude::*;
+use diesel::r2d2::{Pool, ConnectionManager};
 
 mod config;
 
@@ -13,6 +17,15 @@ lazy_static! {
     static ref CONFIGURATION: config::Config = {
         dotenv().ok();
         match config::Config::init() {
+            Ok(val) => val,
+            Err(e) => {
+                log::error!("{}", e);
+                process::exit(1);
+            }
+        }
+    };
+    static ref DB_POOL: Pool<ConnectionManager<PgConnection>> = {
+        match Pool::new(ConnectionManager::new(CONFIGURATION.db_connection_url())) {
             Ok(val) => val,
             Err(e) => {
                 log::error!("{}", e);
