@@ -95,12 +95,12 @@ workflows:
           requires:
             - fmt
             - clippy
-      - gcp-gke/publish-and-rollout-image:
-          cluster: library
-          container: library-api-container
-          deployment: code-library-api
-          image: code-library-api
-          dockerfile-name: ./api/slim.Dockerfile
-          registry-url: eu.gcr.io
-          requires:
-            - tests
+      # - gcp-gke/publish-and-rollout-image:
+      #     cluster: library
+      #     container: library-api-container
+      #     deployment: code-library-api
+      #     image: code-library-api
+      #     dockerfile-name: ./api/slim.Dockerfile
+      #     registry-url: eu.gcr.io
+      #     requires:
+      #       - tests
