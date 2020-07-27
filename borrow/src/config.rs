@@ -1,6 +1,6 @@
 use envconfig::Envconfig;
 use envconfig_derive::Envconfig;
-use std::net::IpAddr;
+use std::net::{IpAddr, SocketAddr};
 
 #[derive(Envconfig, Debug)]
 pub struct Config {
@@ -18,6 +18,12 @@ pub struct Config {
 
     #[envconfig(from = "DB_SECRET")]
     db_secret: String,
+
+    #[envconfig(from = "RPC_HOST_IP", default = "127.0.0.1")]
+    rpc_host_ip: IpAddr,
+
+    #[envconfig(from = "RPC_HOST_PORT", default = "8080")]
+    rpc_host_port: u16,
 }
 
 impl Config {
@@ -26,5 +32,9 @@ impl Config {
             "postgres://{}:{}@{}/{}",
             self.db_user, self.db_secret, self.db_host_ip, self.db_name
         )
+    }
+
+    pub fn rpc_socket(&self) -> SocketAddr {
+        SocketAddr::new(self.rpc_host_ip, self.rpc_host_port)
     }
 }
