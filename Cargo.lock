@@ -590,8 +590,8 @@ dependencies = [
  "env_logger",
  "envconfig",
  "envconfig_derive",
- "lazy_static",
  "log 0.4.11",
+ "once_cell",
  "tokio",
 ]
 
