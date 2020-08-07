@@ -8,7 +8,7 @@ pub struct IdentityService(pub SocketAddr);
 #[tarpc::server]
 impl Identity for IdentityService {
     /// Returns an user
-    async fn user(self, _: context::Context, _id: u32) -> Result<User, Error> {
+    async fn user(self, _: context::Context, _user_id: u32) -> Result<User, Error> {
         unimplemented!();
     }
 
@@ -24,7 +24,7 @@ impl Identity for IdentityService {
     }
 
     /// Returns a role
-    async fn role(self, _: context::Context, _id: u32) -> Result<Role, Error> {
+    async fn role(self, _: context::Context, _role_id: u32) -> Result<Role, Error> {
         unimplemented!();
     }
 
@@ -39,7 +39,7 @@ impl Identity for IdentityService {
     }
 
     /// Returns an user role
-    async fn user_role(self, _: context::Context, _id: u32) -> Result<UserRole, Error> {
+    async fn user_role(self, _: context::Context, _user_role_id: u32) -> Result<UserRole, Error> {
         unimplemented!();
     }
 
@@ -49,7 +49,7 @@ impl Identity for IdentityService {
         _: context::Context,
         _offset: u32,
         _limit: u32,
-        _role: Option<u32>
+        _name: Option<u32>
     ) -> Result<Vec<UserRole>, Error> {
         unimplemented!();
     }
@@ -65,7 +65,7 @@ impl Identity for IdentityService {
     }
 
     /// Switches the status of an user account between enabled and disabled
-    async fn user_status_update(self, _: context::Context, _id: u32, _status: bool) -> Result<(), Error> {
+    async fn user_status_update(self, _: context::Context, _user_id: u32, _status: bool) -> Result<(), Error> {
         unimplemented!();
     }
 
