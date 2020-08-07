@@ -45,7 +45,7 @@ async fn main() -> io::Result<()> {
         }
     };
     match CONFIGURATION.set(configuration) {
-        Ok(()) => log::info!("Successfully initialized service configuration"),
+        Ok(()) => log::info!("Successfully provided global service configuration"),
         Err(_) => {
             log::error!("Failed to provide global service configuration");
             log::error!("Terminating because of previous error.");
@@ -66,7 +66,7 @@ async fn main() -> io::Result<()> {
         }
     };
     match DB.set(db) {
-        Ok(()) => log::info!("Successfully initialized database connection"),
+        Ok(()) => log::info!("Successfully provided global database connection"),
         Err(_) => {
             log::error!("Failed to provide global database connection");
             log::error!("Terminating because of previous error.");
