@@ -29,8 +29,8 @@ pub struct User {
     pub id: i32,
     pub sub: String,
     pub email: String,
-    pub first_name: String,
-    pub last_name: String,
+    pub given_name: String,
+    pub family_name: String,
     pub picture: String,
     pub active: bool,
 }

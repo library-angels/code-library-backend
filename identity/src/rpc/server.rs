@@ -1,6 +1,9 @@
 use std::net::SocketAddr;
 use tarpc::context;
 use super::service::*;
+use crate::db::models;
+use crate::DB;
+use diesel::prelude::*;
 
 #[derive(Clone)]
 pub struct IdentityService(pub SocketAddr);
@@ -8,8 +11,26 @@ pub struct IdentityService(pub SocketAddr);
 #[tarpc::server]
 impl Identity for IdentityService {
     /// Returns an user
-    async fn user(self, _: context::Context, _user_id: u32) -> Result<User, Error> {
-        unimplemented!();
+    async fn user(self, _: context::Context, user_id: u32) -> Result<User, Error> {
+        use crate::db::schema::users::dsl::*;
+
+        let result = users.find(user_id as i32).first::<models::User>(&DB.get().unwrap().get().unwrap());
+
+        match result {
+            Ok(val) => Ok(
+                User {
+                    id: val.id,
+                    sub: val.sub,
+                    email: val.email,
+                    given_name: val.given_name,
+                    family_name: val.family_name,
+                    picture: val.picture,
+                    active: val.active
+                }
+            ),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Returns a list of users
