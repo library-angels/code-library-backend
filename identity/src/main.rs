@@ -2,6 +2,7 @@ extern crate log;
 use dotenv::dotenv;
 use envconfig::Envconfig;
 use std::process;
+#[macro_use]
 extern crate diesel;
 use config::Configuration;
 use diesel::prelude::*;
@@ -9,6 +10,7 @@ use diesel::r2d2::{ConnectionManager, Pool};
 use once_cell::sync::OnceCell;
 
 mod config;
+mod db;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
