@@ -178,7 +178,7 @@ table! {
         email -> Varchar,
         given_name -> Varchar,
         family_name -> Varchar,
-        picture -> Nullable<Varchar>,
+        picture -> Varchar,
         oauth_access_token -> Varchar,
         oauth_access_token_valid -> Timestamp,
         oauth_refresh_token -> Varchar,
