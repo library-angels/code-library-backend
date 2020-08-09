@@ -91,10 +91,28 @@ impl Identity for IdentityService {
     async fn roles(
         self,
         _: context::Context,
-        _offset: u32,
-        _limit: u32,
+        offset: u32,
+        limit: u32,
     ) -> Result<Vec<Role>, Error> {
-        unimplemented!();
+        use crate::db::schema::roles::dsl::*;
+
+        let results = roles.offset(offset as i64).limit(limit as i64).load::<models::Role>(&DB.get().unwrap().get().unwrap());
+
+
+        match results {
+            Ok(val) => Ok(
+                val.iter().map(|x|
+                    Role {
+                        id: x.id,
+                        name: x.name.clone(),
+                        access_manage_books: x.access_manage_books,
+                        access_manage_roles: x.access_manage_roles
+                    }
+                ).collect::<Vec<Role>>()
+            ),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Returns an user role
