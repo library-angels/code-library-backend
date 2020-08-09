@@ -68,8 +68,23 @@ impl Identity for IdentityService {
     }
 
     /// Returns a role
-    async fn role(self, _: context::Context, _role_id: u32) -> Result<Role, Error> {
-        unimplemented!();
+    async fn role(self, _: context::Context, role_id: u32) -> Result<Role, Error> {
+        use crate::db::schema::roles::dsl::*;
+
+        let result = roles.find(role_id as i32).first::<models::Role>(&DB.get().unwrap().get().unwrap());
+
+        match result {
+            Ok(val) => Ok(
+                Role {
+                    id: val.id,
+                    name: val.name,
+                    access_manage_books: val.access_manage_books,
+                    access_manage_roles: val.access_manage_roles
+                }
+            ),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Returns a list of roles
