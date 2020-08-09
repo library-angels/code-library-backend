@@ -37,11 +37,34 @@ impl Identity for IdentityService {
     async fn users(
         self,
         _: context::Context,
-        _offset: u32,
-        _limit: u32,
-        _active: Option<bool>,
+        offset: u32,
+        limit: u32,
+        user_active: Option<bool>,
     ) -> Result<Vec<User>, Error> {
-        unimplemented!();
+        use crate::db::schema::users::dsl::*;
+
+        let results = match user_active {
+            Some(val) => users.filter(active.eq(val)).offset(offset as i64).limit(limit as i64).load::<models::User>(&DB.get().unwrap().get().unwrap()),
+            None => users.offset(offset as i64).limit(limit as i64).load::<models::User>(&DB.get().unwrap().get().unwrap()),
+        };
+
+        match results {
+            Ok(val) => Ok(
+                val.iter().map(|x|
+                    User {
+                        id: x.id,
+                        sub: x.sub.clone(),
+                        email: x.email.clone(),
+                        given_name: x.given_name.clone(),
+                        family_name: x.family_name.clone(),
+                        picture: x.picture.clone(),
+                        active: x.active
+                    }
+                ).collect::<Vec<User>>()
+            ),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Returns a role

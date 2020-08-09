@@ -1,7 +1,7 @@
 #[tarpc::service]
 pub trait Identity {
     async fn user(user_id: u32) -> Result<User, Error>;
-    async fn users(offset: u32, limit: u32, active: Option<bool>) -> Result<Vec<User>, Error>;
+    async fn users(offset: u32, limit: u32, user_active: Option<bool>) -> Result<Vec<User>, Error>;
     async fn role(role_id: u32) -> Result<Role, Error>;
     async fn roles(offset: u32, limit: u32) -> Result<Vec<Role>, Error>;
     async fn user_role(user_role_id: u32) -> Result<UserRole, Error>;
