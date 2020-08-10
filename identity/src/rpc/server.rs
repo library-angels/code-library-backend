@@ -168,10 +168,18 @@ impl Identity for IdentityService {
     async fn user_role_update(
         self,
         _: context::Context,
-        _user_id: u32,
-        _role_id: u32,
+        user_role_id: u32,
+        role_id: u32,
     ) -> Result<(), Error> {
-        unimplemented!();
+        use crate::db::schema::users_roles::dsl;
+
+        let result = diesel::update(dsl::users_roles.find(user_role_id as i32)).set(dsl::role_id.eq(role_id as i32)).get_result::<models::UserRole>(&DB.get().unwrap().get().unwrap());
+
+        match result {
+            Ok(val) => Ok(()),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Switches the status of an user account between enabled and disabled
