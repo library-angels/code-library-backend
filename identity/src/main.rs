@@ -14,6 +14,7 @@ use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
 use futures::{future, prelude::*};
 
+mod authentication;
 mod config;
 mod db;
 mod rpc;
