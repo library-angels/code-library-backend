@@ -21,3 +21,10 @@ pub struct Role {
     pub access_manage_books: bool,
     pub access_manage_roles: bool
 }
+
+#[derive(Queryable)]
+pub struct UserRole {
+    pub id: i32,
+    pub user_id: i32,
+    pub role_id: i32
+}
