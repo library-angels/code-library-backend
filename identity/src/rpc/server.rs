@@ -13,9 +13,9 @@ pub struct IdentityService(pub SocketAddr);
 impl Identity for IdentityService {
     /// Returns an user
     async fn user(self, _: context::Context, user_id: u32) -> Result<User, Error> {
-        use crate::db::schema::users::dsl::*;
+        use crate::db::schema::users::dsl;
 
-        let result = users.find(user_id as i32).first::<models::User>(&DB.get().unwrap().get().unwrap());
+        let result = dsl::users.find(user_id as i32).first::<models::User>(&DB.get().unwrap().get().unwrap());
 
         match result {
             Ok(val) => Ok(
@@ -42,11 +42,11 @@ impl Identity for IdentityService {
         limit: u32,
         user_active: Option<bool>,
     ) -> Result<Vec<User>, Error> {
-        use crate::db::schema::users::dsl::*;
+        use crate::db::schema::users::dsl;
 
         let results = match user_active {
-            Some(val) => users.filter(active.eq(val)).offset(offset as i64).limit(limit as i64).load::<models::User>(&DB.get().unwrap().get().unwrap()),
-            None => users.offset(offset as i64).limit(limit as i64).load::<models::User>(&DB.get().unwrap().get().unwrap()),
+            Some(val) => dsl::users.filter(dsl::active.eq(val)).offset(offset as i64).limit(limit as i64).load::<models::User>(&DB.get().unwrap().get().unwrap()),
+            None => dsl::users.offset(offset as i64).limit(limit as i64).load::<models::User>(&DB.get().unwrap().get().unwrap()),
         };
 
         match results {
@@ -70,9 +70,9 @@ impl Identity for IdentityService {
 
     /// Returns a role
     async fn role(self, _: context::Context, role_id: u32) -> Result<Role, Error> {
-        use crate::db::schema::roles::dsl::*;
+        use crate::db::schema::roles::dsl;
 
-        let result = roles.find(role_id as i32).first::<models::Role>(&DB.get().unwrap().get().unwrap());
+        let result = dsl::roles.find(role_id as i32).first::<models::Role>(&DB.get().unwrap().get().unwrap());
 
         match result {
             Ok(val) => Ok(
@@ -95,9 +95,9 @@ impl Identity for IdentityService {
         offset: u32,
         limit: u32,
     ) -> Result<Vec<Role>, Error> {
-        use crate::db::schema::roles::dsl::*;
+        use crate::db::schema::roles::dsl;
 
-        let results = roles.offset(offset as i64).limit(limit as i64).load::<models::Role>(&DB.get().unwrap().get().unwrap());
+        let results = dsl::roles.offset(offset as i64).limit(limit as i64).load::<models::Role>(&DB.get().unwrap().get().unwrap());
 
 
         match results {
@@ -118,9 +118,9 @@ impl Identity for IdentityService {
 
     /// Returns an user role
     async fn user_role(self, _: context::Context, user_role_id: u32) -> Result<UserRole, Error> {
-        use crate::db::schema::users_roles::dsl::*;
+        use crate::db::schema::users_roles::dsl;
 
-        let result = users_roles.find(user_role_id as i32).first::<models::UserRole>(&DB.get().unwrap().get().unwrap());
+        let result = dsl::users_roles.find(user_role_id as i32).first::<models::UserRole>(&DB.get().unwrap().get().unwrap());
 
         match result {
             Ok(val) => Ok(
@@ -177,7 +177,7 @@ impl Identity for IdentityService {
         let result = diesel::update(dsl::users_roles.find(user_role_id as i32)).set(dsl::role_id.eq(role_id as i32)).get_result::<models::UserRole>(&DB.get().unwrap().get().unwrap());
 
         match result {
-            Ok(val) => Ok(()),
+            Ok(_) => Ok(()),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
             Err(_) => Err(Error::InternalError)
         }
