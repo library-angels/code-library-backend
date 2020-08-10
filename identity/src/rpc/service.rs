@@ -5,7 +5,7 @@ pub trait Identity {
     async fn role(role_id: u32) -> Result<Role, Error>;
     async fn roles(offset: u32, limit: u32) -> Result<Vec<Role>, Error>;
     async fn user_role(user_role_id: u32) -> Result<UserRole, Error>;
-    async fn user_roles(offset: u32, limit: u32, name: Option<u32>) -> Result<Vec<UserRole>, Error>;
+    async fn user_roles(offset: u32, limit: u32, role_id: Option<u32>) -> Result<Vec<UserRole>, Error>;
     async fn user_role_update(user_id: u32, role_id: u32) -> Result<(), Error>;
     async fn user_status_update(user_id: u32, status: bool) -> Result<(), Error>;
     async fn oauth_client_identifier() -> Result<OauthClientIdentifier, Error>;

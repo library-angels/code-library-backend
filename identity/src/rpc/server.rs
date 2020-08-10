@@ -138,11 +138,30 @@ impl Identity for IdentityService {
     async fn user_roles(
         self,
         _: context::Context,
-        _offset: u32,
-        _limit: u32,
-        _name: Option<u32>
+        offset: u32,
+        limit: u32,
+        role_id: Option<u32>
     ) -> Result<Vec<UserRole>, Error> {
-        unimplemented!();
+        use crate::db::schema::users_roles::dsl;
+
+        let results = match role_id {
+            Some(val) => dsl::users_roles.filter(dsl::role_id.eq(val as i32)).offset(offset as i64).limit(limit as i64).load::<models::UserRole>(&DB.get().unwrap().get().unwrap()),
+            None => dsl::users_roles.offset(offset as i64).limit(limit as i64).load::<models::UserRole>(&DB.get().unwrap().get().unwrap()),
+        };
+
+        match results {
+            Ok(val) => Ok(
+                val.iter().map(|x|
+                    UserRole {
+                        id: x.id,
+                        user_id: x.user_id,
+                        role_id: x.role_id
+                    }
+                ).collect::<Vec<UserRole>>()
+            ),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Assigns a role to an user account
