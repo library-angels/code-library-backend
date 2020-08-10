@@ -24,6 +24,9 @@ pub struct Configuration {
 
     #[envconfig(from = "RPC_HOST_PORT", default = "8080")]
     rpc_host_port: u16,
+
+    #[envconfig(from = "OAUTH_CLIENT_IDENTIFIER")]
+    pub oauth_client_identifier: String,
 }
 
 impl Configuration {

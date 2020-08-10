@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
 use tarpc::context;
 use super::service::*;
+use crate::CONFIGURATION;
 use crate::db::models;
 use crate::DB;
 use diesel::prelude::*;
@@ -200,7 +201,11 @@ impl Identity for IdentityService {
         self,
         _: context::Context,
     ) -> Result<OauthClientIdentifier, Error> {
-        unimplemented!();
+        Ok(
+            OauthClientIdentifier {
+                identifier: CONFIGURATION.get().unwrap().oauth_client_identifier.clone()
+            }
+        )
     }
 
     /// Returns a session token and creates a user account
