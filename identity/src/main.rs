@@ -18,6 +18,7 @@ mod authentication;
 mod config;
 mod db;
 mod rpc;
+mod session;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
