@@ -183,8 +183,16 @@ impl Identity for IdentityService {
     }
 
     /// Switches the status of an user account between enabled and disabled
-    async fn user_status_update(self, _: context::Context, _user_id: u32, _status: bool) -> Result<(), Error> {
-        unimplemented!();
+    async fn user_status_update(self, _: context::Context, user_id: u32, status: bool) -> Result<(), Error> {
+        use crate::db::schema::users::dsl;
+
+        let result = diesel::update(dsl::users.find(user_id as i32)).set(dsl::active.eq(status)).get_result::<models::User>(&DB.get().unwrap().get().unwrap());
+
+        match result {
+            Ok(_) => Ok(()),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError)
+        }
     }
 
     /// Returns an OAuth 2.0 client identifier.
