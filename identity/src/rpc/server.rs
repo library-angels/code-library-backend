@@ -320,8 +320,18 @@ impl Identity for IdentityService {
     async fn session_info(
         self,
         _: context::Context,
-        _token: String,
+        token: String,
     ) -> Result<SessionInfo, Error> {
-        unimplemented!();
+        match Jwt::decode(&CONFIGURATION.get().unwrap().jwt_secret(), &token) {
+            Ok(val) => Ok(SessionInfo {
+                sub: val.sub,
+                given_name: val.given_name,
+                family_name: val.family_name,
+                picture: val.picture,
+                iat: val.iat,
+                exp: val.exp,
+            }),
+            Err(_) => Err(Error::InvalidData),
+        }
     }
 }

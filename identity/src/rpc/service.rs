@@ -70,5 +70,4 @@ pub struct SessionInfo {
     pub picture: String,
     pub iat: u64,
     pub exp: u64,
-    pub role: u32,
 }
