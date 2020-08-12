@@ -1,13 +1,6 @@
+use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 use std::time::*;
-use jsonwebtoken::{
-    decode,
-    encode,
-    DecodingKey,
-    EncodingKey,
-    Header,
-    Validation,
-};
 
 #[derive(Serialize, PartialEq, Debug, Deserialize)]
 pub struct Jwt {
@@ -30,9 +23,11 @@ impl Jwt {
         given_name: String,
         family_name: String,
         picture: String,
-        jwt_validity: u64
+        jwt_validity: u64,
     ) -> Jwt {
-        let iat = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap();
+        let iat = SystemTime::now()
+            .duration_since(SystemTime::UNIX_EPOCH)
+            .unwrap();
         let exp = iat + Duration::from_secs(jwt_validity);
         Jwt {
             sub,
@@ -40,7 +35,7 @@ impl Jwt {
             family_name,
             picture,
             iat: iat.as_secs(),
-            exp: exp.as_secs()
+            exp: exp.as_secs(),
         }
     }
 
@@ -77,7 +72,7 @@ mod tests {
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
-            validity
+            validity,
         );
 
         assert_eq!(1, jwt.sub);
@@ -94,7 +89,7 @@ mod tests {
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
-            3600
+            3600,
         );
 
         let jwt_encoded = jwt.encode("super_secret");

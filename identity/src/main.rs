@@ -7,12 +7,12 @@ extern crate diesel;
 use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
+use futures::{future, prelude::*};
 use once_cell::sync::OnceCell;
-use rpc::service::Identity;
 use rpc::server::IdentityService;
+use rpc::service::Identity;
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
-use futures::{future, prelude::*};
 
 mod authentication;
 mod config;

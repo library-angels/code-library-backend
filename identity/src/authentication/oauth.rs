@@ -1,7 +1,7 @@
-use hyper::{Body, Client, StatusCode, Uri, Request};
+use hyper::{Body, Client, Request, StatusCode, Uri};
 use hyper_tls::HttpsConnector;
+use jsonwebtoken::dangerous_insecure_decode;
 use serde::{Deserialize, Serialize, Serializer};
-use jsonwebtoken::{dangerous_insecure_decode};
 
 type ClientIdentifier = String;
 type ClientSecret = String;
@@ -42,12 +42,9 @@ impl AuthorizationCode {
                 return Err(Error::AuthorizationCodeInvalidCharacter);
             }
         }
-        Ok(Self {
-            code: code,
-        })
+        Ok(Self { code: code })
     }
 }
-
 
 #[derive(Debug)]
 pub enum RedirectUri {
@@ -76,7 +73,7 @@ impl Serialize for GrantType {
         S: Serializer,
     {
         match *self {
-            GrantType::AuthorizationCode => serializer.serialize_str("authorization_code")
+            GrantType::AuthorizationCode => serializer.serialize_str("authorization_code"),
         }
     }
 }
@@ -93,7 +90,13 @@ pub struct TokenRequest {
 }
 
 impl TokenRequest {
-    pub fn new(authorization_code: AuthorizationCode, client_identifier: ClientIdentifier, client_secret: ClientSecret, redirect_uri: RedirectUri, grant_type: GrantType) -> Self {
+    pub fn new(
+        authorization_code: AuthorizationCode,
+        client_identifier: ClientIdentifier,
+        client_secret: ClientSecret,
+        redirect_uri: RedirectUri,
+        grant_type: GrantType,
+    ) -> Self {
         TokenRequest {
             authorization_code: authorization_code,
             client_identifier: client_identifier,
@@ -113,17 +116,17 @@ impl TokenRequest {
         let response = match client.request(request).await {
             Ok(val) if val.status() == StatusCode::OK => val,
             Ok(_) => return Err(Error::TokenRequestEndpointInvalidResponse),
-            Err(_) => return Err(Error::TokenRequestEndpointNotReachable)
+            Err(_) => return Err(Error::TokenRequestEndpointNotReachable),
         };
 
         let body = match hyper::body::to_bytes(response).await {
             Ok(val) => val,
-            Err(_) => return Err(Error::TokenRequestContentInvalid)
+            Err(_) => return Err(Error::TokenRequestContentInvalid),
         };
 
         match serde_json::from_slice::<TokenSet>(&body) {
             Ok(val) => Ok(val),
-            Err(_) => return Err(Error::TokenRequestDeserialization)
+            Err(_) => return Err(Error::TokenRequestDeserialization),
         }
     }
 }
@@ -156,7 +159,7 @@ impl IdToken {
     pub fn new(token: &str) -> Result<Self, Error> {
         match dangerous_insecure_decode::<Self>(token) {
             Ok(val) => Ok(val.claims),
-            Err(_) => Err(Error::IdTokenInvalid)
+            Err(_) => Err(Error::IdTokenInvalid),
         }
     }
 }

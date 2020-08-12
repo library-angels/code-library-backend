@@ -1,5 +1,5 @@
-use std::time::SystemTime;
 use super::schema::*;
+use std::time::SystemTime;
 
 #[derive(Queryable)]
 pub struct User {
@@ -12,7 +12,7 @@ pub struct User {
     pub oauth_access_token: String,
     pub oauth_access_token_valid: SystemTime,
     pub oauth_refresh_token: String,
-    pub active: bool
+    pub active: bool,
 }
 
 #[derive(AsChangeset, Insertable)]
@@ -26,7 +26,7 @@ pub struct UserAddUpdate {
     pub oauth_access_token: String,
     pub oauth_access_token_valid: SystemTime,
     pub oauth_refresh_token: Option<String>,
-    pub active: bool
+    pub active: bool,
 }
 
 #[derive(Queryable)]
@@ -34,12 +34,12 @@ pub struct Role {
     pub id: i32,
     pub name: String,
     pub access_manage_books: bool,
-    pub access_manage_roles: bool
+    pub access_manage_roles: bool,
 }
 
 #[derive(Queryable)]
 pub struct UserRole {
     pub id: i32,
     pub user_id: i32,
-    pub role_id: i32
+    pub role_id: i32,
 }
