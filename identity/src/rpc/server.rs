@@ -1,10 +1,12 @@
-use std::net::SocketAddr;
+use std::{net::SocketAddr, time::SystemTime, time::Duration};
 use tarpc::context;
 use super::service::*;
 use crate::CONFIGURATION;
 use crate::db::models;
 use crate::DB;
 use diesel::prelude::*;
+use crate::authentication::oauth;
+use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
 pub struct IdentityService(pub SocketAddr);
@@ -208,13 +210,110 @@ impl Identity for IdentityService {
         )
     }
 
-    /// Returns a session token and creates a user account
+    /// Returns a session token and creates or updates an user account
     async fn oauth_authentication(
         self,
         _: context::Context,
-        _code: AuthorizationCode,
+        code: AuthorizationCode,
     ) -> Result<SessionToken, Error> {
-        unimplemented!();
+        use crate::db::schema::users::dsl::*;
+
+        let authorization_code = match oauth::AuthorizationCode::new(code) {
+            Ok(val) => val,
+            Err(_) => return Err(Error::InvalidData),
+        };
+
+        let request = oauth::TokenRequest::new(
+            authorization_code,
+            CONFIGURATION.get().unwrap().oauth_client_identifier.clone(),
+            CONFIGURATION.get().unwrap().oauth_client_secret.clone(),
+            oauth::RedirectUri::PostMessage,
+            oauth::GrantType::AuthorizationCode,
+        );
+        use hyper::Uri;
+        let token_endpoint = "https://oauth2.googleapis.com/token".parse::<Uri>().unwrap();
+
+        let tokenset = match request.exchange_code(token_endpoint).await {
+            Ok(val) => val,
+            Err(e) => {
+                println!("{:?}", e);
+                return Err(Error::InternalError);
+            },
+        };
+
+        let id_token = match oauth::IdToken::new(&tokenset.id_token) {
+            Ok(val) => val,
+            Err(_) => return Err(Error::InternalError),
+        };
+
+        match users.filter(sub.eq(&id_token.sub)).get_result::<models::User>(&DB.get().unwrap().get().unwrap()) {
+            Ok(val) => {
+                if val.active {
+                    ()
+                } else {
+                    log::info!("Rejected authentication for deactivated account \"{}\"", &id_token.email);
+                    return Err(Error::InvalidInput);
+                }
+            },
+            Err(diesel::result::Error::NotFound) => {
+                log::info!("Starting authentication for new account \"{}\"", &id_token.email);
+                if tokenset.refresh_token.is_none() {
+                    log::info!("Failed to start authentication (missing refresh token) for new account \"{}\"", &id_token.email);
+                    return Err(Error::InvalidInput);
+                } else {
+                    ()
+                }
+            },
+            Err(_) => {
+                log::error!("Failed to fetch information for account \"{}\"", &id_token.email);
+                return Err(Error::InternalError);
+            }
+        }
+
+        let user = models::UserAddUpdate {
+            sub: id_token.sub.clone(),
+            email: id_token.email.clone(),
+            given_name: id_token.given_name.clone(),
+            family_name: id_token.family_name.clone(),
+            picture: id_token.picture.clone(),
+            oauth_access_token: tokenset.access_token.clone(),
+            oauth_access_token_valid: SystemTime::now() + Duration::from_secs(tokenset.expires_in.into()),
+            oauth_refresh_token: tokenset.refresh_token.clone(),
+            active: true
+        };
+
+        let user = match diesel::update(users.filter(sub.eq(&user.sub))).set(&user).get_result::<models::User>(&DB.get().unwrap().get().unwrap()) {
+            Ok(val) => {
+                log::info!("Successfully updated account \"{}\"", &id_token.email);
+                val
+            },
+            Err(diesel::result::Error::NotFound) => {
+                match diesel::insert_into(users).values(&user).get_result::<models::User>(&DB.get().unwrap().get().unwrap()) {
+                    Ok(val) => {
+                        log::info!("Successfully created account \"{}\"", &id_token.email);
+                        val
+                    },
+                    Err(_) => {
+                        log::error!("Failed to create account \"{}\"", &id_token.email);
+                        return Err(Error::InternalError);
+                    }
+                }
+            },
+            Err(_) => {
+                log::error!("Failed to create account \"{}\"", &id_token.email);
+                return Err(Error::InternalError);
+            }
+        };
+
+        Ok(SessionToken {
+            token: Jwt::new(
+                user.id as u32,
+                user.given_name,
+                user.family_name,
+                user.picture,
+                3600,
+            ).encode(&CONFIGURATION.get().unwrap().jwt_secret)
+        })
     }
 
     /// Returns the validity and content of a session token

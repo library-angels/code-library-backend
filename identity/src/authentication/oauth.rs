@@ -140,16 +140,16 @@ pub struct TokenSet {
 
 #[derive(Debug, Deserialize)]
 pub struct IdToken {
-    iss: String,
-    aud: String,
-    sub: String,
-    iat: u64,
-    exp: u64,
-    email: String,
-    given_name: String,
-    family_name: String,
-    hd: String,
-    picture: String,
+    pub iss: String,
+    pub aud: String,
+    pub sub: String,
+    pub iat: u64,
+    pub exp: u64,
+    pub email: String,
+    pub given_name: String,
+    pub family_name: String,
+    pub hd: String,
+    pub picture: String,
 }
 
 impl IdToken {
