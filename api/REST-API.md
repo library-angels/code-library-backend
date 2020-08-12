@@ -42,7 +42,8 @@ Returns a list of book objects.
 |tags|No|Array(String)|*|
 |series|No|Array(String)|*|
 |publisher|No|Array(String|*|
-|search|No|String|all|Search fields `all`, `title` and `author`|
+|search_fields|No|String|all|Search fields `all`, `title` and `author`|
+|search_keywords|No|Array(String)|None|Search term for the search fields|
 
 **Responses**
 
