@@ -17,7 +17,6 @@ pub struct Jwt {
     pub picture: String,
     pub iat: u64,
     pub exp: u64,
-    pub role: u32,
 }
 
 #[derive(Debug)]
@@ -31,8 +30,7 @@ impl Jwt {
         given_name: String,
         family_name: String,
         picture: String,
-        jwt_validity: u64,
-        role: u32
+        jwt_validity: u64
     ) -> Jwt {
         let iat = SystemTime::now().duration_since(SystemTime::UNIX_EPOCH).unwrap();
         let exp = iat + Duration::from_secs(jwt_validity);
@@ -42,8 +40,7 @@ impl Jwt {
             family_name,
             picture,
             iat: iat.as_secs(),
-            exp: exp.as_secs(),
-            role: role
+            exp: exp.as_secs()
         }
     }
 
@@ -80,8 +77,7 @@ mod tests {
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
-            validity,
-            1
+            validity
         );
 
         assert_eq!(1, jwt.sub);
@@ -89,7 +85,6 @@ mod tests {
         assert_eq!("family_name", jwt.family_name);
         assert_eq!("picture", jwt.picture);
         assert_eq!(validity, jwt.exp - jwt.iat);
-        assert_eq!(1, 1);
     }
 
     #[test]
@@ -99,8 +94,7 @@ mod tests {
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
-            3600,
-            1
+            3600
         );
 
         let jwt_encoded = jwt.encode("super_secret");
