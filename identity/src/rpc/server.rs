@@ -312,7 +312,7 @@ impl Identity for IdentityService {
                 user.family_name,
                 user.picture,
                 3600,
-            ).encode(&CONFIGURATION.get().unwrap().jwt_secret)
+            ).encode(&CONFIGURATION.get().unwrap().jwt_secret())
         })
     }
 

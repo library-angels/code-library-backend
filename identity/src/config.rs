@@ -32,7 +32,7 @@ pub struct Configuration {
     pub oauth_client_secret: String,
 
     #[envconfig(from = "JWT_SECRET")]
-    pub jwt_secret: String,
+    jwt_secret: String,
 }
 
 impl Configuration {
@@ -45,5 +45,9 @@ impl Configuration {
 
     pub fn rpc_socket(&self) -> SocketAddr {
         SocketAddr::new(self.rpc_host_ip, self.rpc_host_port)
+    }
+
+    pub fn jwt_secret(&self) -> String {
+        self.jwt_secret.clone()
     }
 }
