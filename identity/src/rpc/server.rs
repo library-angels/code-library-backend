@@ -268,9 +268,7 @@ impl Identity for IdentityService {
             .get_result::<models::User>(&DB.get().unwrap().get().unwrap())
         {
             Ok(val) => {
-                if val.active {
-                    ()
-                } else {
+                if !val.active {
                     log::info!(
                         "Rejected authentication for deactivated account \"{}\"",
                         &id_token.email
@@ -286,8 +284,6 @@ impl Identity for IdentityService {
                 if tokenset.refresh_token.is_none() {
                     log::info!("Failed to start authentication (missing refresh token) for new account \"{}\"", &id_token.email);
                     return Err(Error::InvalidInput);
-                } else {
-                    ()
                 }
             }
             Err(_) => {
@@ -308,7 +304,7 @@ impl Identity for IdentityService {
             oauth_access_token: tokenset.access_token.clone(),
             oauth_access_token_valid: SystemTime::now()
                 + Duration::from_secs(tokenset.expires_in.into()),
-            oauth_refresh_token: tokenset.refresh_token.clone(),
+            oauth_refresh_token: tokenset.refresh_token,
             active: true,
         };
 

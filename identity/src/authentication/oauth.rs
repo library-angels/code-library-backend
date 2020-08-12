@@ -42,7 +42,7 @@ impl AuthorizationCode {
                 return Err(Error::AuthorizationCodeInvalidCharacter);
             }
         }
-        Ok(Self { code: code })
+        Ok(Self { code })
     }
 }
 
@@ -98,11 +98,11 @@ impl TokenRequest {
         grant_type: GrantType,
     ) -> Self {
         TokenRequest {
-            authorization_code: authorization_code,
-            client_identifier: client_identifier,
-            client_secret: client_secret,
-            redirect_uri: redirect_uri,
-            grant_type: grant_type,
+            authorization_code,
+            client_identifier,
+            client_secret,
+            redirect_uri,
+            grant_type,
         }
     }
 
@@ -126,7 +126,7 @@ impl TokenRequest {
 
         match serde_json::from_slice::<TokenSet>(&body) {
             Ok(val) => Ok(val),
-            Err(_) => return Err(Error::TokenRequestDeserialization),
+            Err(_) => Err(Error::TokenRequestDeserialization),
         }
     }
 }
