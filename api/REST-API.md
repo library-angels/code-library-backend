@@ -1008,7 +1008,7 @@ Deletes a notification object, for the authenticated user.
 **Path Parameters**
 
 |Parameter|Data Type|Description|
-|---|---|
+|---|---|---|
 |notification_id|Integer|Id of a notification|
 
 **Query Parameters**
