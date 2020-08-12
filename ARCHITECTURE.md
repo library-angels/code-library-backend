@@ -64,7 +64,7 @@ Service discovery is currently not part of the architecture. Services are deploy
 
 ## Communication
 
-The backend uses gRPC with protocol buffers for internal communication.
+The backend uses RPC with serialized Rust data structures for internal communication.
 External APIs are utilized through HTTP.
 The API microservice exposes a HTTP based REST API to offer the backend services to clients.
 
