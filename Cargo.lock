@@ -118,6 +118,7 @@ dependencies = [
  "envconfig_derive",
  "lazy_static",
  "log 0.4.11",
+ "once_cell",
  "tokio",
 ]
 
@@ -132,6 +133,7 @@ dependencies = [
  "envconfig_derive",
  "lazy_static",
  "log 0.4.11",
+ "once_cell",
  "tokio",
 ]
 
@@ -907,6 +909,7 @@ dependencies = [
  "envconfig_derive",
  "lazy_static",
  "log 0.4.11",
+ "once_cell",
  "tokio",
 ]
 
