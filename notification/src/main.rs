@@ -4,15 +4,15 @@ use envconfig::Envconfig;
 use once_cell::sync::OnceCell;
 use std::process;
 extern crate diesel;
+use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
-use config::Configuration;
-use std::io;
+use futures::{future, prelude::*};
 use rpc::server::NotificationService;
 use rpc::service::Notification;
+use std::io;
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
-use futures::{future, prelude::*};
 
 mod config;
 mod rpc;
