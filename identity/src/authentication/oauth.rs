@@ -179,7 +179,7 @@ mod test {
 
     #[test]
     fn authorization_code_length_too_long() {
-        let too_long_code = String::from("a".repeat(257));
+        let too_long_code = "a".repeat(257);
         assert_eq!(
             Result::Err(Error::AuthorizationCodeLength),
             AuthorizationCode::new(too_long_code)
