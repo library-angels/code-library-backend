@@ -75,5 +75,4 @@ The used merge method is squash and merge.
 |User|Work done|
 |---|---|
 |alexeybi|Database access, book endpoints, tests, CI/CD, GKE|
-|code-mm|Endpoint setup, logging, CORS and identity endpoints|
-
+|code-mm|Database schema, endpoint setup, logging, CORS, RPC setup, identity endpoints, OAuth 2.0, JWT, tests|
