@@ -3,7 +3,7 @@ use envconfig_derive::Envconfig;
 use std::net::{IpAddr, SocketAddr};
 
 #[derive(Envconfig, Debug)]
-pub struct Config {
+pub struct Configuration {
     #[envconfig(from = "DB_HOST_IP")]
     db_host_ip: IpAddr,
 
@@ -26,7 +26,7 @@ pub struct Config {
     rpc_host_port: u16,
 }
 
-impl Config {
+impl Configuration {
     pub fn db_connection_url(&self) -> String {
         format!(
             "postgres://{}:{}@{}/{}",

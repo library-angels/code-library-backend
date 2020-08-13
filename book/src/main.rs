@@ -6,6 +6,7 @@ use std::process;
 extern crate diesel;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
+use config::Configuration;
 
 mod config;
 
@@ -13,9 +14,9 @@ static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 
 lazy_static! {
-    static ref CONFIGURATION: config::Config = {
+    static ref CONFIGURATION: Configuration = {
         dotenv().ok();
-        match config::Config::init() {
+        match Configuration::init() {
             Ok(val) => val,
             Err(e) => {
                 log::error!("{}", e);
