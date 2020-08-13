@@ -7,8 +7,15 @@ extern crate diesel;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use config::Configuration;
+use std::io;
+use rpc::server::BorrowService;
+use rpc::service::Borrow;
+use tarpc::server::{self, Channel, Handler};
+use tokio_serde::formats::Json;
+use futures::{future, prelude::*};
 
 mod config;
+mod rpc;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
@@ -16,7 +23,7 @@ static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
 static DB: OnceCell<Pool<ConnectionManager<PgConnection>>> = OnceCell::new();
 
 #[tokio::main]
-async fn main() {
+async fn main() -> io::Result<()> {
     println!(
         "SERVICE: {} | VERSION: {}\n",
         PKG_NAME.unwrap_or("<unknown>"),
@@ -65,4 +72,19 @@ async fn main() {
             process::exit(1);
         }
     }
+
+    tarpc::serde_transport::tcp::listen(&CONFIGURATION.get().unwrap().rpc_socket(), Json::default)
+        .await?
+        .filter_map(|r| future::ready(r.ok()))
+        .map(server::BaseChannel::with_defaults)
+        .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
+        .map(|channel| {
+            let server = BorrowService(channel.as_ref().as_ref().peer_addr().unwrap());
+            channel.respond_with(server.serve()).execute()
+        })
+        .buffer_unordered(10)
+        .for_each(|_| async {})
+        .await;
+
+    Ok(())
 }

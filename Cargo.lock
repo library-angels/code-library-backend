@@ -116,10 +116,14 @@ dependencies = [
  "env_logger",
  "envconfig",
  "envconfig_derive",
+ "futures",
  "lazy_static",
  "log 0.4.11",
  "once_cell",
+ "serde",
+ "tarpc",
  "tokio",
+ "tokio-serde",
 ]
 
 [[package]]
@@ -131,10 +135,14 @@ dependencies = [
  "env_logger",
  "envconfig",
  "envconfig_derive",
+ "futures",
  "lazy_static",
  "log 0.4.11",
  "once_cell",
+ "serde",
+ "tarpc",
  "tokio",
+ "tokio-serde",
 ]
 
 [[package]]
@@ -907,10 +915,14 @@ dependencies = [
  "env_logger",
  "envconfig",
  "envconfig_derive",
+ "futures",
  "lazy_static",
  "log 0.4.11",
  "once_cell",
+ "serde",
+ "tarpc",
  "tokio",
+ "tokio-serde",
 ]
 
 [[package]]
