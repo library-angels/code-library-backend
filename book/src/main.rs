@@ -8,8 +8,8 @@ use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use futures::{future, prelude::*};
-use rpc::server::BookService;
-use rpc::service::Book;
+use rpc::server::BookServer;
+use rpc::service::BookService;
 use std::io;
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
@@ -79,7 +79,7 @@ async fn main() -> io::Result<()> {
         .map(server::BaseChannel::with_defaults)
         .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(|channel| {
-            let server = BookService(channel.as_ref().as_ref().peer_addr().unwrap());
+            let server = BookServer(channel.as_ref().as_ref().peer_addr().unwrap());
             channel.respond_with(server.serve()).execute()
         })
         .buffer_unordered(10)
