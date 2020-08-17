@@ -14,7 +14,7 @@ pub struct IdentityServer(pub SocketAddr);
 #[tarpc::server]
 impl IdentityService for IdentityServer {
     /// Returns an user
-    async fn user(self, _: context::Context, user_id: u32) -> Result<User, Error> {
+    async fn get_user(self, _: context::Context, user_id: u32) -> Result<User, Error> {
         use crate::db::schema::users::dsl;
 
         let result = dsl::users
@@ -37,7 +37,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a list of users
-    async fn users(
+    async fn list_users(
         self,
         _: context::Context,
         offset: u32,
@@ -77,7 +77,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a role
-    async fn role(self, _: context::Context, role_id: u32) -> Result<Role, Error> {
+    async fn get_role(self, _: context::Context, role_id: u32) -> Result<Role, Error> {
         use crate::db::schema::roles::dsl;
 
         let result = dsl::roles
@@ -97,7 +97,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a list of roles
-    async fn roles(self, _: context::Context, offset: u32, limit: u32) -> Result<Vec<Role>, Error> {
+    async fn list_roles(self, _: context::Context, offset: u32, limit: u32) -> Result<Vec<Role>, Error> {
         use crate::db::schema::roles::dsl;
 
         let results = dsl::roles
@@ -121,7 +121,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns an user role
-    async fn user_role(self, _: context::Context, user_role_id: u32) -> Result<UserRole, Error> {
+    async fn get_user_role(self, _: context::Context, user_role_id: u32) -> Result<UserRole, Error> {
         use crate::db::schema::users_roles::dsl;
 
         let result = dsl::users_roles
@@ -140,7 +140,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a list of users
-    async fn user_roles(
+    async fn list_user_roles(
         self,
         _: context::Context,
         offset: u32,
@@ -176,7 +176,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Assigns a role to an user account
-    async fn user_role_update(
+    async fn update_user_role(
         self,
         _: context::Context,
         user_role_id: u32,
@@ -196,7 +196,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Switches the status of an user account between enabled and disabled
-    async fn user_status_update(
+    async fn update_user_status(
         self,
         _: context::Context,
         user_id: u32,
