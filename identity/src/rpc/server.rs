@@ -97,7 +97,12 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a list of roles
-    async fn list_roles(self, _: context::Context, offset: u32, limit: u32) -> Result<Vec<Role>, Error> {
+    async fn list_roles(
+        self,
+        _: context::Context,
+        offset: u32,
+        limit: u32,
+    ) -> Result<Vec<Role>, Error> {
         use crate::db::schema::roles::dsl;
 
         let results = dsl::roles
@@ -121,7 +126,11 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns an user role
-    async fn get_user_role(self, _: context::Context, user_role_id: u32) -> Result<UserRole, Error> {
+    async fn get_user_role(
+        self,
+        _: context::Context,
+        user_role_id: u32,
+    ) -> Result<UserRole, Error> {
         use crate::db::schema::users_roles::dsl;
 
         let result = dsl::users_roles
