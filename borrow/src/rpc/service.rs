@@ -1,4 +1,4 @@
 #[tarpc::service]
-pub trait Borrow {
+pub trait BorrowService {
     async fn borrow();
 }

@@ -1,4 +1,4 @@
 #[tarpc::service]
-pub trait Notification {
+pub trait NotificationService {
     async fn notification();
 }

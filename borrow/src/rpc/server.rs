@@ -1,12 +1,12 @@
-use crate::rpc::service::Borrow;
+use super::service::*;
 use std::net::SocketAddr;
 use tarpc::context;
 
 #[derive(Clone)]
-pub struct BorrowService(pub SocketAddr);
+pub struct BorrowServer(pub SocketAddr);
 
 #[tarpc::server]
-impl Borrow for BorrowService {
+impl BorrowService for BorrowServer {
     async fn borrow(self, _: context::Context) {
         unimplemented!();
     }

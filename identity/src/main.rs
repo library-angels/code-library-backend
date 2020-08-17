@@ -9,8 +9,8 @@ use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use futures::{future, prelude::*};
 use once_cell::sync::OnceCell;
-use rpc::server::IdentityService;
-use rpc::service::Identity;
+use rpc::server::IdentityServer;
+use rpc::service::IdentityService;
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
 
@@ -82,7 +82,7 @@ async fn main() -> io::Result<()> {
         .map(server::BaseChannel::with_defaults)
         .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(|channel| {
-            let server = IdentityService(channel.as_ref().as_ref().peer_addr().unwrap());
+            let server = IdentityServer(channel.as_ref().as_ref().peer_addr().unwrap());
             channel.respond_with(server.serve()).execute()
         })
         .buffer_unordered(10)

@@ -9,10 +9,10 @@ use std::{net::SocketAddr, time::Duration, time::SystemTime};
 use tarpc::context;
 
 #[derive(Clone)]
-pub struct IdentityService(pub SocketAddr);
+pub struct IdentityServer(pub SocketAddr);
 
 #[tarpc::server]
-impl Identity for IdentityService {
+impl IdentityService for IdentityServer {
     /// Returns an user
     async fn user(self, _: context::Context, user_id: u32) -> Result<User, Error> {
         use crate::db::schema::users::dsl;

@@ -1,5 +1,5 @@
 #[tarpc::service]
-pub trait Identity {
+pub trait IdentityService {
     async fn user(user_id: u32) -> Result<User, Error>;
     async fn users(offset: u32, limit: u32, user_active: Option<bool>) -> Result<Vec<User>, Error>;
     async fn role(role_id: u32) -> Result<Role, Error>;
