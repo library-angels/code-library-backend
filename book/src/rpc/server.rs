@@ -18,12 +18,7 @@ impl BookService for BookServer {
     async fn list_books(
         self,
         _: context::Context,
-        _categories: Option<Vec<Category>>,
-        _tags: Option<Vec<Tag>>,
-        _series: Option<Vec<Series>>,
-        _publishers: Option<Vec<Publisher>>,
-        _search_field: Option<Vec<SearchField>>,
-        _search_keywords: Option<Vec<String>>,
+        _book_filter: BookFilter,
         _sort: Option<SortField>,
         _offset: u32,
         _limit: u32,

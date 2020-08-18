@@ -5,12 +5,7 @@ pub trait BookService {
     async fn create_book(book: Book) -> Result<Book, Error>;
     async fn get_book(book_id: u32) -> Result<Book, Error>;
     async fn list_books(
-        categories: Option<Vec<Category>>,
-        tags: Option<Vec<Tag>>,
-        series: Option<Vec<Series>>,
-        publishers: Option<Vec<Publisher>>,
-        search_field: Option<Vec<SearchField>>,
-        search_keywords: Option<Vec<String>>,
+        book_filter: BookFilter,
         sort: Option<SortField>,
         offset: u32,
         limit: u32,
@@ -85,6 +80,16 @@ pub enum SortField {
     ReleaseDateDesc,
     CodeIdentifierAsc,
     CodeIdentifierDesc,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+pub struct BookFilter {
+    categories: Option<Vec<Category>>,
+    tags: Option<Vec<Tag>>,
+    series: Option<Vec<Series>>,
+    publishers: Option<Vec<Publisher>>,
+    search_field: Option<Vec<SearchField>>,
+    search_keywords: Option<Vec<String>>,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
