@@ -15,7 +15,7 @@ pub trait IdentityService {
         limit: u32,
         role_id: Option<u32>,
     ) -> Result<Vec<UserRole>, Error>;
-    async fn update_user_role(user_role_id: u32, role_id: u32) -> Result<(), Error>;
+    async fn update_user_role(user_role_update: UserRole) -> Result<UserRole, Error>;
     async fn oauth_client_identifier() -> Result<OauthClientIdentifier, Error>;
     async fn oauth_authentication(code: AuthorizationCode) -> Result<SessionToken, Error>;
     async fn session_info(token: String) -> Result<SessionInfo, Error>;

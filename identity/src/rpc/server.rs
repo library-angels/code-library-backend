@@ -211,17 +211,20 @@ impl IdentityService for IdentityServer {
     async fn update_user_role(
         self,
         _: context::Context,
-        user_role_id: u32,
-        role_id: u32,
-    ) -> Result<(), Error> {
+        user_role_update: UserRole,
+    ) -> Result<UserRole, Error> {
         use crate::db::schema::users_roles::dsl;
 
-        let result = diesel::update(dsl::users_roles.find(user_role_id as i32))
-            .set(dsl::role_id.eq(role_id as i32))
+        let result = diesel::update(dsl::users_roles.find(user_role_update.id as i32))
+            .set(dsl::role_id.eq(user_role_update.role_id as i32))
             .get_result::<models::UserRole>(&DB.get().unwrap().get().unwrap());
 
         match result {
-            Ok(_) => Ok(()),
+            Ok(val) => Ok(UserRole {
+                id: val.id,
+                user_id: val.user_id,
+                role_id: val.role_id,
+            }),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
             Err(_) => Err(Error::InternalError),
         }
