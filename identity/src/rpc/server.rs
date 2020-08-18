@@ -96,6 +96,29 @@ impl IdentityService for IdentityServer {
         }
     }
 
+    /// Switches the status of an user account between enabled and disabled
+    async fn update_user(self, _: context::Context, user_update: User) -> Result<User, Error> {
+        use crate::db::schema::users::dsl;
+
+        let result = diesel::update(dsl::users.find(user_update.id as i32))
+            .set(dsl::active.eq(user_update.active))
+            .get_result::<models::User>(&DB.get().unwrap().get().unwrap());
+
+        match result {
+            Ok(val) => Ok(User {
+                id: val.id,
+                sub: val.sub.clone(),
+                email: val.email.clone(),
+                given_name: val.given_name.clone(),
+                family_name: val.family_name.clone(),
+                picture: val.picture.clone(),
+                active: val.active,
+            }),
+            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
+            Err(_) => Err(Error::InternalError),
+        }
+    }
+
     /// Returns a list of roles
     async fn list_roles(
         self,
@@ -196,26 +219,6 @@ impl IdentityService for IdentityServer {
         let result = diesel::update(dsl::users_roles.find(user_role_id as i32))
             .set(dsl::role_id.eq(role_id as i32))
             .get_result::<models::UserRole>(&DB.get().unwrap().get().unwrap());
-
-        match result {
-            Ok(_) => Ok(()),
-            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
-            Err(_) => Err(Error::InternalError),
-        }
-    }
-
-    /// Switches the status of an user account between enabled and disabled
-    async fn update_user_status(
-        self,
-        _: context::Context,
-        user_id: u32,
-        status: bool,
-    ) -> Result<(), Error> {
-        use crate::db::schema::users::dsl;
-
-        let result = diesel::update(dsl::users.find(user_id as i32))
-            .set(dsl::active.eq(status))
-            .get_result::<models::User>(&DB.get().unwrap().get().unwrap());
 
         match result {
             Ok(_) => Ok(()),

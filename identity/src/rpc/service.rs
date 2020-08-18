@@ -6,6 +6,7 @@ pub trait IdentityService {
         limit: u32,
         user_active: Option<bool>,
     ) -> Result<Vec<User>, Error>;
+    async fn update_user(user_update: User) -> Result<User, Error>;
     async fn get_role(role_id: u32) -> Result<Role, Error>;
     async fn list_roles(offset: u32, limit: u32) -> Result<Vec<Role>, Error>;
     async fn get_user_role(user_role_id: u32) -> Result<UserRole, Error>;
@@ -15,7 +16,6 @@ pub trait IdentityService {
         role_id: Option<u32>,
     ) -> Result<Vec<UserRole>, Error>;
     async fn update_user_role(user_role_id: u32, role_id: u32) -> Result<(), Error>;
-    async fn update_user_status(user_id: u32, status: bool) -> Result<(), Error>;
     async fn oauth_client_identifier() -> Result<OauthClientIdentifier, Error>;
     async fn oauth_authentication(code: AuthorizationCode) -> Result<SessionToken, Error>;
     async fn session_info(token: String) -> Result<SessionInfo, Error>;
