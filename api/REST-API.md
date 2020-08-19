@@ -37,7 +37,7 @@ Returns a list of book objects.
 |offset|No|Integer|0|Offset to first object|
 |limit|No|Integer|10|Quantity of returned objects|
 |sort|No|String|alpha_asc|Sorting of results, possible values are `alpha_asc`, `alpha_desc`, `releasedate_asc`, `releasedate_desc`, `codeidentifier_asc` and `codeidentifier_desc`|
-|designation|No|Array(string)|*|
+|categories|No|Array(string)|*|
 |modules|No|Array(String)|*|
 |tags|No|Array(String)|*|
 |series|No|Array(String)|*|
@@ -84,7 +84,7 @@ Creates a book object.
 |pages|Integer|Pages|
 |code_identifier|String|CODE book identifier (without copy id)|
 |publisher|String|Publisher|
-|designation|String|Designation|
+|category|String|Category|
 |series|String|Series|
 |language|String|Language|
 |physical_size|String|Physical size|
@@ -161,7 +161,7 @@ Updates a book object.
 |pages|Integer|Pages|
 |code_identifier|String|CODE book identifier (without copy id)|
 |publisher|String|Publisher|
-|designation|String|Designation|
+|category|String|Category|
 |series|String|Series|
 |language|String|Language|
 |physical_size|String|Physical size|
@@ -175,36 +175,6 @@ Updates a book object.
 |401|Client is not authenticated|
 |403|Client is not allowed to see the resource|
 |404|Resource does not exist|
-|500|Internal error|
-
-
-### DELETE - /book/{book_id}
----
-
-Deletes a book object.
-
-**Authentication required:** Yes<br>
-**Authorization level (minimum):** Manager
-
-**Path Parameters**
-
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-
-**Query Parameters**
-
-*No query parameters*
-
-**Responses**
-
-|HTTP Code|Description|
-|---|---|
-|204|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
 |500|Internal error|
 
 
@@ -338,78 +308,10 @@ Returns a copy object for a book.
 |500|Internal error|
 
 
-### POST - /book/{book_id}/copies/{copy_id}
+### GET - /book/{book_id}/category
 ---
 
-Updates a copy object for a book.
-
-**Authentication required:** Yes<br>
-**Authorization level (minimum):** Manager
-
-**Path Parameters**
-
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-|copy_id|Integer|Id of a copy|
-
-**Query Parameters**
-
-*No query parameters*
-
-**Request Body**
-
-|Key|Data Type|
-|---|---|
-|status|String|
-
-**Responses**
-
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
-
-
-### DELETE - /book/{book_id}/copies/{copy_id}
----
-
-Deletes a copy object of a book.
-
-**Authentication required:** Yes<br>
-**Authorization level (minimum):** Manager
-
-**Path Parameters**
-
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-|copy_id|Integer|Id of a copy|
-
-**Query Parameters**
-
-*No query parameters*
-
-**Responses**
-
-|HTTP Code|Description|
-|---|---|
-|204|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
-
-
-### GET - /book/{book_id}/designations
----
-
-Returns the designation object for a book.
+Returns the category object for a book.
 
 **Authentication required:** Yes<br>
 **Authorization level (minimum):** User
@@ -675,10 +577,10 @@ Returns a list of author objects.
 |500|Internal error|
 
 
-### GET - /book/designations
+### GET - /book/categories
 ---
 
-Returns a list of designation objects.
+Returns a list of category objects.
 
 **Authentication required:** Yes<br>
 **Authorization level (minimum):** User

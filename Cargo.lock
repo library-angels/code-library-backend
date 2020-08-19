@@ -19,22 +19,18 @@ checksum = "6b602bfe940d21c130f3895acd65221e8a61270debe89d628b9cb4e3ccb8569b"
 name = "api"
 version = "0.1.0"
 dependencies = [
- "bytes",
  "chrono",
- "diesel",
  "dotenv",
  "env_logger",
  "envconfig",
  "envconfig_derive",
  "futures",
  "hyper",
- "hyper-tls",
- "jsonwebtoken",
  "log 0.4.11",
+ "once_cell",
  "serde",
  "serde_derive",
  "serde_json",
- "serde_urlencoded",
  "tokio",
  "warp",
 ]
@@ -247,7 +243,6 @@ checksum = "3e2de9deab977a153492a1468d1b1c0662c1cf39e5ea87d0c060ecd59ef18d8c"
 dependencies = [
  "bitflags",
  "byteorder",
- "chrono",
  "diesel_derives",
  "pq-sys",
  "r2d2",
@@ -967,9 +962,9 @@ dependencies = [
 
 [[package]]
 name = "once_cell"
-version = "1.4.0"
+version = "1.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0b631f7e854af39a1739f401cf34a8a013dfe09eac4fa4dba91e9768bd28168d"
+checksum = "260e51e7efe62b592207e9e13a68e43692a7a279171d6ba57abd208bf23645ad"
 
 [[package]]
 name = "opaque-debug"
