@@ -25,13 +25,17 @@ dependencies = [
  "envconfig",
  "envconfig_derive",
  "futures",
+ "http",
  "hyper",
+ "identity",
  "log 0.4.11",
  "once_cell",
  "serde",
  "serde_derive",
  "serde_json",
+ "tarpc",
  "tokio",
+ "tokio-serde",
  "warp",
 ]
 

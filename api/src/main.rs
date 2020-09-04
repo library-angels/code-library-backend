@@ -9,6 +9,7 @@ use envconfig::Envconfig;
 mod config;
 mod endpoints;
 mod router;
+mod rpc;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
