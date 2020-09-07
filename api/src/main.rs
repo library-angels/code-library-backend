@@ -8,6 +8,7 @@ use envconfig::Envconfig;
 
 mod config;
 mod endpoints;
+mod middleware;
 mod router;
 mod rpc;
 
