@@ -15,8 +15,15 @@ pub fn router() -> BoxedFilter<(impl Reply,)> {
                         .and(warp::get())
                         .and_then(crate::endpoints::identity::get_oauth_client_identifier)
                         .boxed()
+                        // POST - /identity/oauth/authentication
+                        .or(warp::path("authentication")
+                            .and(warp::path::end())
+                            .and(warp::post())
+                            .and(warp::body::json())
+                            .and_then(crate::endpoints::identity::create_oauth_authentication)
+                            .boxed()),
                 )
-                .boxed()
+                .boxed(),
         ))
         .recover(rejection::handle_rejection)
         .boxed()
