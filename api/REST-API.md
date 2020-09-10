@@ -18,8 +18,8 @@ Failed requests contain a `error` field in the response body, with information a
 ## Endpoints
 ---
 
-### GET - /book
----
+<details>
+<summary>GET - /book</summary>
 
 Returns a list of book objects.
 
@@ -54,8 +54,10 @@ Returns a list of book objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
-### POST - /book
----
+</details>
+
+<details>
+<summary>POST - /book</summary>
 
 Creates a book object.
 
@@ -99,9 +101,10 @@ Creates a book object.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}
----
+<details>
+<summary>GET - /book/{book_id}</summary>
 
 Returns a book object.
 
@@ -128,9 +131,10 @@ Returns a book object.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### POST - /book/{book_id}
----
+<details>
+<summary>POST - /book/{book_id}</summary>
 
 Updates a book object.
 
@@ -177,9 +181,10 @@ Updates a book object.
 | 404       | Resource does not exist                   |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/authors
----
+<details>
+<summary>GET - /book/{book_id}/authors</summary>
 
 Returns a list of author objects for a book.
 
@@ -207,9 +212,10 @@ Returns a list of author objects for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/copies
----
+<details>
+<summary>GET - /book/{book_id}/copies</summary>
 
 Returns a list of copy objects for a book.
 
@@ -240,9 +246,10 @@ Returns a list of copy objects for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### POST - /book/{book_id}/copies
----
+<details>
+<summary>POST - /book/{book_id}/copies</summary>
 
 Creates a copy objects for a book.
 
@@ -276,9 +283,10 @@ Creates a copy objects for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/copies/{copy_id}
----
+<details>
+<summary>GET - /book/{book_id}/copies/{copy_id}</summary>
 
 Returns a copy object for a book.
 
@@ -308,8 +316,10 @@ Returns a copy object for a book.
 | 500       | Internal error                            |
 
 
-### GET - /book/{book_id}/category
----
+</details>
+
+<details>
+<summary>GET - /book/{book_id}/category</summary>
 
 Returns the category object for a book.
 
@@ -338,8 +348,10 @@ Returns the category object for a book.
 | 500       | Internal error                            |
 
 
-### GET - /book/{book_id}/editors
----
+</details>
+
+<details>
+<summary>GET - /book/{book_id}/editors</summary>
 
 Returns a list of editor objects for a book.
 
@@ -368,8 +380,10 @@ Returns a list of editor objects for a book.
 | 500       | Internal error                            |
 
 
-### GET - /book/{book_id}/languages
----
+</details>
+
+<details>
+<summary>GET - /book/{book_id}/languages</summary>
 
 Returns the language object for a book.
 
@@ -397,9 +411,10 @@ Returns the language object for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/physical_sizes
----
+<details>
+<summary>GET - /book/{book_id}/physical_sizes</summary>
 
 Returns the physical size object for a book.
 
@@ -427,9 +442,10 @@ Returns the physical size object for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/publishers
----
+<details>
+<summary>GET - /book/{book_id}/publishers</summary>
 
 Returns the publisher object for a book.
 
@@ -457,9 +473,10 @@ Returns the publisher object for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/series
----
+<details>
+<summary>GET - /book/{book_id}/series</summary>
 
 Returns the series object for a book.
 
@@ -487,9 +504,10 @@ Returns the series object for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/subject_areas
----
+<details>
+<summary>GET - /book/{book_id}/subject_areas</summary>
 
 Returns the subject area object for a book.
 
@@ -517,9 +535,10 @@ Returns the subject area object for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/tags
----
+<details>
+<summary>GET - /book/{book_id}/tags</summary>
 
 Returns the tag object for a book.
 
@@ -547,9 +566,10 @@ Returns the tag object for a book.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/authors
----
+<details>
+<summary>GET - /book/authors</summary>
 
 Returns a list of author objects.
 
@@ -576,9 +596,10 @@ Returns a list of author objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/categories
----
+<details>
+<summary>GET - /book/categories</summary>
 
 Returns a list of category objects.
 
@@ -605,9 +626,10 @@ Returns a list of category objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/editors
----
+<details>
+<summary>GET - /book/editors</summary>
 
 Returns a list of editor objects.
 
@@ -634,9 +656,10 @@ Returns a list of editor objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/languages
----
+<details>
+<summary>GET - /book/languages</summary>
 
 Returns a list of language objects.
 
@@ -663,9 +686,10 @@ Returns a list of language objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/physical_sizes
----
+<details>
+<summary>GET - /book/physical_sizes</summary>
 
 Returns a list of physical size objects.
 
@@ -692,9 +716,10 @@ Returns a list of physical size objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/publishers
----
+<details>
+<summary>GET - /book/publishers</summary>
 
 Returns a list of publisher objects.
 
@@ -718,9 +743,10 @@ Returns a list of publisher objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/series
----
+<details>
+<summary>GET - /book/series</summary>
 
 Returns a list of series objects.
 
@@ -747,9 +773,10 @@ Returns a list of series objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/subject_areas
----
+<details>
+<summary>GET - /book/subject_areas</summary>
 
 Returns a list of subject area objects.
 
@@ -776,9 +803,10 @@ Returns a list of subject area objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /book/tags
----
+<details>
+<summary>GET - /book/tags</summary>
 
 Returns a list of tag objects.
 
@@ -805,9 +833,10 @@ Returns a list of tag objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/notifications
----
+<details>
+<summary>GET - /borrow/notifications</summary>
 
 Returns a list of notification objects, of the authenticated user.
 
@@ -834,9 +863,10 @@ Returns a list of notification objects, of the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/notifications
----
+<details>
+<summary>POST - /borrow/notifications</summary>
 
 Creates a notification object, for the authenticated user.
 
@@ -867,9 +897,10 @@ Creates a notification object, for the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/notification/{notification_id}
----
+<details>
+<summary>GET - /borrow/notification/{notification_id}</summary>
 
 Returns a notification object, of the authenticated user.
 
@@ -897,9 +928,10 @@ Returns a notification object, of the authenticated user.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### DELETE - /borrow/notifications/{notification_id}
----
+<details>
+<summary>DELETE - /borrow/notifications/{notification_id}</summary>
 
 Deletes a notification object, for the authenticated user.
 
@@ -927,9 +959,10 @@ Deletes a notification object, for the authenticated user.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/active
----
+<details>
+<summary>GET - /borrow/active</summary>
 
 Returns a list of active borrows, of the authenticated user.
 
@@ -956,9 +989,10 @@ Returns a list of active borrows, of the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/active
----
+<details>
+<summary>POST - /borrow/active</summary>
 
 Creates an active borrow object, for the authenticated user.
 
@@ -990,9 +1024,10 @@ Creates an active borrow object, for the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/active/{borrow_id}
----
+<details>
+<summary>GET - /borrow/active/{borrow_id}</summary>
 
 Returns a active borrow object, of the authenticated user.
 
@@ -1020,9 +1055,10 @@ Returns a active borrow object, of the authenticated user.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/active/{borrow_id}/return
----
+<details>
+<summary>POST - /borrow/active/{borrow_id}/return</summary>
 
 Updates an active borrow object (returns borrow), for the authenticated user.
 
@@ -1053,9 +1089,10 @@ Updates an active borrow object (returns borrow), for the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/active/{borrow_id}/return/confirm
----
+<details>
+<summary>POST - /borrow/active/{borrow_id}/return/confirm</summary>
 
 Updates an active borrow object (confirms return), for the authenticated user.
 
@@ -1086,9 +1123,10 @@ Updates an active borrow object (confirms return), for the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/history
----
+<details>
+<summary>GET - /borrow/history</summary>
 
 Returns a list of historic borrow objects, of the authenticated user.
 
@@ -1115,9 +1153,10 @@ Returns a list of historic borrow objects, of the authenticated user.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/history/{borrow_id}
----
+<details>
+<summary>GET - /borrow/history/{borrow_id}</summary>
 
 Returns a historic borrow object, of the authenticated user.
 
@@ -1145,9 +1184,10 @@ Returns a historic borrow object, of the authenticated user.
 | 404       | Requested object not found                |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/oauth/client_identifier
----
+<details>
+<summary>GET - /identity/oauth/client_identifier</summary>
 
 Returns the OAuth 2.0 client identifier.
 
@@ -1169,9 +1209,10 @@ Returns the OAuth 2.0 client identifier.
 | 200       | Request successful |
 | 500       | Internal error     |
 
+</details>
 
-### POST - /identity/oauth/authentication
----
+<details>
+<summary>POST - /identity/oauth/authentication</summary>
 
 Creates a user account and returns a session token.
 
@@ -1200,9 +1241,10 @@ Creates a user account and returns a session token.
 | 400       | Request malformed  |
 | 500       | Internal error     |
 
+</details>
 
-### GET - /identity/roles
----
+<details>
+<summary>GET - /identity/roles</summary>
 
 Returns a list of roles.
 
@@ -1229,9 +1271,10 @@ Returns a list of roles.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/roles/{role_id}
----
+<details>
+<summary>GET - /identity/roles/{role_id}</summary>
 
 Returns a role object.
 
@@ -1258,9 +1301,10 @@ Returns a role object.
 | 404       | Resource not found                        |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/users
----
+<details>
+<summary>GET - /identity/users</summary>
 
 Returns a list of user objects.
 
@@ -1287,9 +1331,10 @@ Returns a list of user objects.
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/users/{user_id}
----
+<details>
+<summary>GET - /identity/users/{user_id}</summary>
 
 Returns an user object.
 
@@ -1316,9 +1361,10 @@ Returns an user object.
 | 404       | Resource not found                        |
 | 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/session/info
----
+<details>
+<summary>GET - /identity/session/info</summary>
 
 Returns information about the current session token.
 
@@ -1341,3 +1387,4 @@ Returns information about the current session token.
 | 401       | Client is not authenticated               |
 | 403       | Client is not allowed to see the resource |
 | 500       | Internal error                            |
+</details>
