@@ -1,4 +1,3 @@
-use identity_rpc_service;
 use tarpc::client;
 use tokio_serde::formats::Json;
 

@@ -11,7 +11,7 @@ pub mod session {
         warp::header::<String>("authorization").and_then(|header: String| async move {
             let token = header
                 .strip_prefix("Bearer ")
-                .ok_or(reject::custom(super::rejection::NotAuthenticated))?;
+                .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
 
             let mut client = crate::rpc::client_connections::identity_client()
                 .await
@@ -64,10 +64,10 @@ pub mod rejection {
         } else if let Some(_not_authenticated) = err.find::<NotAuthenticated>() {
             code = StatusCode::UNAUTHORIZED;
             message = "AUTHENTICATION_REQUIRED";
-        } else if let Some(_) = err.find::<warp::filters::body::BodyDeserializeError>() {
+        } else if err.find::<warp::filters::body::BodyDeserializeError>().is_some() {
             code = StatusCode::BAD_REQUEST;
             message = "BAD_REQUEST";
-        } else if let Some(_) = err.find::<warp::reject::MethodNotAllowed>() {
+        } else if err.find::<warp::reject::MethodNotAllowed>().is_some() {
             code = StatusCode::METHOD_NOT_ALLOWED;
             message = "METHOD_NOT_ALLOWED";
         } else {
