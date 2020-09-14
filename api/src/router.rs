@@ -1,4 +1,4 @@
-use crate::middleware::rejection;
+use crate::middleware;
 use warp::{filters::BoxedFilter, Filter, Reply};
 
 pub fn router() -> BoxedFilter<(impl Reply,)> {
@@ -23,8 +23,19 @@ pub fn router() -> BoxedFilter<(impl Reply,)> {
                             .and_then(crate::endpoints::identity::create_oauth_authentication)
                             .boxed()),
                 )
-                .boxed(),
-        ))
-        .recover(rejection::handle_rejection)
+                .boxed()
+                .or(warp::path("session")
+                    .and(
+                        // GET - /identity/session/info
+                        warp::path("info")
+                            .and(warp::path::end())
+                            .and(warp::get())
+                            .and(middleware::session::authorization())
+                            .and_then(crate::endpoints::identity::get_session_info)
+                            .boxed(),
+                    )
+                    .boxed()),
+         ))
+        .recover(middleware::rejection::handle_rejection)
         .boxed()
 }
