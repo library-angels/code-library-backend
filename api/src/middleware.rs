@@ -64,7 +64,10 @@ pub mod rejection {
         } else if let Some(_not_authenticated) = err.find::<NotAuthenticated>() {
             code = StatusCode::UNAUTHORIZED;
             message = "AUTHENTICATION_REQUIRED";
-        } else if err.find::<warp::filters::body::BodyDeserializeError>().is_some() {
+        } else if err
+            .find::<warp::filters::body::BodyDeserializeError>()
+            .is_some()
+        {
             code = StatusCode::BAD_REQUEST;
             message = "BAD_REQUEST";
         } else if err.find::<warp::reject::MethodNotAllowed>().is_some() {
