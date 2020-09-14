@@ -1,5 +1,5 @@
-use std::convert::Infallible;
 use serde::{Deserialize, Serialize};
+use std::convert::Infallible;
 use warp::Reply;
 
 #[derive(Debug, Deserialize, Serialize)]

@@ -35,7 +35,7 @@ pub fn router() -> BoxedFilter<(impl Reply,)> {
                             .boxed(),
                     )
                     .boxed()),
-         ))
+        ))
         .recover(middleware::rejection::handle_rejection)
         .boxed()
 }

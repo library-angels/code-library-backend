@@ -148,7 +148,9 @@ pub async fn create_oauth_authentication(
         })
 }
 
-pub async fn get_session_info(session: crate::middleware::session::Session) -> Result<impl Reply, Infallible> {
+pub async fn get_session_info(
+    session: crate::middleware::session::Session,
+) -> Result<impl Reply, Infallible> {
     let mut client = match crate::rpc::client_connections::identity_client().await {
         Ok(val) => val,
         Err(e) => {

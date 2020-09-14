@@ -23,6 +23,9 @@ impl Configuration {
     }
 
     pub fn identity_service_socket(&self) -> SocketAddr {
-        SocketAddr::new(self.identity_service_host_ip, self.identity_service_host_port)
+        SocketAddr::new(
+            self.identity_service_host_ip,
+            self.identity_service_host_port,
+        )
     }
 }
