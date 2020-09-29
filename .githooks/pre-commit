@@ -1,0 +1,52 @@
+#!/bin/sh
+
+# Check if cargo package manager is installed
+if ! $(command -v cargo &> /dev/null); then
+    echo "Error: Could not find cargo package manager."
+    exit 1
+fi
+
+# Check if cargo fmt submodule is installed
+if ! $(cargo fmt --version &> /dev/null); then 
+    echo "Error: Could not find cargo fmt submodule."
+    exit 1
+fi
+
+# Check if cargo clippy submodule is installed
+if ! $(cargo clippy --version &> /dev/null); then
+    echo "Error: Could not find cargo clippy submodule."
+    exit 1
+fi
+
+# Determine commit for diff
+if git rev-parse --verify HEAD >/dev/null 2>&1
+then
+	against=HEAD
+else
+	# Initial commit: diff against an empty tree object
+	against=$(git hash-object -t tree /dev/null)
+fi
+
+# If you want to allow non-ASCII filenames set this variable to true.
+allownonascii=$(git config --type=bool hooks.allownonascii)
+
+# Check for non-ASCII filenames
+if [ "$allownonascii" != "true" ] &&
+	test $(git diff --cached --name-only --diff-filter=A -z $against |
+	  LC_ALL=C tr -d '[ -~]\0' | wc -c) != 0
+then
+	echo "Error: Attempt to add a non-ASCII file name."
+	exit 1
+fi
+
+# Check for formatting errors
+if ! $(cargo fmt -- --check &> /dev/null); then
+    echo "Error: Cargo fmt returned errors."
+	exit 1
+fi
+
+# # Check for linter errors
+if ! $(cargo clippy --all-features --all-targets -- -D warnings &> /dev/null); then
+    echo "Error: Cargo clippy returned errors."
+    exit 1
+fi

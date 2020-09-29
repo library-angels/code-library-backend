@@ -18,8 +18,8 @@ Failed requests contain a `error` field in the response body, with information a
 ## Endpoints
 ---
 
-### GET - /book
----
+<details>
+<summary>GET - /book</summary>
 
 Returns a list of book objects.
 
@@ -32,31 +32,32 @@ Returns a list of book objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
-|sort|No|String|alpha_asc|Sorting of results, possible values are `alpha_asc`, `alpha_desc`, `releasedate_asc`, `releasedate_desc`, `codeidentifier_asc` and `codeidentifier_desc`|
-|designation|No|Array(string)|*|
-|modules|No|Array(String)|*|
-|tags|No|Array(String)|*|
-|series|No|Array(String)|*|
-|publisher|No|Array(String|*|
-|search_fields|No|String|all|Search fields `all`, `title` and `author`|
-|search_keywords|No|Array(String)|None|Search term for the search fields|
+| Parameter  | Required | Data Type     | Default Value | Description                                                                                                                                              |
+| ---------- | -------- | ------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| offset     | No       | Integer       | 0             | Offset to first object                                                                                                                                   |
+| limit      | No       | Integer       | 10            | Quantity of returned objects                                                                                                                             |
+| sort       | No       | String        | alpha_asc     | Sorting of results, possible values are `alpha_asc`, `alpha_desc`, `releasedate_asc`, `releasedate_desc`, `codeidentifier_asc` and `codeidentifier_desc` |
+| categories | No       | Array(string) | *             |
+| modules    | No       | Array(String) | *             |
+| tags       | No       | Array(String) | *             |
+| series     | No       | Array(String) | *             |
+| publisher  | No       | Array(String  | *             |
+| search     | No       | String        | all           | Search fields `all`, `title` and `author`                                                                                                                |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
-### POST - /book
----
+</details>
+
+<details>
+<summary>POST - /book</summary>
 
 Creates a book object.
 
@@ -73,36 +74,37 @@ Creates a book object.
 
 **Request Body**
 
-|Key|Data Type|Description|
-|---|---|---|
-|isbn_13|String|International Standard Book Number|
-|issn|String|International Standard Serial Number|
-|title|String|Title|
-|subtitle|String|Subtitle|
-|description|String|Description|
-|edition|String|Edition|
-|release_year|Integer|Release year|
-|pages|Integer|Pages|
-|code_identifier|String|CODE book identifier (without copy id)|
-|publisher|String|Publisher|
-|designation|String|Designation|
-|series|String|Series|
-|language|String|Language|
-|physical_size|String|Physical size|
+| Key             | Data Type | Description                            |
+| --------------- | --------- | -------------------------------------- |
+| isbn_13         | String    | International Standard Book Number     |
+| issn            | String    | International Standard Serial Number   |
+| title           | String    | Title                                  |
+| subtitle        | String    | Subtitle                               |
+| description     | String    | Description                            |
+| edition         | String    | Edition                                |
+| release_year    | Integer   | Release year                           |
+| pages           | Integer   | Pages                                  |
+| code_identifier | String    | CODE book identifier (without copy id) |
+| publisher       | String    | Publisher                              |
+| category        | String    | Category                               |
+| series          | String    | Series                                 |
+| language        | String    | Language                               |
+| physical_size   | String    | Physical size                          |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 201       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}
----
+<details>
+<summary>GET - /book/{book_id}</summary>
 
 Returns a book object.
 
@@ -111,9 +113,9 @@ Returns a book object.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -121,17 +123,18 @@ Returns a book object.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### POST - /book/{book_id}
----
+<details>
+<summary>POST - /book/{book_id}</summary>
 
 Updates a book object.
 
@@ -140,9 +143,9 @@ Updates a book object.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -150,67 +153,38 @@ Updates a book object.
 
 **Request Body**
 
-|Key|Data Type|Description|
-|---|---|---|
-|isbn_13|String|International Standard Book Number|
-|issn|String|International Standard Serial Number|
-|title|String|Title|
-|subtitle|String|Subtitle|
-|description|String|Description|
-|edition|String|Edition|
-|release_year|Integer|Release year|
-|pages|Integer|Pages|
-|code_identifier|String|CODE book identifier (without copy id)|
-|publisher|String|Publisher|
-|designation|String|Designation|
-|series|String|Series|
-|language|String|Language|
-|physical_size|String|Physical size|
+| Key             | Data Type | Description                            |
+| --------------- | --------- | -------------------------------------- |
+| isbn_13         | String    | International Standard Book Number     |
+| issn            | String    | International Standard Serial Number   |
+| title           | String    | Title                                  |
+| subtitle        | String    | Subtitle                               |
+| description     | String    | Description                            |
+| edition         | String    | Edition                                |
+| release_year    | Integer   | Release year                           |
+| pages           | Integer   | Pages                                  |
+| code_identifier | String    | CODE book identifier (without copy id) |
+| publisher       | String    | Publisher                              |
+| category        | String    | Category                               |
+| series          | String    | Series                                 |
+| language        | String    | Language                               |
+| physical_size   | String    | Physical size                          |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Resource does not exist|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Resource does not exist                   |
+| 500       | Internal error                            |
 
+</details>
 
-### DELETE - /book/{book_id}
----
-
-Deletes a book object.
-
-**Authentication required:** Yes<br>
-**Authorization level (minimum):** Manager
-
-**Path Parameters**
-
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-
-**Query Parameters**
-
-*No query parameters*
-
-**Responses**
-
-|HTTP Code|Description|
-|---|---|
-|204|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
-
-
-### GET - /book/{book_id}/authors
----
+<details>
+<summary>GET - /book/{book_id}/authors</summary>
 
 Returns a list of author objects for a book.
 
@@ -219,9 +193,9 @@ Returns a list of author objects for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -229,18 +203,19 @@ Returns a list of author objects for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/copies
----
+<details>
+<summary>GET - /book/{book_id}/copies</summary>
 
 Returns a list of copy objects for a book.
 
@@ -249,31 +224,32 @@ Returns a list of copy objects for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### POST - /book/{book_id}/copies
----
+<details>
+<summary>POST - /book/{book_id}/copies</summary>
 
 Creates a copy objects for a book.
 
@@ -282,9 +258,9 @@ Creates a copy objects for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -292,24 +268,25 @@ Creates a copy objects for a book.
 
 **Request Body**
 
-|Key|Data Type|
-|---|---|
-|status|String|
+| Key    | Data Type |
+| ------ | --------- |
+| status | String    |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 201       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/copies/{copy_id}
----
+<details>
+<summary>GET - /book/{book_id}/copies/{copy_id}</summary>
 
 Returns a copy object for a book.
 
@@ -318,10 +295,10 @@ Returns a copy object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-|copy_id|Integer|Id of a copy|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
+| copy_id   | Integer   | Id of a copy |
 
 **Query Parameters**
 
@@ -329,97 +306,31 @@ Returns a copy object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
 
-### POST - /book/{book_id}/copies/{copy_id}
----
+</details>
 
-Updates a copy object for a book.
+<details>
+<summary>GET - /book/{book_id}/category</summary>
 
-**Authentication required:** Yes<br>
-**Authorization level (minimum):** Manager
-
-**Path Parameters**
-
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-|copy_id|Integer|Id of a copy|
-
-**Query Parameters**
-
-*No query parameters*
-
-**Request Body**
-
-|Key|Data Type|
-|---|---|
-|status|String|
-
-**Responses**
-
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
-
-
-### DELETE - /book/{book_id}/copies/{copy_id}
----
-
-Deletes a copy object of a book.
-
-**Authentication required:** Yes<br>
-**Authorization level (minimum):** Manager
-
-**Path Parameters**
-
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
-|copy_id|Integer|Id of a copy|
-
-**Query Parameters**
-
-*No query parameters*
-
-**Responses**
-
-|HTTP Code|Description|
-|---|---|
-|204|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
-
-
-### GET - /book/{book_id}/designations
----
-
-Returns the designation object for a book.
+Returns the category object for a book.
 
 **Authentication required:** Yes<br>
 **Authorization level (minimum):** User
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -427,18 +338,20 @@ Returns the designation object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
 
-### GET - /book/{book_id}/editors
----
+</details>
+
+<details>
+<summary>GET - /book/{book_id}/editors</summary>
 
 Returns a list of editor objects for a book.
 
@@ -447,9 +360,9 @@ Returns a list of editor objects for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -457,18 +370,20 @@ Returns a list of editor objects for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
 
-### GET - /book/{book_id}/languages
----
+</details>
+
+<details>
+<summary>GET - /book/{book_id}/languages</summary>
 
 Returns the language object for a book.
 
@@ -477,9 +392,9 @@ Returns the language object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -487,18 +402,19 @@ Returns the language object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/physical_sizes
----
+<details>
+<summary>GET - /book/{book_id}/physical_sizes</summary>
 
 Returns the physical size object for a book.
 
@@ -507,9 +423,9 @@ Returns the physical size object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -517,18 +433,19 @@ Returns the physical size object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/publishers
----
+<details>
+<summary>GET - /book/{book_id}/publishers</summary>
 
 Returns the publisher object for a book.
 
@@ -537,9 +454,9 @@ Returns the publisher object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -547,18 +464,19 @@ Returns the publisher object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/series
----
+<details>
+<summary>GET - /book/{book_id}/series</summary>
 
 Returns the series object for a book.
 
@@ -567,9 +485,9 @@ Returns the series object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -577,18 +495,19 @@ Returns the series object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/subject_areas
----
+<details>
+<summary>GET - /book/{book_id}/subject_areas</summary>
 
 Returns the subject area object for a book.
 
@@ -597,9 +516,9 @@ Returns the subject area object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -607,18 +526,19 @@ Returns the subject area object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/{book_id}/tags
----
+<details>
+<summary>GET - /book/{book_id}/tags</summary>
 
 Returns the tag object for a book.
 
@@ -627,9 +547,9 @@ Returns the tag object for a book.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|book_id|Integer|Id of a book|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| book_id   | Integer   | Id of a book |
 
 **Query Parameters**
 
@@ -637,18 +557,19 @@ Returns the tag object for a book.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/authors
----
+<details>
+<summary>GET - /book/authors</summary>
 
 Returns a list of author objects.
 
@@ -661,25 +582,26 @@ Returns a list of author objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/designations
----
+<details>
+<summary>GET - /book/categories</summary>
 
-Returns a list of designation objects.
+Returns a list of category objects.
 
 **Authentication required:** Yes<br>
 **Authorization level (minimum):** User
@@ -690,23 +612,24 @@ Returns a list of designation objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/editors
----
+<details>
+<summary>GET - /book/editors</summary>
 
 Returns a list of editor objects.
 
@@ -719,23 +642,24 @@ Returns a list of editor objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/languages
----
+<details>
+<summary>GET - /book/languages</summary>
 
 Returns a list of language objects.
 
@@ -748,23 +672,24 @@ Returns a list of language objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/physical_sizes
----
+<details>
+<summary>GET - /book/physical_sizes</summary>
 
 Returns a list of physical size objects.
 
@@ -777,23 +702,24 @@ Returns a list of physical size objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/publishers
----
+<details>
+<summary>GET - /book/publishers</summary>
 
 Returns a list of publisher objects.
 
@@ -810,16 +736,17 @@ Returns a list of publisher objects.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/series
----
+<details>
+<summary>GET - /book/series</summary>
 
 Returns a list of series objects.
 
@@ -832,23 +759,24 @@ Returns a list of series objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/subject_areas
----
+<details>
+<summary>GET - /book/subject_areas</summary>
 
 Returns a list of subject area objects.
 
@@ -861,23 +789,24 @@ Returns a list of subject area objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /book/tags
----
+<details>
+<summary>GET - /book/tags</summary>
 
 Returns a list of tag objects.
 
@@ -890,23 +819,24 @@ Returns a list of tag objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/notifications
----
+<details>
+<summary>GET - /borrow/notifications</summary>
 
 Returns a list of notification objects, of the authenticated user.
 
@@ -919,23 +849,24 @@ Returns a list of notification objects, of the authenticated user.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/notifications
----
+<details>
+<summary>POST - /borrow/notifications</summary>
 
 Creates a notification object, for the authenticated user.
 
@@ -952,23 +883,24 @@ Creates a notification object, for the authenticated user.
 
 **Request Body**
 
-|Key|Data Type|Description|
-|---|---|---|
-|copy_id|Integer|Id of a book copy|
+| Key     | Data Type | Description       |
+| ------- | --------- | ----------------- |
+| copy_id | Integer   | Id of a book copy |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 201       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/notification/{notification_id}
----
+<details>
+<summary>GET - /borrow/notification/{notification_id}</summary>
 
 Returns a notification object, of the authenticated user.
 
@@ -977,9 +909,9 @@ Returns a notification object, of the authenticated user.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|notification_id|Integer|Id of a notification|
+| Parameter       | Data Type | Description          |
+| --------------- | --------- | -------------------- |
+| notification_id | Integer   | Id of a notification |
 
 **Query Parameters**
 
@@ -987,18 +919,19 @@ Returns a notification object, of the authenticated user.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### DELETE - /borrow/notifications/{notification_id}
----
+<details>
+<summary>DELETE - /borrow/notifications/{notification_id}</summary>
 
 Deletes a notification object, for the authenticated user.
 
@@ -1007,9 +940,9 @@ Deletes a notification object, for the authenticated user.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|notification_id|Integer|Id of a notification|
+| Parameter       | Data Type | Description          |
+| --------------- | --------- |
+| notification_id | Integer   | Id of a notification |
 
 **Query Parameters**
 
@@ -1017,18 +950,19 @@ Deletes a notification object, for the authenticated user.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|204|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 204       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/active
----
+<details>
+<summary>GET - /borrow/active</summary>
 
 Returns a list of active borrows, of the authenticated user.
 
@@ -1041,23 +975,24 @@ Returns a list of active borrows, of the authenticated user.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/active
----
+<details>
+<summary>POST - /borrow/active</summary>
 
 Creates an active borrow object, for the authenticated user.
 
@@ -1074,24 +1009,25 @@ Creates an active borrow object, for the authenticated user.
 
 **Request Body**
 
-|Key|Data Type|Description|
-|---|---|---|
-|copy_id|Integer|Id of a book copy|
-|duration|Integer|Borrow duration in days|
+| Key      | Data Type | Description             |
+| -------- | --------- | ----------------------- |
+| copy_id  | Integer   | Id of a book copy       |
+| duration | Integer   | Borrow duration in days |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 201       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/active/{borrow_id}
----
+<details>
+<summary>GET - /borrow/active/{borrow_id}</summary>
 
 Returns a active borrow object, of the authenticated user.
 
@@ -1100,9 +1036,9 @@ Returns a active borrow object, of the authenticated user.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|borrow_id|Integer|Id of a borrow|
+| Parameter | Data Type | Description    |
+| --------- | --------- | -------------- |
+| borrow_id | Integer   | Id of a borrow |
 
 **Query Parameters**
 
@@ -1110,18 +1046,19 @@ Returns a active borrow object, of the authenticated user.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/active/{borrow_id}/return
----
+<details>
+<summary>POST - /borrow/active/{borrow_id}/return</summary>
 
 Updates an active borrow object (returns borrow), for the authenticated user.
 
@@ -1130,9 +1067,9 @@ Updates an active borrow object (returns borrow), for the authenticated user.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|borrow_id|Integer|Id of a borrow|
+| Parameter | Data Type | Description    |
+| --------- | --------- | -------------- |
+| borrow_id | Integer   | Id of a borrow |
 
 **Query Parameters**
 
@@ -1144,17 +1081,18 @@ Updates an active borrow object (returns borrow), for the authenticated user.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 201       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### POST - /borrow/active/{borrow_id}/return/confirm
----
+<details>
+<summary>POST - /borrow/active/{borrow_id}/return/confirm</summary>
 
 Updates an active borrow object (confirms return), for the authenticated user.
 
@@ -1163,9 +1101,9 @@ Updates an active borrow object (confirms return), for the authenticated user.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|borrow_id|Integer|Id of a borrow|
+| Parameter | Data Type | Description    |
+| --------- | --------- | -------------- |
+| borrow_id | Integer   | Id of a borrow |
 
 **Query Parameters**
 
@@ -1177,17 +1115,18 @@ Updates an active borrow object (confirms return), for the authenticated user.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 201       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/history
----
+<details>
+<summary>GET - /borrow/history</summary>
 
 Returns a list of historic borrow objects, of the authenticated user.
 
@@ -1200,23 +1139,24 @@ Returns a list of historic borrow objects, of the authenticated user.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /borrow/history/{borrow_id}
----
+<details>
+<summary>GET - /borrow/history/{borrow_id}</summary>
 
 Returns a historic borrow object, of the authenticated user.
 
@@ -1225,9 +1165,9 @@ Returns a historic borrow object, of the authenticated user.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|borrow_id|Integer|Id of a borrow|
+| Parameter | Data Type | Description    |
+| --------- | --------- | -------------- |
+| borrow_id | Integer   | Id of a borrow |
 
 **Query Parameters**
 
@@ -1235,18 +1175,19 @@ Returns a historic borrow object, of the authenticated user.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|400|Request malformed|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Requested object not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 400       | Request malformed                         |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Requested object not found                |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/oauth/client_identifier
----
+<details>
+<summary>GET - /identity/oauth/client_identifier</summary>
 
 Returns the OAuth 2.0 client identifier.
 
@@ -1263,14 +1204,15 @@ Returns the OAuth 2.0 client identifier.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|500|Internal error|
+| HTTP Code | Description        |
+| --------- | ------------------ |
+| 200       | Request successful |
+| 500       | Internal error     |
 
+</details>
 
-### POST - /identity/oauth/authentication
----
+<details>
+<summary>POST - /identity/oauth/authentication</summary>
 
 Creates a user account and returns a session token.
 
@@ -1287,21 +1229,22 @@ Creates a user account and returns a session token.
 
 **Request Body**
 
-|Key|Data Type|Description|
-|---|---|---|
-|code|String|OAuth 2.0 authorization code|
+| Key  | Data Type | Description                  |
+| ---- | --------- | ---------------------------- |
+| code | String    | OAuth 2.0 authorization code |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|201|Request successful|
-|400|Request malformed|
-|500|Internal error|
+| HTTP Code | Description        |
+| --------- | ------------------ |
+| 201       | Request successful |
+| 400       | Request malformed  |
+| 500       | Internal error     |
 
+</details>
 
-### GET - /identity/roles
----
+<details>
+<summary>GET - /identity/roles</summary>
 
 Returns a list of roles.
 
@@ -1314,23 +1257,24 @@ Returns a list of roles.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/roles/{role_id}
----
+<details>
+<summary>GET - /identity/roles/{role_id}</summary>
 
 Returns a role object.
 
@@ -1339,9 +1283,9 @@ Returns a role object.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|role_id|Integer|Id of a role|
+| Parameter | Data Type | Description  |
+| --------- | --------- | ------------ |
+| role_id   | Integer   | Id of a role |
 
 **Query Parameters**
 
@@ -1349,17 +1293,18 @@ Returns a role object.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Resource not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Resource not found                        |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/users
----
+<details>
+<summary>GET - /identity/users</summary>
 
 Returns a list of user objects.
 
@@ -1372,23 +1317,24 @@ Returns a list of user objects.
 
 **Query Parameters**
 
-|Parameter|Required|Data Type|Default Value|Description|
-|---|---|---|---|---|
-|offset|No|Integer|0|Offset to first object|
-|limit|No|Integer|10|Quantity of returned objects|
+| Parameter | Required | Data Type | Default Value | Description                  |
+| --------- | -------- | --------- | ------------- | ---------------------------- |
+| offset    | No       | Integer   | 0             | Offset to first object       |
+| limit     | No       | Integer   | 10            | Quantity of returned objects |
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/users/{user_id}
----
+<details>
+<summary>GET - /identity/users/{user_id}</summary>
 
 Returns an user object.
 
@@ -1397,9 +1343,9 @@ Returns an user object.
 
 **Path Parameters**
 
-|Parameter|Data Type|Description|
-|---|---|---|
-|user_id|Integer|Id of an user|
+| Parameter | Data Type | Description   |
+| --------- | --------- | ------------- |
+| user_id   | Integer   | Id of an user |
 
 **Query Parameters**
 
@@ -1407,17 +1353,18 @@ Returns an user object.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|404|Resource not found|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 404       | Resource not found                        |
+| 500       | Internal error                            |
 
+</details>
 
-### GET - /identity/session/info
----
+<details>
+<summary>GET - /identity/session/info</summary>
 
 Returns information about the current session token.
 
@@ -1434,9 +1381,10 @@ Returns information about the current session token.
 
 **Responses**
 
-|HTTP Code|Description|
-|---|---|
-|200|Request successful|
-|401|Client is not authenticated|
-|403|Client is not allowed to see the resource|
-|500|Internal error|
+| HTTP Code | Description                               |
+| --------- | ----------------------------------------- |
+| 200       | Request successful                        |
+| 401       | Client is not authenticated               |
+| 403       | Client is not allowed to see the resource |
+| 500       | Internal error                            |
+</details>

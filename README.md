@@ -69,6 +69,10 @@ The used prefixes are the same as the Github labels for pull requests.
 The `master` branch is protected and requires pull request and an approval of at least one reviewer.
 The used merge method is squash and merge.
 
+### 3.1 Git Hooks
+
+It's recommended to use the provided Git hooks in the `.githooks` directory, to assure the compliance with project guidelines.
+The hooks can be activated for the local Git repository with `git config --local core.hooksPath ".githooks"`.
 
 ## 4. Contributors
 

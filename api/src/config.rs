@@ -1,40 +1,31 @@
-use dotenv::dotenv;
-use envconfig::{Envconfig, Error};
+use envconfig::Envconfig;
 use envconfig_derive::Envconfig;
-use log::error;
-use std::{net::IpAddr, process, sync::Arc};
+use std::net::{IpAddr, SocketAddr};
 
-#[derive(Envconfig)]
-pub struct Config {
-    #[envconfig(from = "HTTP_HOST", default = "127.0.0.1")]
-    pub http_host: IpAddr,
+#[derive(Envconfig, Debug)]
+pub struct Configuration {
+    #[envconfig(from = "HTTP_HOST_IP", default = "127.0.0.1")]
+    http_host_ip: IpAddr,
 
-    #[envconfig(from = "HTTP_PORT", default = "8080")]
-    pub http_port: u16,
+    #[envconfig(from = "HTTP_HOST_PORT", default = "8080")]
+    http_host_port: u16,
 
-    #[envconfig(from = "DATABASE_URL")]
-    pub database_url: String,
+    #[envconfig(from = "IDENTITY_SERVICE_HOST_IP", default = "127.0.0.1")]
+    identity_service_host_ip: IpAddr,
 
-    #[envconfig(from = "OAUTH_CLIENT_IDENTIFIER")]
-    pub oauth_client_identifier: String,
-
-    #[envconfig(from = "OAUTH_CLIENT_SECRET")]
-    pub oauth_client_secret: String,
-
-    #[envconfig(from = "OAUTH_CLIENT_REDIRECT")]
-    pub oauth_client_redirect: String,
-
-    #[envconfig(from = "JWT_SECRET")]
-    pub jwt_secret: String,
+    #[envconfig(from = "IDENTITY_SERVICE_HOST_PORT", default = "8081")]
+    identity_service_host_port: u16,
 }
 
-pub fn initialize_config() -> Result<Arc<Box<Config>>, Error> {
-    dotenv().ok();
-    match Config::init() {
-        Ok(val) => Ok(Arc::new(Box::new(val))),
-        Err(e) => {
-            error!("{}", e);
-            process::exit(1);
-        }
+impl Configuration {
+    pub fn http_socket(&self) -> SocketAddr {
+        SocketAddr::new(self.http_host_ip, self.http_host_port)
+    }
+
+    pub fn identity_service_socket(&self) -> SocketAddr {
+        SocketAddr::new(
+            self.identity_service_host_ip,
+            self.identity_service_host_port,
+        )
     }
 }
