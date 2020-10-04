@@ -1,10 +1,9 @@
 use config::Configuration;
+use dotenv::dotenv;
+use envconfig::Envconfig;
 use once_cell::sync::OnceCell;
 use std::process;
 use warp::Filter;
-extern crate log;
-use dotenv::dotenv;
-use envconfig::Envconfig;
 
 mod config;
 mod endpoints;

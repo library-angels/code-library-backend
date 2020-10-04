@@ -1,18 +1,18 @@
-extern crate log;
-use dotenv::dotenv;
-use envconfig::Envconfig;
-use std::{io, process};
-#[macro_use]
-extern crate diesel;
 use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
+use dotenv::dotenv;
+use envconfig::Envconfig;
 use futures::{future, prelude::*};
 use once_cell::sync::OnceCell;
 use rpc::server::IdentityServer;
 use rpc::service::IdentityService;
+use std::{io, process};
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
+
+#[macro_use]
+extern crate diesel;
 
 mod authentication;
 mod config;

@@ -1,16 +1,14 @@
-extern crate log;
-use dotenv::dotenv;
-use envconfig::Envconfig;
-use once_cell::sync::OnceCell;
-use std::process;
-extern crate diesel;
 use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
+use dotenv::dotenv;
+use envconfig::Envconfig;
 use futures::{future, prelude::*};
+use once_cell::sync::OnceCell;
 use rpc::server::BorrowServer;
 use rpc::service::BorrowService;
 use std::io;
+use std::process;
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
 
