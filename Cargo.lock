@@ -336,9 +336,9 @@ dependencies = [
 
 [[package]]
 name = "envconfig_derive"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bb6cec7a023cdb44f38c5b99c26f520d279eec7265d9c957970d8b073bb2f17"
+checksum = "9817995a31cb617610b03216ff4be9ee69ffecd6bfd00252c11aa52a48962437"
 dependencies = [
  "proc-macro2",
  "quote",
