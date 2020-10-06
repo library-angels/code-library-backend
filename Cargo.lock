@@ -19,6 +19,7 @@ checksum = "bf8dcb5b4bbaa28653b647d8c77bd4ed40183b48882e130c1f1ffb73de069fd7"
 name = "api"
 version = "0.1.0"
 dependencies = [
+ "book",
  "chrono",
  "dotenv",
  "env_logger",

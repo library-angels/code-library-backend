@@ -49,7 +49,7 @@ pub mod rejection {
 
     pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
         let reply = if err.is_not_found() {
-            response::not_found()
+            response::not_found("NOT_FOUND")
         } else if let Some(_not_authenticated) = err.find::<NotAuthenticated>() {
             response::unauthorized("AUTHENTICATION_REQUIRED")
         } else if err.find::<BodyDeserializeError>().is_some() {

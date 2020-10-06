@@ -14,6 +14,12 @@ pub struct Configuration {
 
     #[envconfig(from = "IDENTITY_SERVICE_HOST_PORT", default = "8081")]
     identity_service_host_port: u16,
+
+    #[envconfig(from = "BOOK_SERVICE_HOST_IP", default = "127.0.0.1")]
+    book_service_host_ip: IpAddr,
+
+    #[envconfig(from = "BOOK_SERVICE_HOST_PORT", default = "8082")]
+    book_service_host_port: u16,
 }
 
 impl Configuration {
@@ -26,5 +32,9 @@ impl Configuration {
             self.identity_service_host_ip,
             self.identity_service_host_port,
         )
+    }
+
+    pub fn book_service_socket(&self) -> SocketAddr {
+        SocketAddr::new(self.book_service_host_ip, self.book_service_host_port)
     }
 }
