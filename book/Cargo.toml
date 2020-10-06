@@ -8,7 +8,7 @@ edition = "2018"
 diesel = { version = "1.4", features = ["postgres", "r2d2"] }
 dotenv = "0.15"
 env_logger = "0.7"
-envconfig = "0.8"
+envconfig = "0.9"
 envconfig_derive = "0.8"
 futures = "0.3"
 lazy_static = "1.4"
