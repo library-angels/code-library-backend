@@ -30,12 +30,9 @@ pub fn unauthorized(msg: &str) -> WithStatus<Json> {
 }
 
 /// `404` Not Found
-pub fn not_found() -> WithStatus<Json> {
+pub fn not_found(msg: &str) -> WithStatus<Json> {
     warp::reply::with_status(
-        warp::reply::json(&ErrorMessage {
-            code: 404,
-            msg: "NOT_FOUND",
-        }),
+        warp::reply::json(&ErrorMessage { code: 404, msg }),
         StatusCode::NOT_FOUND,
     )
 }

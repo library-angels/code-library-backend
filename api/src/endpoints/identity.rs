@@ -21,7 +21,7 @@ pub async fn get_oauth_client_identifier() -> Result<impl Reply, Infallible> {
         .map(|x| match x {
             Ok(val) => response::okay_with_json(&val),
             Err(Error::InternalError) => response::internal_server_error(),
-            Err(Error::NotFound) => response::not_found(),
+            Err(Error::NotFound) => response::not_found("NOT_FOUND"),
             Err(Error::AlreadyExists) => response::bad_request("ALREADY_EXISTS"),
             Err(Error::InvalidInput) => response::bad_request("INVALID_INPUT"),
             Err(Error::InvalidData) => response::bad_request("INVALID_DATA"),
@@ -49,7 +49,7 @@ pub async fn create_oauth_authentication(
         .map(|x| match x {
             Ok(val) => response::okay_with_json(&val),
             Err(Error::InternalError) => response::internal_server_error(),
-            Err(Error::NotFound) => response::not_found(),
+            Err(Error::NotFound) => response::not_found("NOT_FOUND"),
             Err(Error::AlreadyExists) => response::bad_request("ALREADY_EXISTS"),
             Err(Error::InvalidInput) => response::bad_request("INVALID_INPUT"),
             Err(Error::InvalidData) => response::bad_request("INVALID_DATA"),
@@ -77,7 +77,7 @@ pub async fn get_session_info(
         .map(|x| match x {
             Ok(val) => response::okay_with_json(&val),
             Err(Error::InternalError) => response::internal_server_error(),
-            Err(Error::NotFound) => response::not_found(),
+            Err(Error::NotFound) => response::not_found("NOT_FOUND"),
             Err(Error::AlreadyExists) => response::bad_request("ALREADY_EXISTS"),
             Err(Error::InvalidInput) => response::bad_request("INVALID_INPUT"),
             Err(Error::InvalidData) => response::bad_request("INVALID_DATA"),

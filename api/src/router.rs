@@ -1,4 +1,4 @@
-use crate::endpoints::{identity, root};
+use crate::endpoints::{book, identity, root};
 use crate::middleware;
 
 use warp::{filters::BoxedFilter, Filter, Reply};
@@ -30,7 +30,16 @@ pub fn router() -> BoxedFilter<(impl Reply,)> {
                 .and_then(identity::get_session_info)),
     );
 
+    // GET /book/<book_id>
+    let book = warp::path("book")
+        .and(middleware::session::authorization())
+        .and(warp::path::param::<u32>())
+        .and(warp::path::end())
+        .and(warp::get())
+        .and_then(book::get_book_by_id);
+
     root.or(identity)
+        .or(book)
         .recover(middleware::rejection::handle_rejection)
         .boxed()
 }
