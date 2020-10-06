@@ -1,58 +1,55 @@
-name: CD-DEV-API
 on:
-  push:
-    branches:
-      - 'master'
-    paths:
-      - 'api/**'
+    push:
+        branches:
+            - 'master'
+        paths:
+            - 'api/**'
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: 'Build and save Docker image'
-        env:
-          REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
-          REPOSITORY: code-library-api
-          IMAGE_TAG: ${{ github.sha }}
-        run: |
-          docker build -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" api/
-          docker image save -o image "$REGISTRY/$REPOSITORY:$IMAGE_TAG"
-      - name: 'Upload the Docker image'
-        uses: actions/upload-artifact@v2
-        with:
-          name: image
-          path: image
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: eu-central-1
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v1
-      - name: 'Download the Docker image'
-        uses: actions/download-artifact@v2
-        with:
-          name: image
-      - name: 'Load Docker image'
-        run: docker load -i image
-      - name: 'Tag Docker image as latest'
-        env:
-          REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
-          REPOSITORY: code-library-api
-          IMAGE_TAG: ${{ github.sha }}
-        run: docker tag "$REGISTRY/$REPOSITORY:$IMAGE_TAG" "$REGISTRY/$REPOSITORY:latest-dev"
-      - name: 'Push Docker image'
-        env:
-          REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
-          REPOSITORY: code-library-api
-        run: docker push "$REGISTRY/$REPOSITORY:latest-dev"
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v2
+            - name: 'Build and save Docker image'
+              env:
+                  REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+                  REPOSITORY: code-library-api
+                  IMAGE_TAG: ${{ github.sha }}
+              run: |
+                  docker build -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" -f api/Dockerfile .
+                  docker image save -o image "$REGISTRY/$REPOSITORY:$IMAGE_TAG"
+            - name: 'Upload the Docker image'
+              uses: actions/upload-artifact@v2
+              with:
+                  name: image
+                  path: image
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Configure AWS credentials
+              uses: aws-actions/configure-aws-credentials@v1
+              with:
+                  aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+                  aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+                  aws-region: eu-central-1
+            - name: Login to Amazon ECR
+              id: login-ecr
+              uses: aws-actions/amazon-ecr-login@v1
+            - name: 'Download the Docker image'
+              uses: actions/download-artifact@v2
+              with:
+                  name: image
+            - name: 'Load Docker image'
+              run: docker load -i image
+            - name: 'Tag Docker image as latest'
+              env:
+                  REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+                  REPOSITORY: code-library-api
+                  IMAGE_TAG: ${{ github.sha }}
+              run: docker tag "$REGISTRY/$REPOSITORY:$IMAGE_TAG" "$REGISTRY/$REPOSITORY:latest-dev"
+            - name: 'Push Docker image'
+              env:
+                  REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+                  REPOSITORY: code-library-api
+              run: docker push "$REGISTRY/$REPOSITORY:latest-dev"
