@@ -11,7 +11,7 @@ struct ErrorMessage<'a> {
 }
 
 pub async fn get_oauth_client_identifier() -> Result<impl Reply, Infallible> {
-    let mut client = match crate::rpc::client_connections::identity_client().await {
+    let mut client = match crate::rpc::identity_client().await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
@@ -81,7 +81,7 @@ pub async fn get_oauth_client_identifier() -> Result<impl Reply, Infallible> {
 pub async fn create_oauth_authentication(
     body: HashMap<String, String>,
 ) -> Result<impl Reply, Infallible> {
-    let mut client = match crate::rpc::client_connections::identity_client().await {
+    let mut client = match crate::rpc::identity_client().await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
@@ -151,7 +151,7 @@ pub async fn create_oauth_authentication(
 pub async fn get_session_info(
     session: crate::middleware::session::Session,
 ) -> Result<impl Reply, Infallible> {
-    let mut client = match crate::rpc::client_connections::identity_client().await {
+    let mut client = match crate::rpc::identity_client().await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
