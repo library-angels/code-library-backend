@@ -13,12 +13,10 @@ pub mod session {
                 .strip_prefix("Bearer ")
                 .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
 
-            let mut client = crate::rpc::client_connections::identity_client()
-                .await
-                .map_err(|e| {
-                    log::error!("Identity service error: {}", e);
-                    reject::custom(super::rejection::NotAuthenticated)
-                })?;
+            let mut client = crate::rpc::identity_client().await.map_err(|e| {
+                log::error!("Identity service error: {}", e);
+                reject::custom(super::rejection::NotAuthenticated)
+            })?;
 
             let token_content = client
                 .session_info(context::current(), token.into())
