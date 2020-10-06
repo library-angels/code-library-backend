@@ -16,6 +16,7 @@ use tokio_serde::formats::Json;
 extern crate diesel_migrations;
 
 mod config;
+mod db;
 mod rpc;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
