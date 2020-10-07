@@ -1,5 +1,4 @@
 use envconfig::Envconfig;
-use envconfig_derive::Envconfig;
 use std::net::{IpAddr, SocketAddr};
 
 #[derive(Envconfig, Debug)]

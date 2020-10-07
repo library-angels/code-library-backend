@@ -27,7 +27,7 @@ async fn main() {
 
     let configuration = {
         dotenv().ok();
-        match Configuration::init() {
+        match Configuration::init_from_env() {
             Ok(val) => val,
             Err(e) => {
                 log::error!("{}", e);

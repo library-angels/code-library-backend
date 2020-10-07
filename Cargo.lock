@@ -23,7 +23,6 @@ dependencies = [
  "dotenv",
  "env_logger",
  "envconfig",
- "envconfig_derive",
  "futures",
  "http",
  "hyper",
@@ -117,7 +116,6 @@ dependencies = [
  "dotenv",
  "env_logger",
  "envconfig",
- "envconfig_derive",
  "futures",
  "lazy_static",
  "log",
@@ -136,7 +134,6 @@ dependencies = [
  "dotenv",
  "env_logger",
  "envconfig",
- "envconfig_derive",
  "futures",
  "lazy_static",
  "log",
@@ -327,18 +324,19 @@ dependencies = [
 
 [[package]]
 name = "envconfig"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ca475bc6bdc0c0e3c74dfcc08cf4b39a5d43f1d597afa4d36d069f17b2108f5d"
+checksum = "e801e3882afa3e1ad3057013c769e2997753de548f2d8e150f34066a49df8feb"
 dependencies = [
+ "envconfig_derive",
  "thiserror",
 ]
 
 [[package]]
 name = "envconfig_derive"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0bb6cec7a023cdb44f38c5b99c26f520d279eec7265d9c957970d8b073bb2f17"
+checksum = "9817995a31cb617610b03216ff4be9ee69ffecd6bfd00252c11aa52a48962437"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -665,7 +663,6 @@ dependencies = [
  "dotenv",
  "env_logger",
  "envconfig",
- "envconfig_derive",
  "futures",
  "hyper",
  "hyper-tls",
@@ -943,7 +940,6 @@ dependencies = [
  "dotenv",
  "env_logger",
  "envconfig",
- "envconfig_derive",
  "futures",
  "lazy_static",
  "log",
