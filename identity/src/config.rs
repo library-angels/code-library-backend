@@ -21,7 +21,7 @@ pub struct Configuration {
     #[envconfig(from = "RPC_HOST_IP", default = "127.0.0.1")]
     rpc_host_ip: IpAddr,
 
-    #[envconfig(from = "RPC_HOST_PORT", default = "8080")]
+    #[envconfig(from = "RPC_HOST_PORT", default = "8081")]
     rpc_host_port: u16,
 
     #[envconfig(from = "OAUTH_CLIENT_IDENTIFIER")]
