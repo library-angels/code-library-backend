@@ -4,6 +4,7 @@ on:
             - 'master'
         paths:
             - 'identity/**'
+            - 'Cargo.lock'
 
 jobs:
     build:

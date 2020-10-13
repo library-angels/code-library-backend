@@ -4,6 +4,7 @@ on:
             - 'master'
         paths:
             - 'notification/**'
+            - 'Cargo.lock'
 
 jobs:
     build:
