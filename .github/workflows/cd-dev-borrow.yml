@@ -4,6 +4,7 @@ on:
             - 'master'
         paths:
             - 'borrow/**'
+            - 'Cargo.lock'
 
 jobs:
     build:
