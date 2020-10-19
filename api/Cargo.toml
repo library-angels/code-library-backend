@@ -7,7 +7,7 @@ edition = "2018"
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 dotenv = "0.15"
-env_logger = "0.7"
+env_logger = "0.8"
 envconfig = "0.9"
 futures = "0.3"
 http = "0.2"
