@@ -10,10 +10,12 @@ path = "src/rpc/service.rs"
 
 [dependencies]
 diesel = { version = "1.4", features = ["postgres", "r2d2"] }
+diesel_migrations = "1.4"
 dotenv = "0.15"
 env_logger = "0.8"
 envconfig = "0.9"
 futures = "0.3"
+helpers = { path = "../helpers" }
 hyper = "0.13"
 hyper-tls = "0.4"
 jsonwebtoken = "7.2"

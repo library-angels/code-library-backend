@@ -1,0 +1,25 @@
+CREATE TABLE users (
+  id SERIAL PRIMARY KEY,
+  sub VARCHAR(255) NOT NULL UNIQUE,
+  email VARCHAR(50) NOT NULL,
+  given_name VARCHAR(50) NOT NULL,
+  family_name VARCHAR(50) NOT NULL,
+  picture VARCHAR(200) NOT NULL,
+  oauth_access_token VARCHAR(256) NOT NULL,
+  oauth_access_token_valid TIMESTAMP NOT NULL,
+  oauth_refresh_token VARCHAR(256) NOT NULL,
+  active BOOLEAN NOT NULL
+);
+
+CREATE TABLE roles (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(50) NOT NULL,
+  access_manage_books BOOLEAN NOT NULL,
+  access_manage_roles BOOLEAN NOT NULL
+);
+
+CREATE TABLE users_roles (
+  id SERIAL PRIMARY KEY,
+  user_id INTEGER NOT NULL REFERENCES users (id) ON UPDATE CASCADE ON DELETE CASCADE UNIQUE,
+  role_id INTEGER NOT NULL REFERENCES roles (id) ON UPDATE CASCADE ON DELETE CASCADE
+);

@@ -13,6 +13,8 @@ use tokio_serde::formats::Json;
 
 #[macro_use]
 extern crate diesel;
+#[macro_use]
+extern crate diesel_migrations;
 
 mod authentication;
 mod config;
@@ -75,6 +77,9 @@ async fn main() -> io::Result<()> {
             process::exit(1);
         }
     }
+
+    embed_migrations!();
+    helpers::db::run_migration(embedded_migrations::run, &DB.get().unwrap());
 
     tarpc::serde_transport::tcp::listen(&CONFIGURATION.get().unwrap().rpc_socket(), Json::default)
         .await?
