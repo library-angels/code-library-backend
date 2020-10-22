@@ -117,6 +117,7 @@ dependencies = [
  "env_logger",
  "envconfig",
  "futures",
+ "helpers",
  "lazy_static",
  "log",
  "once_cell",
@@ -135,6 +136,7 @@ dependencies = [
  "env_logger",
  "envconfig",
  "futures",
+ "helpers",
  "lazy_static",
  "log",
  "once_cell",
@@ -567,6 +569,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "helpers"
+version = "0.1.0"
+dependencies = [
+ "diesel",
+ "diesel_migrations",
+ "log",
+]
+
+[[package]]
 name = "hermit-abi"
 version = "0.1.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -669,6 +680,7 @@ dependencies = [
  "env_logger",
  "envconfig",
  "futures",
+ "helpers",
  "hyper",
  "hyper-tls",
  "jsonwebtoken",
@@ -946,6 +958,7 @@ dependencies = [
  "env_logger",
  "envconfig",
  "futures",
+ "helpers",
  "lazy_static",
  "log",
  "once_cell",
