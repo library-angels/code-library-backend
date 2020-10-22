@@ -80,7 +80,7 @@ async fn main() -> io::Result<()> {
         .await?
         .filter_map(|r| future::ready(r.ok()))
         .map(server::BaseChannel::with_defaults)
-        .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
+        .max_channels_per_key(11, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(|channel| {
             let server = IdentityServer(channel.as_ref().as_ref().peer_addr().unwrap());
             channel.respond_with(server.serve()).execute()
