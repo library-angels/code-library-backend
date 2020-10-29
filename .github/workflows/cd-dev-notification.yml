@@ -17,7 +17,7 @@ jobs:
                   REPOSITORY: code-library-notification
                   IMAGE_TAG: ${{ github.sha }}
               run: |
-                  docker build -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" notification/
+                  docker build -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" -f notification/Dockerfile .
                   docker image save -o image "$REGISTRY/$REPOSITORY:$IMAGE_TAG"
             - name: 'Upload the Docker image'
               uses: actions/upload-artifact@v2
