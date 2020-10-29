@@ -5,6 +5,7 @@ on:
         paths:
             - 'api/**'
             - 'Cargo.lock'
+            - '**/cd-dev-api.yml'
 
 jobs:
     build:

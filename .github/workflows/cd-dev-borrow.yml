@@ -5,6 +5,7 @@ on:
         paths:
             - 'borrow/**'
             - 'Cargo.lock'
+            - '**/cd-dev-borrow.yml'
 
 jobs:
     build:

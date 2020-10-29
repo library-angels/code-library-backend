@@ -5,6 +5,7 @@ on:
         paths:
             - 'notification/**'
             - 'Cargo.lock'
+            - '**/cd-dev-notification.yml'
 
 jobs:
     build:

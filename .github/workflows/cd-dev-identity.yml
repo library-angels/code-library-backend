@@ -5,6 +5,7 @@ on:
         paths:
             - 'identity/**'
             - 'Cargo.lock'
+            - '**/cd-dev-identity.yml'
 
 jobs:
     build:

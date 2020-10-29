@@ -5,6 +5,7 @@ on:
         paths:
             - 'book/**'
             - 'Cargo.lock'
+            - '**/cd-dev-book.yml'
 
 jobs:
     build:
