@@ -17,7 +17,7 @@ jobs:
                   REPOSITORY: code-library-borrow
                   IMAGE_TAG: ${{ github.sha }}
               run: |
-                  docker build -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" borrow/
+                  docker build -t "$REGISTRY/$REPOSITORY:$IMAGE_TAG" -f borrow/Dockerfile .
                   docker image save -o image "$REGISTRY/$REPOSITORY:$IMAGE_TAG"
             - name: 'Upload the Docker image'
               uses: actions/upload-artifact@v2
