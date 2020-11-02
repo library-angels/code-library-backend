@@ -4,6 +4,7 @@ use warp::{filters::BoxedFilter, Reply};
 mod config;
 mod endpoints;
 mod middleware;
+mod response;
 mod router;
 mod rpc;
 
