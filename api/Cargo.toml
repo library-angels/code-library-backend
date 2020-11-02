@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Markus Merklinger <markus.merklinger@code.berlin>"]
 edition = "2018"
 
+[lib]
+path = "src/lib.rs"
+name = "api_lib"
+
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
 dotenv = "0.15"

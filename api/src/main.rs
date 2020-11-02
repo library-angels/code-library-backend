@@ -1,19 +1,11 @@
-use config::Configuration;
 use dotenv::dotenv;
 use envconfig::Envconfig;
-use once_cell::sync::OnceCell;
 use std::process;
-use warp::Filter;
 
-mod config;
-mod endpoints;
-mod middleware;
-mod router;
-mod rpc;
+use api_lib::{server, Configuration, CONFIGURATION};
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
 
 #[tokio::main]
 async fn main() {
@@ -45,14 +37,7 @@ async fn main() {
         }
     }
 
-    let routes = router::router().with(
-        warp::cors()
-            .allow_any_origin()
-            .allow_methods(vec!["GET", "POST", "DELETE"])
-            .allow_headers(vec!["Content-Type"]),
-    );
-
-    warp::serve(routes)
+    server()
         .try_bind(CONFIGURATION.get().unwrap().http_socket())
         .await;
 }
