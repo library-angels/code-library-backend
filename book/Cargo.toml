@@ -4,6 +4,10 @@ version = "0.1.0"
 authors = ["Markus Merklinger <markus.merklinger@code.berlin>"]
 edition = "2018"
 
+[lib]
+name = "book_lib"
+path = "src/lib.rs"
+
 [dependencies]
 diesel = { version = "1.4", features = ["postgres", "r2d2"] }
 diesel_migrations = "1.4"
