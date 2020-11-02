@@ -3,19 +3,19 @@ use std::net::{IpAddr, SocketAddr};
 
 #[derive(Envconfig, Debug)]
 pub struct Configuration {
-    #[envconfig(from = "DB_HOST_IP")]
+    #[envconfig(from = "DB_HOST_IP", default = "127.0.0.1")]
     db_host_ip: IpAddr,
 
     #[envconfig(from = "DB_PORT", default = "5432")]
     db_port: u16,
 
-    #[envconfig(from = "DB_NAME")]
+    #[envconfig(from = "DB_NAME", default = "postgres")]
     db_name: String,
 
-    #[envconfig(from = "DB_USER")]
+    #[envconfig(from = "DB_USER", default = "postgres")]
     db_user: String,
 
-    #[envconfig(from = "DB_SECRET")]
+    #[envconfig(from = "DB_SECRET", default = "password")]
     db_secret: String,
 
     #[envconfig(from = "RPC_HOST_IP", default = "127.0.0.1")]
