@@ -36,51 +36,30 @@ pub mod session {
 }
 
 pub mod rejection {
-    use http::status::StatusCode;
-    use serde::Serialize;
     use std::convert::Infallible;
-    use warp::{reject, Rejection, Reply};
+    use warp::filters::body::BodyDeserializeError;
+    use warp::{reject, reject::MethodNotAllowed, Rejection, Reply};
+
+    use crate::response;
 
     #[derive(Debug)]
     pub struct NotAuthenticated;
 
     impl reject::Reject for NotAuthenticated {}
 
-    #[derive(Serialize)]
-    struct ErrorMessage {
-        code: u16,
-        message: String,
-    }
-
     pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
-        let code;
-        let message;
-
-        if err.is_not_found() {
-            code = StatusCode::NOT_FOUND;
-            message = "NOT_FOUND";
+        let reply = if err.is_not_found() {
+            response::not_found()
         } else if let Some(_not_authenticated) = err.find::<NotAuthenticated>() {
-            code = StatusCode::UNAUTHORIZED;
-            message = "AUTHENTICATION_REQUIRED";
-        } else if err
-            .find::<warp::filters::body::BodyDeserializeError>()
-            .is_some()
-        {
-            code = StatusCode::BAD_REQUEST;
-            message = "BAD_REQUEST";
-        } else if err.find::<warp::reject::MethodNotAllowed>().is_some() {
-            code = StatusCode::METHOD_NOT_ALLOWED;
-            message = "METHOD_NOT_ALLOWED";
+            response::unauthorized("AUTHENTICATION_REQUIRED")
+        } else if err.find::<BodyDeserializeError>().is_some() {
+            response::bad_request("BAD_REQUEST")
+        } else if err.find::<MethodNotAllowed>().is_some() {
+            response::method_not_allowed()
         } else {
-            code = StatusCode::INTERNAL_SERVER_ERROR;
-            message = "UNHANDLED_REJECTION";
-        }
+            response::internal_server_error()
+        };
 
-        let json = warp::reply::json(&ErrorMessage {
-            code: code.as_u16(),
-            message: message.into(),
-        });
-
-        Ok(warp::reply::with_status(json, code))
+        Ok(reply)
     }
 }
