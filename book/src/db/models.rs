@@ -1,13 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
-pub enum Error {
-    AlreadyExists,
-    InternalError,
-    InvalidData,
-    InvalidInput,
-    NotFound,
-}
+pub use helpers::rpc::Error;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Book {

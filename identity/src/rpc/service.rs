@@ -1,3 +1,7 @@
+use serde::{Deserialize, Serialize};
+
+pub use helpers::rpc::Error;
+
 #[tarpc::service]
 pub trait IdentityService {
     async fn get_user(user_id: u32) -> Result<User, Error>;
@@ -19,17 +23,6 @@ pub trait IdentityService {
     async fn oauth_client_identifier() -> Result<OauthClientIdentifier, Error>;
     async fn oauth_authentication(code: AuthorizationCode) -> Result<SessionToken, Error>;
     async fn session_info(token: String) -> Result<SessionInfo, Error>;
-}
-
-use serde::{Deserialize, Serialize};
-
-#[derive(Debug, Deserialize, Serialize)]
-pub enum Error {
-    NotFound,
-    AlreadyExists,
-    InvalidInput,
-    InvalidData,
-    InternalError,
 }
 
 #[derive(Debug, Deserialize, Serialize)]
