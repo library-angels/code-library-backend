@@ -1,8 +1,7 @@
 use std::net::SocketAddr;
 use tarpc::context;
 
-use crate::db::models::{Book, Error};
-
+use super::models::{Book, Error};
 use super::service::BookService;
 
 #[derive(Clone)]
