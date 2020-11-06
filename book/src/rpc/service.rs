@@ -1,4 +1,4 @@
-use crate::db::models::{Book, Error};
+use super::models::{Book, Error};
 
 #[tarpc::service]
 pub trait BookService {
