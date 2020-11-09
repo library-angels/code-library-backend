@@ -2,10 +2,10 @@ use serde::{Deserialize, Serialize};
 
 pub use helpers::rpc::{Error, RpcResult};
 
-pub(crate) use crate::db::models::Book as RawBook;
+pub use crate::db::models::Book as RawBook;
 pub use crate::db::models::*;
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct Book {
     #[serde(flatten)]
     raw_book: RawBook,
