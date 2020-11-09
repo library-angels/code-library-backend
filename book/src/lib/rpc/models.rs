@@ -6,7 +6,7 @@ pub use crate::db::models::{
     Book as RawBook, Category, Language, Person, Publisher, Series, SubjectArea,
 };
 
-#[derive(Clone, Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct Book {
     #[serde(flatten)]
     raw_book: RawBook,
