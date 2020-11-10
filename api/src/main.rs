@@ -1,6 +1,5 @@
 use dotenv::dotenv;
 use envconfig::Envconfig;
-use std::process;
 
 use api_lib::{server, Configuration, CONFIGURATION};
 
@@ -17,25 +16,11 @@ async fn main() {
     env_logger::init();
     log::info!("Starting service");
 
-    let configuration = {
-        dotenv().ok();
-        match Configuration::init_from_env() {
-            Ok(val) => val,
-            Err(e) => {
-                log::error!("{}", e);
-                log::error!("Terminating because of previous error.");
-                process::exit(1);
-            }
-        }
-    };
-    match CONFIGURATION.set(configuration) {
-        Ok(()) => log::info!("Successfully provided global service configuration"),
-        Err(_) => {
-            log::error!("Failed to provide global service configuration");
-            log::error!("Terminating because of previous error.");
-            process::exit(1);
-        }
-    }
+    dotenv().ok();
+    let conf = Configuration::init_from_env().expect("Error getting configuration from env");
+    CONFIGURATION
+        .set(conf)
+        .expect("Failed to provide global service configuration");
 
     server()
         .try_bind(CONFIGURATION.get().unwrap().http_socket())
