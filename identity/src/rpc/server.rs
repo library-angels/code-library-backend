@@ -14,7 +14,7 @@ pub struct IdentityServer(pub SocketAddr);
 #[tarpc::server]
 impl IdentityService for IdentityServer {
     /// Returns an user
-    async fn get_user(self, _: context::Context, user_id: u32) -> Result<User, Error> {
+    async fn get_user(self, _: context::Context, user_id: u32) -> RpcResult<User> {
         use crate::db::schema::users::dsl;
 
         let result = dsl::users
@@ -43,7 +43,7 @@ impl IdentityService for IdentityServer {
         offset: u32,
         limit: u32,
         user_active: Option<bool>,
-    ) -> Result<Vec<User>, Error> {
+    ) -> RpcResult<Vec<User>> {
         use crate::db::schema::users::dsl;
 
         let results = match user_active {
@@ -77,7 +77,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a role
-    async fn get_role(self, _: context::Context, role_id: u32) -> Result<Role, Error> {
+    async fn get_role(self, _: context::Context, role_id: u32) -> RpcResult<Role> {
         use crate::db::schema::roles::dsl;
 
         let result = dsl::roles
@@ -97,7 +97,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Switches the status of an user account between enabled and disabled
-    async fn update_user(self, _: context::Context, user_update: User) -> Result<User, Error> {
+    async fn update_user(self, _: context::Context, user_update: User) -> RpcResult<User> {
         use crate::db::schema::users::dsl;
 
         let result = diesel::update(dsl::users.find(user_update.id as i32))
@@ -125,7 +125,7 @@ impl IdentityService for IdentityServer {
         _: context::Context,
         offset: u32,
         limit: u32,
-    ) -> Result<Vec<Role>, Error> {
+    ) -> RpcResult<Vec<Role>> {
         use crate::db::schema::roles::dsl;
 
         let results = dsl::roles
@@ -149,11 +149,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns an user role
-    async fn get_user_role(
-        self,
-        _: context::Context,
-        user_role_id: u32,
-    ) -> Result<UserRole, Error> {
+    async fn get_user_role(self, _: context::Context, user_role_id: u32) -> RpcResult<UserRole> {
         use crate::db::schema::users_roles::dsl;
 
         let result = dsl::users_roles
@@ -178,7 +174,7 @@ impl IdentityService for IdentityServer {
         offset: u32,
         limit: u32,
         role_id: Option<u32>,
-    ) -> Result<Vec<UserRole>, Error> {
+    ) -> RpcResult<Vec<UserRole>> {
         use crate::db::schema::users_roles::dsl;
 
         let results = match role_id {
@@ -212,7 +208,7 @@ impl IdentityService for IdentityServer {
         self,
         _: context::Context,
         user_role_update: UserRole,
-    ) -> Result<UserRole, Error> {
+    ) -> RpcResult<UserRole> {
         use crate::db::schema::users_roles::dsl;
 
         let result = diesel::update(dsl::users_roles.find(user_role_update.id as i32))
@@ -234,7 +230,7 @@ impl IdentityService for IdentityServer {
     async fn oauth_client_identifier(
         self,
         _: context::Context,
-    ) -> Result<OauthClientIdentifier, Error> {
+    ) -> RpcResult<OauthClientIdentifier> {
         Ok(OauthClientIdentifier {
             identifier: CONFIGURATION.get().unwrap().oauth_client_identifier.clone(),
         })
@@ -245,7 +241,7 @@ impl IdentityService for IdentityServer {
         self,
         _: context::Context,
         code: AuthorizationCode,
-    ) -> Result<SessionToken, Error> {
+    ) -> RpcResult<SessionToken> {
         use crate::db::schema::users::dsl::*;
 
         let authorization_code = match oauth::AuthorizationCode::new(code) {
@@ -365,7 +361,7 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns the validity and content of a session token
-    async fn session_info(self, _: context::Context, token: String) -> Result<SessionInfo, Error> {
+    async fn session_info(self, _: context::Context, token: String) -> RpcResult<SessionInfo> {
         match Jwt::decode(&CONFIGURATION.get().unwrap().jwt_secret(), &token) {
             Ok(val) => Ok(SessionInfo {
                 sub: val.sub,
