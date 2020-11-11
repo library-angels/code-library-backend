@@ -2,11 +2,9 @@ use diesel::result::Error as DBError;
 use std::net::SocketAddr;
 use tarpc::context;
 
-use super::models::{Book, Error};
+use super::models::{Book, Error, RpcResult};
 use super::service::BookService;
 use crate::db::queries;
-
-pub use helpers::rpc::RpcResult;
 
 #[derive(Clone)]
 pub struct BookServer(pub SocketAddr);
