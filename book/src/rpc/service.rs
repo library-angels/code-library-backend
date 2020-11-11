@@ -1,6 +1,4 @@
-use super::models::Book;
-
-pub use helpers::rpc::RpcResult;
+use super::models::{Book, RpcResult};
 
 #[tarpc::service]
 pub trait BookService {
