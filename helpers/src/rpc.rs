@@ -9,3 +9,5 @@ pub enum Error {
     InvalidInput,
     NotFound,
 }
+
+pub type RpcResult<T> = Result<T, Error>;

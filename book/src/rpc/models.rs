@@ -3,8 +3,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::db::models as db_models;
 
-/// Error type returned to API
-pub use helpers::rpc::Error;
+pub use helpers::rpc::{Error, RpcResult};
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Book {
