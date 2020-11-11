@@ -31,6 +31,7 @@ pub struct Category {
 pub struct Language {
     pub id: i32,
     pub name: String,
+    /// ISO 639-2/B (https://en.wikipedia.org/wiki/ISO_639-2)
     pub iso_code: String,
 }
 
