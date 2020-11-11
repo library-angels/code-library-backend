@@ -10,7 +10,7 @@ RUN cargo install --path api/
 
 
 FROM alpine:latest
-RUN apk --no-cache add libgcc
+RUN apk --no-cache add libgcc libpq
 
 COPY --from=builder /usr/local/cargo/bin/api /usr/local/bin/api
 
