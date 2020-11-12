@@ -36,12 +36,13 @@ fn get_book_authors(book_id: i32) -> QueryResult<Vec<db_models::Person>> {
         .get_results::<db_models::Person>(&get_conn())
 }
 
-fn get_book_series(book_id: i32) -> QueryResult<db_models::Series> {
+fn get_book_series(book_id: i32) -> QueryResult<Option<db_models::Series>> {
     books_series::table
         .filter(books_series::book_id.eq(book_id))
         .inner_join(series::table)
         .select(series::all_columns)
         .get_result::<db_models::Series>(&get_conn())
+        .optional()
 }
 
 fn get_book_subject_areas(book_id: i32) -> QueryResult<Vec<db_models::SubjectArea>> {
