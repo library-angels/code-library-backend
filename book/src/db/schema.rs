@@ -10,7 +10,6 @@ table! {
         category_id -> Int4,
         language_id -> Int4,
         publisher_id -> Int4,
-        series_id -> Int4,
     }
 }
 
@@ -19,6 +18,14 @@ table! {
         id -> Int4,
         book_id -> Int4,
         person_id -> Int4,
+    }
+}
+
+table! {
+    books_series (id) {
+        id -> Int4,
+        book_id -> Int4,
+        series_id -> Int4,
     }
 }
 
@@ -81,9 +88,10 @@ table! {
 joinable!(books -> categories (category_id));
 joinable!(books -> languages (language_id));
 joinable!(books -> publishers (publisher_id));
-joinable!(books -> series (series_id));
 joinable!(books_authors -> books (book_id));
 joinable!(books_authors -> persons (person_id));
+joinable!(books_series -> books (book_id));
+joinable!(books_series -> series (series_id));
 joinable!(books_subject_areas -> books (book_id));
 joinable!(books_subject_areas -> subject_areas (subject_area_id));
 joinable!(series -> publishers (publisher_id));
@@ -91,6 +99,7 @@ joinable!(series -> publishers (publisher_id));
 allow_tables_to_appear_in_same_query!(
     books,
     books_authors,
+    books_series,
     books_subject_areas,
     categories,
     languages,

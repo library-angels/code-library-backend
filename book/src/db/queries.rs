@@ -5,18 +5,16 @@ use super::{get_conn, models as db_models};
 use crate::rpc::models as rpc_models;
 
 pub fn get_book_by_id(book_id: i32) -> QueryResult<rpc_models::Book> {
-    let (raw_book, category, language, publisher, series) = books::table
+    let (raw_book, category, language, publisher) = books::table
         .find(book_id)
         .inner_join(categories::table)
         .inner_join(languages::table)
         .inner_join(publishers::table)
-        .inner_join(series::table)
         .get_result::<(
             db_models::Book,
             db_models::Category,
             db_models::Language,
             db_models::Publisher,
-            db_models::Series,
         )>(&get_conn())?;
 
     Ok(rpc_models::Book::new(
@@ -24,7 +22,7 @@ pub fn get_book_by_id(book_id: i32) -> QueryResult<rpc_models::Book> {
         category,
         language,
         publisher,
-        series,
+        self::get_book_series(book_id)?,
         self::get_book_authors(book_id)?,
         self::get_book_subject_areas(book_id)?,
     ))
@@ -36,6 +34,14 @@ fn get_book_authors(book_id: i32) -> QueryResult<Vec<db_models::Person>> {
         .inner_join(persons::table)
         .select(persons::all_columns)
         .get_results::<db_models::Person>(&get_conn())
+}
+
+fn get_book_series(book_id: i32) -> QueryResult<db_models::Series> {
+    books_series::table
+        .filter(books_series::book_id.eq(book_id))
+        .inner_join(series::table)
+        .select(series::all_columns)
+        .get_result::<db_models::Series>(&get_conn())
 }
 
 fn get_book_subject_areas(book_id: i32) -> QueryResult<Vec<db_models::SubjectArea>> {
