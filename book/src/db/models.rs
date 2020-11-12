@@ -18,7 +18,6 @@ pub struct Book {
     pub category_id: i32,
     pub language_id: i32,
     pub publisher_id: i32,
-    pub series_id: i32,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
