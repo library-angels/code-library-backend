@@ -1,5 +1,6 @@
 use dotenv::dotenv;
 use envconfig::Envconfig;
+use helpers::log::log_error_and_panic;
 
 use api_lib::{server, Configuration, CONFIGURATION};
 
@@ -17,10 +18,14 @@ async fn main() {
     log::info!("Starting service");
 
     dotenv().ok();
-    let conf = Configuration::init_from_env().expect("Error getting configuration from env");
+    let conf = Configuration::init_from_env()
+        .map_err(log_error_and_panic)
+        .unwrap();
+
     CONFIGURATION
         .set(conf)
-        .expect("Failed to provide global service configuration");
+        .map_err(|_| log_error_and_panic("Failed to provide global service configuration"))
+        .unwrap();
 
     server()
         .try_bind(CONFIGURATION.get().unwrap().http_socket())

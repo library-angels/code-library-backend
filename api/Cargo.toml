@@ -15,6 +15,7 @@ dotenv = "0.15"
 env_logger = "0.8"
 envconfig = "0.9"
 futures = "0.3"
+helpers = { path = "../helpers" }
 http = "0.2"
 hyper = "0.13"
 identity = { path = "../identity" }
