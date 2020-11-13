@@ -20,11 +20,11 @@ This module provides pagination for database queries.
 This returns a tuple `(Vec<T>, i64)` with the records of the requested page as the first and the amount of pages in the second element.
 **/
 
-pub trait Paginate: Sized {
+pub trait Paginate: Sized + Query {
     fn paginate(self, page: i64) -> Paginated<Self>;
 }
 
-impl<T> Paginate for T {
+impl<T: Query> Paginate for T {
     fn paginate(self, page: i64) -> Paginated<Self> {
         Paginated {
             query: self,
