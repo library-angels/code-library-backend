@@ -76,7 +76,7 @@ async fn main() -> io::Result<()> {
     let (server, addr) = rpc_server(&CONFIGURATION.get().unwrap().rpc_socket())
         .await
         .unwrap();
-    log::error!("Book RPC Server started on {}", addr);
+    log::info!("Book RPC Server started on {}", addr);
     server.await;
 
     Ok(())
