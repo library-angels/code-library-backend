@@ -1,7 +1,7 @@
 on:
     push:
         branches-ignore:
-            - 'master'
+            - "master"
 
 jobs:
     ci:
@@ -9,7 +9,7 @@ jobs:
         strategy:
             matrix:
                 rust: [stable, beta]
-                conf: [fmt, clippy, check, test]
+                conf: [fmt, clippy, check]
                 experimental: [true, false]
                 exclude:
                     - rust: stable
@@ -17,6 +17,7 @@ jobs:
                     - rust: beta
                       experimental: false
         continue-on-error: ${{ matrix.experimental }}
+
         steps:
             - name: Install Rust toolchain
               uses: actions-rs/toolchain@v1
@@ -34,5 +35,48 @@ jobs:
               run: cargo clippy --all-targets --all-features -- -D warnings
             - if: matrix.conf == 'check'
               run: cargo check --all-targets --all-features
-            - if: matrix.conf == 'test'
-              run: cargo test --all-targets --all-features
+
+    ci-test:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                rust: [stable, beta]
+                experimental: [true, false]
+                exclude:
+                    - rust: stable
+                      experimental: true
+                    - rust: beta
+                      experimental: false
+        continue-on-error: ${{ matrix.experimental }}
+
+        services:
+            postgres:
+                image: postgres:11
+                env:
+                    POSTGRES_PASSWORD: password
+                options: >-
+                    --health-cmd pg_isready
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
+        env:
+            PG_HOST: localhost
+            PG_USER: postgres
+            PG_SECRET: password
+
+        steps:
+            - name: Ping Postgres
+              run: psql postgres://$PG_USER:$PG_SECRET@$PG_HOST -l
+
+            - name: Install Rust toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  override: true
+                  profile: minimal
+                  toolchain: ${{ matrix.rust }}
+
+            - uses: actions/checkout@v2
+
+            - run: cargo test --all-targets --all-features
