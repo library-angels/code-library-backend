@@ -7,6 +7,19 @@ use diesel::QueryId;
 
 const DEFAULT_PER_PAGE: i64 = 10;
 
+/**
+This module provides pagination for database queries.
+
+```
+<schema-module>::table
+    .into_boxed()
+    .paginate(<page>)
+    .per_page(<records-per-page>)
+    .load_and_count_pages(<database-connection>)
+```
+This returns a tuple `(Vec<T>, i64)` with the records of the requested page as the first and the amount of pages in the second element.
+**/
+
 pub trait Paginate: Sized {
     fn paginate(self, page: i64) -> Paginated<Self>;
 }
@@ -29,8 +42,9 @@ pub struct Paginated<T> {
 }
 
 impl<T> Paginated<T> {
-    pub fn per_page(self, per_page: i64) -> Self {
-        Paginated { per_page, ..self }
+    pub fn per_page(mut self, per_page: i64) -> Self {
+        self.per_page = per_page;
+        self
     }
 
     pub fn load_and_count_pages<U>(self, conn: &PgConnection) -> QueryResult<(Vec<U>, i64)>
@@ -56,6 +70,9 @@ impl<T> QueryFragment<Pg> for Paginated<T>
 where
     T: QueryFragment<Pg>,
 {
+    /* Implements the logic of the AST node.
+     * Generated sql: SELECT *, COUNT(*) OVER () FROM (<passed-query>) t LIMIT $1 OFFSET $2;
+     */
     fn walk_ast(&self, mut out: AstPass<Pg>) -> QueryResult<()> {
         out.push_sql("SELECT *, COUNT(*) OVER () FROM (");
         self.query.walk_ast(out.reborrow())?;
