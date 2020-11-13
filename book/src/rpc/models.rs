@@ -22,7 +22,7 @@ pub struct Book {
     pub category: db_models::Category,
     pub language: db_models::Language,
     pub publisher: db_models::Publisher,
-    pub series: db_models::Series,
+    pub series: Option<db_models::Series>,
 
     // many-to-many
     pub authors: Vec<db_models::Person>,
@@ -35,7 +35,7 @@ impl Book {
         category: db_models::Category,
         language: db_models::Language,
         publisher: db_models::Publisher,
-        series: db_models::Series,
+        series: Option<db_models::Series>,
         authors: Vec<db_models::Person>,
         subject_areas: Vec<db_models::SubjectArea>,
     ) -> Self {
