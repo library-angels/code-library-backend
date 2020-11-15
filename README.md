@@ -26,8 +26,8 @@ Specific implementation details about an individual service and how to run it ca
 
 ## 2. Building
 
-There are two supported ways to build the services, either locally (see Chapter: 2.1 Building from Source) or
-inside a Docker container (see Chapter: 2.2 Building with Docker).
+There are two supported ways to build the services, either locally (see [Chapter: 2.1 Building from Source](#21-building-from-source)) or
+inside a Docker container (see [Chapter: 2.2 Building with Docker](#22-building-with-docker)).
 
 
 ### 2.1 Building from Source
@@ -35,7 +35,7 @@ inside a Docker container (see Chapter: 2.2 Building with Docker).
 To build from source, please clone this repository and make sure you have a working
 installation of the Rust compiler and Cargo package manager, minimum version is `1.41`. Please refer to the Rust
 [website](https://www.rust-lang.org/tools/install), to learn more about how to download and install Rust.
-Furthermore, there are required external dependencies (see Chapter: 2.1.1 External Dependencies).
+Furthermore, there are required external dependencies (see [Chapter: 2.1.1 External Dependencies](#211-external-dependencies)).
 
 Each command has to be executed in the repository root directory.
 
