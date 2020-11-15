@@ -10,17 +10,17 @@ The backend consists of five microservices and a helpers library. The source cod
 
 The table below provides an overview of the services.
 
-| Service      | Description                                        |
-| ------------ | -------------------------------------------------- |
-| identity     | Authentication and authorization functionalities.  |
-| book         | Book management functionalities.                   |
-| borrow       | Borrow management functionalities.                 |
-| notification | Notification functionalities (e.g., email, Slack). |
-| api          | REST API for user access.                          |
+| Service                                    | Description                                        |
+| ------------------------------------------ | -------------------------------------------------- |
+| [`identity`](./identity/README.md)         | Authentication and authorization functionalities.  |
+| [`book`](./book/README.md)                 | Book management functionalities.                   |
+| [`borrow`](./borrow/README.md)             | Borrow management functionalities.                 |
+| [`notification`](./notification/README.md) | Notification functionalities (e.g., email, Slack). |
+| [`api`](./api/README.md)                   | REST API for user access.                          |
 
-The helpers library resides in the `directory`.
+The helpers library resides in [`helpers/`](./helpers/).
 
-For more detailed information about how the services work together, refer to `ARCHITECTURE.md`.
+For more detailed information about how the services work together, refer to [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 Specific implementation details about an individual service and how to run it can be found in the `README.md`, of the respective service directory.
 
 
