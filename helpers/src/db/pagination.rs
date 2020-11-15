@@ -7,20 +7,50 @@ use diesel::QueryId;
 
 const DEFAULT_PER_PAGE: i64 = 10;
 
-/**
-This module provides pagination for database queries.
-
-```
-<schema-module>::table
-    .into_boxed()
-    .paginate(<page>)
-    .per_page(<records-per-page>)
-    .load_and_count_pages(<database-connection>)
-```
-This returns a tuple `(Vec<T>, i64)` with the records of the requested page as the first and the amount of pages in the second element.
-**/
-
+/// Provides pagination for database queries.
 pub trait Paginate: Sized + Query {
+    /// Returns a tuple `(Vec<T>, i64)` with the records of the requested page as the first and the amount of pages in the second element.
+    ///
+    /// # Examples
+    /// ```
+    /// # #[macro_use] extern crate diesel;
+    /// # use diesel::prelude::*;
+    /// #
+    /// # mod schema {
+    /// #     table! {
+    /// #         a (id) {
+    /// #             id -> Int4,
+    /// #         }
+    /// #     }
+    /// # }
+    /// #
+    /// # mod models {
+    /// #     #[derive(Queryable)]
+    /// #     pub struct A {
+    /// #         id: i32
+    /// #     }
+    /// # }
+    /// #
+    /// # let tmp_conn = PgConnection::establish("postgres://postgres:password@localhost").unwrap();
+    /// # diesel::sql_query("CREATE DATABASE helpers_db_pagination_doc_comment;").execute(&tmp_conn);
+    /// # let conn = PgConnection::establish("postgres://postgres:password@localhost/helpers_db_pagination_doc_comment").unwrap();
+    /// # diesel::sql_query("CREATE TABLE A(id SERIAL PRIMARY KEY);").execute(&conn);
+    /// #
+    /// use helpers::db::pagination::Paginate;
+    /// use models::A;
+    /// use schema::a;
+    ///
+    /// // items: Vec<A>, num_pages: i64
+    /// let (items, num_pages) = a::table
+    ///     .into_boxed()
+    ///     .paginate(1)  // page number
+    ///     .per_page(10) // items per page (optional, default: 10)
+    ///     .load_and_count_pages::<A>(&conn)
+    ///     .unwrap();
+    ///
+    /// # std::mem::drop(conn);
+    /// # diesel::sql_query("DROP DATABASE helpers_db_pagination_doc_comment;").execute(&tmp_conn);
+    /// ```
     fn paginate(self, page: i64) -> Paginated<Self>;
 }
 
