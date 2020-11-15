@@ -79,8 +79,8 @@ The hooks can be activated for the local Git repository with `git config --local
 
 ## 4. Contributors
 
-| User       | Work done                                                                                                                |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------ |
-| alexeybi   | Database access, book endpoints, tests, CI/CD, GKE                                                                       |
-| code-mm    | Database schema, endpoint setup, logging, CORS, RPC setup, identity endpoints, OAuth 2.0, JWT, tests, CI/CD, refactoring |
-| Urhengulas | Database schema, book endpoints, refactoring, CI/CD                                                                      |
+| User                                  | Work done                                                                                                                |
+| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| [`alexeybi`](github.com/alexeybi)     | Database access, book endpoints, tests, CI/CD, GKE                                                                       |
+| [`code-mm`](github.com/code-mm)       | Database schema, endpoint setup, logging, CORS, RPC setup, identity endpoints, OAuth 2.0, JWT, tests, CI/CD, refactoring |
+| [`urhengulas`](github.com/urhengulas) | Database schema, book endpoints, refactoring, CI/CD                                                                      |
