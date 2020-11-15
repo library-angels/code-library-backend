@@ -12,11 +12,11 @@ The table below provides an overview of the services.
 
 | Service                                    | Description                                        |
 | ------------------------------------------ | -------------------------------------------------- |
-| [`identity`](./identity/README.md)         | Authentication and authorization functionalities.  |
+| [`api`](./api/README.md)                   | REST API for user access.                          |
 | [`book`](./book/README.md)                 | Book management functionalities.                   |
 | [`borrow`](./borrow/README.md)             | Borrow management functionalities.                 |
+| [`identity`](./identity/README.md)         | Authentication and authorization functionalities.  |
 | [`notification`](./notification/README.md) | Notification functionalities (e.g., email, Slack). |
-| [`api`](./api/README.md)                   | REST API for user access.                          |
 
 The helpers library resides in [`helpers/`](./helpers/).
 
