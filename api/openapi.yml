@@ -27,9 +27,7 @@ paths:
                   in: path
                   description: "Database primary key of a book object"
                   required: true
-                  schema:
-                      type: integer
-                      format: u32
+                  schema: { type: integer }
             responses:
                 200:
                     description: Success
