@@ -1,0 +1,169 @@
+openapi: 3.0.3
+info:
+    title: CODE Library Backend
+    description: For most routes you need to authenticate via OAuth 2.0 with your `@code.berlin`-email.
+    version: 0.1.0
+externalDocs:
+    description: GitHub repo
+    url: https://github.com/library-angels/code-library-backend
+
+servers:
+    - url: https://api.dev.library.code.berlin/
+    - url: https://api.library.code.berlin/
+    - url: http://127.0.0.1:8080/
+
+tags:
+    - name: book
+    - name: identity
+    - name: borrow
+paths:
+    /book/{book_id}:
+        get:
+            tags:
+                - book
+            summary: Get specific book
+            parameters:
+                - name: book_id
+                  in: path
+                  description: "Database primary key of a book object"
+                  required: true
+                  schema: { type: integer }
+            responses:
+                200:
+                    description: Success
+                    content:
+                        application/json:
+                            { schema: { $ref: "#/components/schemas/Book" } }
+                400:
+                    description: Request malformed
+                    content:
+                        application/json:
+                            schema:
+                                { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 400, msg: "BAD_REQUEST" }
+                401:
+                    description: Client is not authenticated
+                    content:
+                        application/json:
+                            schema:
+                                { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 401, msg: "UNAUTHORIZED" }
+                403:
+                    description: Client is not allowed to see the resource
+                    content:
+                        application/json:
+                            schema:
+                                { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 403, msg: "FORBIDDEN" }
+                404:
+                    description: Object not available
+                    content:
+                        application/json:
+                            schema:
+                                { $ref: "#/components/schemas/ErrorMessage" }
+                            examples:
+                                generic:
+                                    value: { code: 404, msg: "NOT_AVAILABLE" }
+                                book_id:
+                                    value:
+                                        {
+                                            code: 404,
+                                            msg: "BOOK_ID_NOT_AVAILABLE",
+                                        }
+                500:
+                    description: Internal error
+                    content:
+                        application/json:
+                            schema:
+                                { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
+
+components:
+    schemas:
+        Book:
+            type: object
+            properties:
+                id: { type: integer, example: 42 }
+                code_identifier: { type: string, example: SE101 }
+                isbn:
+                    type: string
+                    minLength: 13
+                    maxLength: 13
+                    example: 1234567891011
+                issn:
+                    type: string
+                    nullable: true
+                    minLength: 8
+                    maxLength: 8
+                    example: null
+                release_date: { type: string, format: date }
+                subtitle:
+                    type: string
+                    nullable: true
+                    example: null
+                title: { type: string, example: The Rust Book }
+                category:
+                    type: object
+                    properties:
+                        id: { type: integer }
+                        name:
+                            type: string
+                            enum: [DH, ID, IS, PM, SE, STS]
+                language:
+                    type: object
+                    properties:
+                        id: { type: integer }
+                        name: { type: string, example: English }
+                        iso_code:
+                            type: string
+                            minLength: 3
+                            maxLength: 3
+                            example: ang
+                publisher:
+                    type: object
+                    properties:
+                        id: { type: integer }
+                        name: { type: string, example: Nostarch Press }
+                series:
+                    type: object
+                    nullable: true
+                    properties:
+                        id: { type: integer }
+                        name: { type: string, example: Rusty Books }
+                        publisher_id: { type: integer }
+                authors:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            id: { type: integer }
+                            first_name: { type: string, example: Ada }
+                            last_name: { type: string, example: Lovelace }
+                            isni:
+                                type: string
+                                minLength: 8
+                                maxLength: 8
+                                nullable: true
+                                example: null
+                            orcid:
+                                type: string
+                                minLength: 8
+                                maxLength: 8
+                                nullable: true
+                                example: null
+                            oclc:
+                                type: integer
+                                nullable: true
+                                example: null
+                subject_areas:
+                    type: array
+                    items:
+                        type: object
+                        properties:
+                            id: { type: integer }
+                            name: { type: string, example: Software }
+        ErrorMessage:
+            type: object
+            properties:
+                code: { type: integer }
+                msg: { type: string }
