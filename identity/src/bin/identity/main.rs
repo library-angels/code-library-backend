@@ -3,8 +3,10 @@ use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
 use futures::{future, prelude::*};
-use identity::config::{Configuration, CONFIGURATION};
-use once_cell::sync::OnceCell;
+use identity::{
+    config::{Configuration, CONFIGURATION},
+    db::DB
+};
 use rpc::server::IdentityServer;
 use rpc::service::IdentityService;
 use std::{io, process};
@@ -12,18 +14,15 @@ use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
 
 #[macro_use]
-extern crate diesel;
-#[macro_use]
 extern crate diesel_migrations;
 
 mod authentication;
-mod db;
 mod rpc;
 mod session;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-static DB: OnceCell<Pool<ConnectionManager<PgConnection>>> = OnceCell::new();
+
 
 #[tokio::main]
 async fn main() -> io::Result<()> {

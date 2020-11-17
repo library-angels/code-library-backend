@@ -1,6 +1,6 @@
 use super::service::*;
 use crate::authentication::oauth;
-use crate::db::models;
+use identity::db::models;
 use crate::session::jwt::Jwt;
 use crate::CONFIGURATION;
 use crate::DB;
@@ -15,7 +15,7 @@ pub struct IdentityServer(pub SocketAddr);
 impl IdentityService for IdentityServer {
     /// Returns an user
     async fn get_user(self, _: context::Context, user_id: u32) -> RpcResult<User> {
-        use crate::db::schema::users::dsl;
+        use identity::db::schema::users::dsl;
 
         let result = dsl::users
             .find(user_id as i32)
@@ -44,7 +44,7 @@ impl IdentityService for IdentityServer {
         limit: u32,
         user_active: Option<bool>,
     ) -> RpcResult<Vec<User>> {
-        use crate::db::schema::users::dsl;
+        use identity::db::schema::users::dsl;
 
         let results = match user_active {
             Some(val) => dsl::users
@@ -78,7 +78,7 @@ impl IdentityService for IdentityServer {
 
     /// Returns a role
     async fn get_role(self, _: context::Context, role_id: u32) -> RpcResult<Role> {
-        use crate::db::schema::roles::dsl;
+        use identity::db::schema::roles::dsl;
 
         let result = dsl::roles
             .find(role_id as i32)
@@ -98,7 +98,7 @@ impl IdentityService for IdentityServer {
 
     /// Switches the status of an user account between enabled and disabled
     async fn update_user(self, _: context::Context, user_update: User) -> RpcResult<User> {
-        use crate::db::schema::users::dsl;
+        use identity::db::schema::users::dsl;
 
         let result = diesel::update(dsl::users.find(user_update.id as i32))
             .set(dsl::active.eq(user_update.active))
@@ -126,7 +126,7 @@ impl IdentityService for IdentityServer {
         offset: u32,
         limit: u32,
     ) -> RpcResult<Vec<Role>> {
-        use crate::db::schema::roles::dsl;
+        use identity::db::schema::roles::dsl;
 
         let results = dsl::roles
             .offset(offset as i64)
@@ -150,7 +150,7 @@ impl IdentityService for IdentityServer {
 
     /// Returns an user role
     async fn get_user_role(self, _: context::Context, user_role_id: u32) -> RpcResult<UserRole> {
-        use crate::db::schema::users_roles::dsl;
+        use identity::db::schema::users_roles::dsl;
 
         let result = dsl::users_roles
             .find(user_role_id as i32)
@@ -175,7 +175,7 @@ impl IdentityService for IdentityServer {
         limit: u32,
         role_id: Option<u32>,
     ) -> RpcResult<Vec<UserRole>> {
-        use crate::db::schema::users_roles::dsl;
+        use identity::db::schema::users_roles::dsl;
 
         let results = match role_id {
             Some(val) => dsl::users_roles
@@ -209,7 +209,7 @@ impl IdentityService for IdentityServer {
         _: context::Context,
         user_role_update: UserRole,
     ) -> RpcResult<UserRole> {
-        use crate::db::schema::users_roles::dsl;
+        use identity::db::schema::users_roles::dsl;
 
         let result = diesel::update(dsl::users_roles.find(user_role_update.id as i32))
             .set(dsl::role_id.eq(user_role_update.role_id as i32))
@@ -242,7 +242,7 @@ impl IdentityService for IdentityServer {
         _: context::Context,
         code: AuthorizationCode,
     ) -> RpcResult<SessionToken> {
-        use crate::db::schema::users::dsl::*;
+        use identity::db::schema::users::dsl::*;
 
         let authorization_code = match oauth::AuthorizationCode::new(code) {
             Ok(val) => val,
