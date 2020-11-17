@@ -9,15 +9,11 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                rust: [stable, beta]
+                rust:
+                    - { toolchain: stable, experimental: false }
+                    - { toolchain: beta, experimental: true }
                 conf: [fmt, clippy, check]
-                experimental: [true, false]
-                exclude:
-                    - rust: stable
-                      experimental: true
-                    - rust: beta
-                      experimental: false
-        continue-on-error: ${{ matrix.experimental }}
+        continue-on-error: ${{ matrix.rust.experimental }}
 
         steps:
             - name: Install Rust toolchain
@@ -26,7 +22,7 @@ jobs:
                   components: rustfmt, clippy
                   override: true
                   profile: minimal
-                  toolchain: ${{ matrix.rust }}
+                  toolchain: ${{ matrix.rust.toolchain }}
 
             - uses: actions/checkout@v2
 
@@ -41,14 +37,10 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                rust: [stable, beta]
-                experimental: [true, false]
-                exclude:
-                    - rust: stable
-                      experimental: true
-                    - rust: beta
-                      experimental: false
-        continue-on-error: ${{ matrix.experimental }}
+                rust:
+                    - { toolchain: stable, experimental: false }
+                    - { toolchain: beta, experimental: true }
+        continue-on-error: ${{ matrix.rust.experimental }}
 
         services:
             postgres:
@@ -76,7 +68,7 @@ jobs:
               with:
                   override: true
                   profile: minimal
-                  toolchain: ${{ matrix.rust }}
+                  toolchain: ${{ matrix.rust.toolchain }}
 
             - uses: actions/checkout@v2
 
