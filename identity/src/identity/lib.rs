@@ -1,3 +1,4 @@
+pub mod authentication;
 pub mod config;
 pub mod db;
 pub mod session;
