@@ -1,10 +1,9 @@
 use super::service::*;
 use crate::authentication::oauth;
-use identity::db::models;
-use crate::session::jwt::Jwt;
 use crate::CONFIGURATION;
 use crate::DB;
 use diesel::prelude::*;
+use identity::{db::models, session::jwt::Jwt};
 use std::{net::SocketAddr, time::Duration, time::SystemTime};
 use tarpc::context;
 

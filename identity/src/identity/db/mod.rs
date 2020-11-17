@@ -1,6 +1,6 @@
 use diesel::{
     prelude::*,
-    r2d2::{ConnectionManager, Pool}
+    r2d2::{ConnectionManager, Pool},
 };
 use once_cell::sync::OnceCell;
 

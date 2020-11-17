@@ -5,7 +5,7 @@ use envconfig::Envconfig;
 use futures::{future, prelude::*};
 use identity::{
     config::{Configuration, CONFIGURATION},
-    db::DB
+    db::DB,
 };
 use rpc::server::IdentityServer;
 use rpc::service::IdentityService;
@@ -18,11 +18,9 @@ extern crate diesel_migrations;
 
 mod authentication;
 mod rpc;
-mod session;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
