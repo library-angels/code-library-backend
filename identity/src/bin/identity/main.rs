@@ -1,9 +1,9 @@
-use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
 use futures::{future, prelude::*};
+use identity::config::{Configuration, CONFIGURATION};
 use once_cell::sync::OnceCell;
 use rpc::server::IdentityServer;
 use rpc::service::IdentityService;
@@ -17,14 +17,12 @@ extern crate diesel;
 extern crate diesel_migrations;
 
 mod authentication;
-mod config;
 mod db;
 mod rpc;
 mod session;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
 static DB: OnceCell<Pool<ConnectionManager<PgConnection>>> = OnceCell::new();
 
 #[tokio::main]
