@@ -1,54 +1,39 @@
 use diesel::prelude::*;
 
+use super::get_conn;
+use super::models::*;
 use super::schema::*;
-use super::{get_conn, models as db_models};
-use crate::rpc::models as rpc_models;
 
-pub fn get_book_by_id(book_id: i32) -> QueryResult<rpc_models::Book> {
-    let (raw_book, category, language, publisher) = books::table
+pub fn get_book_by_id(book_id: i32) -> QueryResult<(Book, Category, Language, Publisher)> {
+    books::table
         .find(book_id)
         .inner_join(categories::table)
         .inner_join(languages::table)
         .inner_join(publishers::table)
-        .get_result::<(
-            db_models::Book,
-            db_models::Category,
-            db_models::Language,
-            db_models::Publisher,
-        )>(&get_conn())?;
-
-    Ok(rpc_models::Book::new(
-        raw_book,
-        category,
-        language,
-        publisher,
-        self::get_book_series(book_id)?,
-        self::get_book_authors(book_id)?,
-        self::get_book_subject_areas(book_id)?,
-    ))
+        .get_result::<(Book, Category, Language, Publisher)>(&get_conn())
 }
 
-fn get_book_authors(book_id: i32) -> QueryResult<Vec<db_models::Person>> {
+pub fn get_book_authors(book_id: i32) -> QueryResult<Vec<Person>> {
     books_authors::table
         .filter(books_authors::book_id.eq(book_id))
         .inner_join(persons::table)
         .select(persons::all_columns)
-        .get_results::<db_models::Person>(&get_conn())
+        .get_results::<Person>(&get_conn())
 }
 
-fn get_book_series(book_id: i32) -> QueryResult<Option<db_models::Series>> {
+pub fn get_book_series(book_id: i32) -> QueryResult<Option<Series>> {
     books_series::table
         .filter(books_series::book_id.eq(book_id))
         .inner_join(series::table)
         .select(series::all_columns)
-        .get_result::<db_models::Series>(&get_conn())
+        .get_result::<Series>(&get_conn())
         .optional()
 }
 
-fn get_book_subject_areas(book_id: i32) -> QueryResult<Vec<db_models::SubjectArea>> {
+pub fn get_book_subject_areas(book_id: i32) -> QueryResult<Vec<SubjectArea>> {
     books_subject_areas::table
         .filter(books_subject_areas::book_id.eq(book_id))
         .inner_join(subject_areas::table)
         .select(subject_areas::all_columns)
-        .get_results::<db_models::SubjectArea>(&get_conn())
+        .get_results::<SubjectArea>(&get_conn())
 }
