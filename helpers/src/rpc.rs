@@ -1,3 +1,4 @@
+use diesel::result::Error as DBError;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -8,6 +9,16 @@ pub enum Error {
     InvalidData,
     InvalidInput,
     NotFound,
+}
+
+impl From<DBError> for Error {
+    fn from(e: DBError) -> Self {
+        log::debug!("{}", e);
+        match e {
+            DBError::NotFound => Error::NotFound,
+            _ => Error::InternalError,
+        }
+    }
 }
 
 pub type RpcResult<T> = Result<T, Error>;
