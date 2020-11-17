@@ -6,17 +6,14 @@ use futures::{future, prelude::*};
 use identity::{
     config::{Configuration, CONFIGURATION},
     db::DB,
+    rpc::{server::IdentityServer, service::IdentityService},
 };
-use rpc::server::IdentityServer;
-use rpc::service::IdentityService;
 use std::{io, process};
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
 
 #[macro_use]
 extern crate diesel_migrations;
-
-mod rpc;
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
