@@ -23,6 +23,7 @@ The helpers library resides in [`helpers/`](./helpers/).
 For more detailed information about how the services work together, refer to [`ARCHITECTURE.md`](./ARCHITECTURE.md).
 Specific implementation details about an individual service and how to run it can be found in the `README.md`, of the respective service directory.
 
+For more details about our cyber security and privacy efforts please refer to [`SECURITY.md`](./SECURITY.md).
 
 ## 2. Building
 
