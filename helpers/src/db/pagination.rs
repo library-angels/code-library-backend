@@ -12,7 +12,8 @@ const DEFAULT_PER_PAGE: i64 = 10;
 /// Provides pagination for database queries.
 pub trait Paginate: Sized + Query {
     /// Returns a tuple `(Vec<T>, i64)` with the records of the requested page as the first and the amount of pages in the second element.
-    /// The methods `.paginate()` and `.per_page()` expect values greater than zero. If a lower value is found, `.load_and_count_pages()` will return a `QueryBuilderError(PaginatedError))` error.
+    ///
+    /// Expects `page > 0`. Else `.load_and_count_pages()` will return `diesel::result::Error::QueryBuilderError(PaginatedError))`.
     ///
     /// # Examples
     /// ```
@@ -75,6 +76,9 @@ pub struct Paginated<T> {
 }
 
 impl<T> Paginated<T> {
+    /// Configure how many items one page should contain.
+    ///
+    /// Expects `per_page > 0`. Else `.load_and_count_pages()` will return `diesel::result::Error::QueryBuilderError(PaginatedError))`.
     pub fn per_page(mut self, per_page: i64) -> Self {
         self.per_page = per_page;
         self
@@ -85,13 +89,11 @@ impl<T> Paginated<T> {
         Self: LoadQuery<PgConnection, (U, i64)>,
     {
         if self.page < 1 {
-            Err(DieselError::QueryBuilderError(Box::new(
-                PaginatedError::PageLessThanZero,
-            )))
+            let err = PaginatedError::PageIndexLessThanZero;
+            Err(DieselError::QueryBuilderError(Box::new(err)))
         } else if self.per_page < 1 {
-            Err(DieselError::QueryBuilderError(Box::new(
-                PaginatedError::PerPageLessThanZero,
-            )))
+            let err = PaginatedError::PerPageLessThanZero;
+            Err(DieselError::QueryBuilderError(Box::new(err)))
         } else {
             let per_page = self.per_page;
             let results = self.load::<(U, i64)>(conn)?;
@@ -105,7 +107,7 @@ impl<T> Paginated<T> {
 
 #[derive(Debug)]
 pub enum PaginatedError {
-    PageLessThanZero,
+    PageIndexLessThanZero,
     PerPageLessThanZero,
 }
 
@@ -118,8 +120,8 @@ impl Error for PaginatedError {
 impl fmt::Display for PaginatedError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            PaginatedError::PageLessThanZero => write!(f, "Page less than zero."),
-            PaginatedError::PerPageLessThanZero => write!(f, "Per page less than zero"),
+            PaginatedError::PageIndexLessThanZero => write!(f, "Page index less than zero."),
+            PaginatedError::PerPageLessThanZero => write!(f, "Per page less than zero."),
         }
     }
 }
