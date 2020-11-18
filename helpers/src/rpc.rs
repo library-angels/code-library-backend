@@ -16,7 +16,7 @@ impl From<DBError> for Error {
         log::debug!("{}", e);
         match e {
             DBError::NotFound => Error::NotFound,
-            DBError::QueryBuilderError(_) => Error::InvalidInput,
+            DBError::QueryBuilderError(_) => Error::InvalidData,
             _ => Error::InternalError,
         }
     }
