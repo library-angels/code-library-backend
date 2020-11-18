@@ -2,14 +2,17 @@ use diesel::pg::Pg;
 use diesel::prelude::*;
 use diesel::query_builder::*;
 use diesel::query_dsl::methods::LoadQuery;
+use diesel::result::Error as DieselError;
 use diesel::sql_types::BigInt;
 use diesel::QueryId;
+use std::{error::Error, fmt};
 
 const DEFAULT_PER_PAGE: i64 = 10;
 
 /// Provides pagination for database queries.
 pub trait Paginate: Sized + Query {
     /// Returns a tuple `(Vec<T>, i64)` with the records of the requested page as the first and the amount of pages in the second element.
+    /// The methods `.paginate()` and `.per_page()` expect values greater than zero. If a lower value is found, `.load_and_count_pages()` will return a `QueryBuilderError(PaginatedError))` error.
     ///
     /// # Examples
     /// ```
@@ -43,8 +46,8 @@ pub trait Paginate: Sized + Query {
     /// // items: Vec<A>, num_pages: i64
     /// let (items, num_pages) = a::table
     ///     .into_boxed()
-    ///     .paginate(1)  // page number
-    ///     .per_page(10) // items per page (optional, default: 10)
+    ///     .paginate(1)  // page number (minimum: 1)
+    ///     .per_page(10) // items per page (optional, default: 10, minimum: 1)
     ///     .load_and_count_pages::<A>(&conn)
     ///     .unwrap();
     ///
@@ -81,12 +84,43 @@ impl<T> Paginated<T> {
     where
         Self: LoadQuery<PgConnection, (U, i64)>,
     {
-        let per_page = self.per_page;
-        let results = self.load::<(U, i64)>(conn)?;
-        let total = results.get(0).map(|x| x.1).unwrap_or(0);
-        let records = results.into_iter().map(|x| x.0).collect();
-        let total_pages = (total as f64 / per_page as f64).ceil() as i64;
-        Ok((records, total_pages))
+        if self.page < 1 {
+            Err(DieselError::QueryBuilderError(Box::new(
+                PaginatedError::PageLessThanZero,
+            )))
+        } else if self.per_page < 1 {
+            Err(DieselError::QueryBuilderError(Box::new(
+                PaginatedError::PerPageLessThanZero,
+            )))
+        } else {
+            let per_page = self.per_page;
+            let results = self.load::<(U, i64)>(conn)?;
+            let total = results.get(0).map(|x| x.1).unwrap_or(0);
+            let records = results.into_iter().map(|x| x.0).collect();
+            let total_pages = (total as f64 / per_page as f64).ceil() as i64;
+            Ok((records, total_pages))
+        }
+    }
+}
+
+#[derive(Debug)]
+pub enum PaginatedError {
+    PageLessThanZero,
+    PerPageLessThanZero,
+}
+
+impl Error for PaginatedError {
+    fn source(&self) -> Option<&(dyn Error + 'static)> {
+        Some(self)
+    }
+}
+
+impl fmt::Display for PaginatedError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            PaginatedError::PageLessThanZero => write!(f, "Page less than zero."),
+            PaginatedError::PerPageLessThanZero => write!(f, "Per page less than zero"),
+        }
     }
 }
 
