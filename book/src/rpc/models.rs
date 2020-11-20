@@ -55,4 +55,16 @@ impl Book {
             subject_areas,
         }
     }
+
+    pub fn push_author(&mut self, a: db_models::Person) {
+        self.authors.push(a);
+    }
+
+    pub fn push_subject_area(&mut self, s: db_models::SubjectArea) {
+        self.subject_areas.push(s);
+    }
+
+    pub fn set_series(&mut self, s: db_models::Series) {
+        self.series = Some(s);
+    }
 }

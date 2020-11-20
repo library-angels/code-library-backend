@@ -4,6 +4,7 @@ use warp::Reply;
 
 use book_lib::models::Error;
 
+use self::models::*;
 use crate::middleware::session::Session;
 use crate::response;
 
@@ -18,4 +19,50 @@ pub async fn get_book_by_id(_: Session, id: u32) -> Result<impl Reply, Infallibl
         }
     }
     Ok(response::internal_server_error())
+}
+
+pub async fn list_books(
+    _: Session,
+    query_params: models::QueryParams,
+) -> Result<impl Reply, Infallible> {
+    let QueryParams { page, page_size } = query_params;
+    if let Ok(mut client) = crate::rpc::book_client().await {
+        if let Ok(rpc_result) = client
+            .list_books(context::current(), page, page_size.unwrap_or(10))
+            .await
+        {
+            match rpc_result {
+                Ok(res) => {
+                    let (book_list, num_pages) = res;
+                    return Ok(response::okay_with_json(&BookList {
+                        book_list,
+                        num_pages,
+                    }));
+                }
+                Err(Error::InvalidData) => {
+                    return Ok(response::bad_request("INVALID_QUERY_PARAMS"))
+                }
+                _ => {}
+            }
+        }
+    }
+    Ok(response::internal_server_error())
+}
+
+mod models {
+    use serde::{Deserialize, Serialize};
+
+    use book_lib::models::Book;
+
+    #[derive(Debug, Deserialize)]
+    pub struct QueryParams {
+        pub page: u32,
+        pub page_size: Option<u32>,
+    }
+
+    #[derive(Debug, Serialize)]
+    pub struct BookList {
+        pub book_list: Vec<Book>,
+        pub num_pages: u32,
+    }
 }
