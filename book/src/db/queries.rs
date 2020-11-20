@@ -4,7 +4,9 @@ use super::get_conn;
 use super::models::*;
 use super::schema::*;
 
-pub fn get_book_by_id(book_id: i32) -> QueryResult<(Book, Category, Language, Publisher)> {
+type RawBookAndArgs = (Book, Category, Language, Publisher);
+
+pub fn get_book_by_id(book_id: i32) -> QueryResult<RawBookAndArgs> {
     books::table
         .find(book_id)
         .inner_join(categories::table)
