@@ -1,12 +1,14 @@
-use super::service::*;
+use diesel::prelude::*;
+use std::net::SocketAddr;
+use std::time::{Duration, SystemTime};
+use tarpc::context;
+
+use super::models::*;
+use super::service::IdentityService;
 use crate::authentication::oauth;
 use crate::db::models;
 use crate::session::jwt::Jwt;
-use crate::CONFIGURATION;
-use crate::DB;
-use diesel::prelude::*;
-use std::{net::SocketAddr, time::Duration, time::SystemTime};
-use tarpc::context;
+use crate::{CONFIGURATION, DB};
 
 #[derive(Clone)]
 pub struct IdentityServer(pub SocketAddr);

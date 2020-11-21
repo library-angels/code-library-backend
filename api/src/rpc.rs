@@ -4,7 +4,7 @@ use tarpc::client;
 use tokio_serde::formats::Json;
 
 use book_lib::service::BookServiceClient;
-use identity_rpc_service::IdentityServiceClient;
+use identity_lib::service::IdentityServiceClient;
 
 use crate::CONFIGURATION;
 

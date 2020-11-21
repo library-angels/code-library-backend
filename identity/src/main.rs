@@ -1,31 +1,18 @@
-use config::Configuration;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
-use futures::{future, prelude::*};
-use once_cell::sync::OnceCell;
-use rpc::server::IdentityServer;
-use rpc::service::IdentityService;
 use std::{io, process};
-use tarpc::server::{self, Channel, Handler};
-use tokio_serde::formats::Json;
 
-#[macro_use]
-extern crate diesel;
 #[macro_use]
 extern crate diesel_migrations;
 
-mod authentication;
-mod config;
-mod db;
-mod rpc;
-mod session;
+use identity_lib::rpc_server;
+use identity_lib::Configuration;
+use identity_lib::{CONFIGURATION, DB};
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
-static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
-static DB: OnceCell<Pool<ConnectionManager<PgConnection>>> = OnceCell::new();
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -81,18 +68,11 @@ async fn main() -> io::Result<()> {
     embed_migrations!();
     helpers::db::run_migration(embedded_migrations::run, &DB.get().unwrap());
 
-    tarpc::serde_transport::tcp::listen(&CONFIGURATION.get().unwrap().rpc_socket(), Json::default)
-        .await?
-        .filter_map(|r| future::ready(r.ok()))
-        .map(server::BaseChannel::with_defaults)
-        .max_channels_per_key(11, |t| t.as_ref().peer_addr().unwrap().ip())
-        .map(|channel| {
-            let server = IdentityServer(channel.as_ref().as_ref().peer_addr().unwrap());
-            channel.respond_with(server.serve()).execute()
-        })
-        .buffer_unordered(10)
-        .for_each(|_| async {})
-        .await;
+    let (server, addr) = rpc_server(&CONFIGURATION.get().unwrap().rpc_socket())
+        .await
+        .unwrap();
+    log::info!("Identity RPC Server started on {}", addr);
+    server.await;
 
     Ok(())
 }

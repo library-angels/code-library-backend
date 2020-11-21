@@ -5,8 +5,8 @@ authors = ["Markus Merklinger <markus.merklinger@code.berlin>"]
 edition = "2018"
 
 [lib]
-name = "identity_rpc_service"
-path = "src/rpc/service.rs"
+name = "identity_lib"
+path = "src/lib.rs"
 
 [dependencies]
 diesel = { version = "1.4", features = ["postgres", "r2d2"] }

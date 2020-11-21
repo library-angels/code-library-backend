@@ -2,7 +2,7 @@ use std::{collections::HashMap, convert::Infallible};
 use tarpc::context;
 use warp::Reply;
 
-use identity_rpc_service::Error;
+use identity_lib::models::Error;
 
 use crate::response;
 
