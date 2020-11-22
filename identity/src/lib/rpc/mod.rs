@@ -4,11 +4,12 @@ pub mod service;
 use std::{io, net::SocketAddr, sync::Arc};
 
 use futures::{future, prelude::*};
+use tarpc::client::Config;
 use tarpc::server::{BaseChannel, Channel, Handler};
 use tokio_serde::formats::Json;
 
 use self::server::IdentityServer;
-use self::service::IdentityService;
+use self::service::{IdentityService, IdentityServiceClient};
 use crate::{config::Configuration, db::Db};
 
 pub async fn rpc_server(
@@ -35,4 +36,12 @@ pub async fn rpc_server(
         .for_each(|_| async {});
 
     Ok((fut, addr))
+}
+
+pub async fn rpc_client(addr: SocketAddr) -> std::io::Result<IdentityServiceClient> {
+    IdentityServiceClient::new(
+        Config::default(),
+        tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
+    )
+    .spawn()
 }

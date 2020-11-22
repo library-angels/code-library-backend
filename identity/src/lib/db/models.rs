@@ -44,3 +44,10 @@ pub struct UserRole {
     pub user_id: i32,
     pub role_id: i32,
 }
+
+#[derive(AsChangeset, Insertable)]
+#[table_name = "users_roles"]
+pub struct UserRoleAddUpdate {
+    pub user_id: i32,
+    pub role_id: i32,
+}

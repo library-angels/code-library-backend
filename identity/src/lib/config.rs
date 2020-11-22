@@ -37,9 +37,13 @@ pub struct Configuration {
 
 impl Configuration {
     pub fn db_connection_url(&self) -> String {
+        format!("{}/{}", self.db_connection_base_url(), self.db_name)
+    }
+
+    pub fn db_connection_base_url(&self) -> String {
         format!(
-            "postgres://{}:{}@{}/{}",
-            self.db_user, self.db_secret, self.db_host_ip, self.db_name
+            "postgres://{}:{}@{}",
+            self.db_user, self.db_secret, self.db_host_ip
         )
     }
 
