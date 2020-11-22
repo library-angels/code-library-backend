@@ -1,16 +1,27 @@
-use std::{net::SocketAddr, time::Duration, time::SystemTime};
+use std::{net::SocketAddr, sync::Arc, time::Duration, time::SystemTime};
 
 use diesel::prelude::*;
+use diesel::r2d2::{ConnectionManager, PooledConnection};
 use tarpc::context;
 
 use super::service::*;
 use crate::authentication::oauth;
-use crate::config::CONFIGURATION;
-use crate::db::{models, DB};
+use crate::config::Configuration;
+use crate::db::{models, Db};
 use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
-pub struct IdentityServer(pub SocketAddr);
+pub struct IdentityServer {
+    pub addr: SocketAddr,
+    pub conf: Arc<Configuration>,
+    pub db: Arc<Db>,
+}
+
+impl IdentityServer {
+    fn get_db(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
+        self.db.get().expect("Can't retrieve connection from pool")
+    }
+}
 
 #[tarpc::server]
 impl IdentityService for IdentityServer {
@@ -20,7 +31,7 @@ impl IdentityService for IdentityServer {
 
         let result = dsl::users
             .find(user_id as i32)
-            .first::<models::User>(&DB.get().unwrap().get().unwrap());
+            .first::<models::User>(&self.get_db());
 
         match result {
             Ok(val) => Ok(User {
@@ -52,11 +63,11 @@ impl IdentityService for IdentityServer {
                 .filter(dsl::active.eq(val))
                 .offset(offset as i64)
                 .limit(limit as i64)
-                .load::<models::User>(&DB.get().unwrap().get().unwrap()),
+                .load::<models::User>(&self.get_db()),
             None => dsl::users
                 .offset(offset as i64)
                 .limit(limit as i64)
-                .load::<models::User>(&DB.get().unwrap().get().unwrap()),
+                .load::<models::User>(&self.get_db()),
         };
 
         match results {
@@ -83,7 +94,7 @@ impl IdentityService for IdentityServer {
 
         let result = dsl::roles
             .find(role_id as i32)
-            .first::<models::Role>(&DB.get().unwrap().get().unwrap());
+            .first::<models::Role>(&self.get_db());
 
         match result {
             Ok(val) => Ok(Role {
@@ -103,7 +114,7 @@ impl IdentityService for IdentityServer {
 
         let result = diesel::update(dsl::users.find(user_update.id as i32))
             .set(dsl::active.eq(user_update.active))
-            .get_result::<models::User>(&DB.get().unwrap().get().unwrap());
+            .get_result::<models::User>(&self.get_db());
 
         match result {
             Ok(val) => Ok(User {
@@ -132,7 +143,7 @@ impl IdentityService for IdentityServer {
         let results = dsl::roles
             .offset(offset as i64)
             .limit(limit as i64)
-            .load::<models::Role>(&DB.get().unwrap().get().unwrap());
+            .load::<models::Role>(&self.get_db());
 
         match results {
             Ok(val) => Ok(val
@@ -155,7 +166,7 @@ impl IdentityService for IdentityServer {
 
         let result = dsl::users_roles
             .find(user_role_id as i32)
-            .first::<models::UserRole>(&DB.get().unwrap().get().unwrap());
+            .first::<models::UserRole>(&self.get_db());
 
         match result {
             Ok(val) => Ok(UserRole {
@@ -183,11 +194,11 @@ impl IdentityService for IdentityServer {
                 .filter(dsl::role_id.eq(val as i32))
                 .offset(offset as i64)
                 .limit(limit as i64)
-                .load::<models::UserRole>(&DB.get().unwrap().get().unwrap()),
+                .load::<models::UserRole>(&self.get_db()),
             None => dsl::users_roles
                 .offset(offset as i64)
                 .limit(limit as i64)
-                .load::<models::UserRole>(&DB.get().unwrap().get().unwrap()),
+                .load::<models::UserRole>(&self.get_db()),
         };
 
         match results {
@@ -214,7 +225,7 @@ impl IdentityService for IdentityServer {
 
         let result = diesel::update(dsl::users_roles.find(user_role_update.id as i32))
             .set(dsl::role_id.eq(user_role_update.role_id as i32))
-            .get_result::<models::UserRole>(&DB.get().unwrap().get().unwrap());
+            .get_result::<models::UserRole>(&self.get_db());
 
         match result {
             Ok(val) => Ok(UserRole {
@@ -233,7 +244,7 @@ impl IdentityService for IdentityServer {
         _: context::Context,
     ) -> RpcResult<OauthClientIdentifier> {
         Ok(OauthClientIdentifier {
-            identifier: CONFIGURATION.get().unwrap().oauth_client_identifier.clone(),
+            identifier: self.conf.oauth_client_identifier.clone(),
         })
     }
 
@@ -252,8 +263,8 @@ impl IdentityService for IdentityServer {
 
         let request = oauth::TokenRequest::new(
             authorization_code,
-            CONFIGURATION.get().unwrap().oauth_client_identifier.clone(),
-            CONFIGURATION.get().unwrap().oauth_client_secret.clone(),
+            self.conf.oauth_client_identifier.clone(),
+            self.conf.oauth_client_secret.clone(),
             oauth::RedirectUri::PostMessage,
             oauth::GrantType::AuthorizationCode,
         );
@@ -277,7 +288,7 @@ impl IdentityService for IdentityServer {
 
         match users
             .filter(sub.eq(&id_token.sub))
-            .get_result::<models::User>(&DB.get().unwrap().get().unwrap())
+            .get_result::<models::User>(&self.get_db())
         {
             Ok(val) => {
                 if !val.active {
@@ -322,7 +333,7 @@ impl IdentityService for IdentityServer {
 
         let user = match diesel::update(users.filter(sub.eq(&user.sub)))
             .set(&user)
-            .get_result::<models::User>(&DB.get().unwrap().get().unwrap())
+            .get_result::<models::User>(&self.get_db())
         {
             Ok(val) => {
                 log::info!("Successfully updated account \"{}\"", &id_token.email);
@@ -331,7 +342,7 @@ impl IdentityService for IdentityServer {
             Err(diesel::result::Error::NotFound) => {
                 match diesel::insert_into(users)
                     .values(&user)
-                    .get_result::<models::User>(&DB.get().unwrap().get().unwrap())
+                    .get_result::<models::User>(&self.get_db())
                 {
                     Ok(val) => {
                         log::info!("Successfully created account \"{}\"", &id_token.email);
@@ -357,13 +368,13 @@ impl IdentityService for IdentityServer {
                 user.picture,
                 3600,
             )
-            .encode(&CONFIGURATION.get().unwrap().jwt_secret()),
+            .encode(&self.conf.jwt_secret()),
         })
     }
 
     /// Returns the validity and content of a session token
     async fn session_info(self, _: context::Context, token: String) -> RpcResult<SessionInfo> {
-        match Jwt::decode(&CONFIGURATION.get().unwrap().jwt_secret(), &token) {
+        match Jwt::decode(&self.conf.jwt_secret(), &token) {
             Ok(val) => Ok(SessionInfo {
                 sub: val.sub,
                 given_name: val.given_name,

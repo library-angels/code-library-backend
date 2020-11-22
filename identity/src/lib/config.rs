@@ -1,11 +1,8 @@
 use std::net::{IpAddr, SocketAddr};
 
 use envconfig::Envconfig;
-use once_cell::sync::OnceCell;
 
-pub static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
-
-#[derive(Envconfig, Debug)]
+#[derive(Envconfig, Debug, Clone)]
 pub struct Configuration {
     #[envconfig(from = "DB_HOST_IP", default = "127.0.0.1")]
     db_host_ip: IpAddr,
