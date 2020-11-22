@@ -6,11 +6,9 @@ pub mod queries;
 pub mod schema;
 
 pub fn get_conn() -> PooledConnection<ConnectionManager<PgConnection>> {
-    match crate::DB.get() {
-        Some(pool) => match pool.get() {
-            Ok(conn) => conn,
-            Err(e) => panic!("Failed to get database connection: {}", e),
-        },
-        None => panic!("No database connection set"),
-    }
+    crate::DB
+        .get()
+        .expect("No database connection set")
+        .get()
+        .expect("Failed to get database connection")
 }
