@@ -1,5 +1,6 @@
-use envconfig::Envconfig;
 use std::net::{IpAddr, SocketAddr};
+
+use envconfig::Envconfig;
 
 #[derive(Envconfig, Debug)]
 pub struct Configuration {

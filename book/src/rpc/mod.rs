@@ -1,14 +1,15 @@
-use futures::{future, prelude::*};
-use std::io;
-use std::net::SocketAddr;
-use tarpc::server::{BaseChannel, Channel, Handler};
-use tokio_serde::formats::Json;
-
 pub mod models;
 pub mod server;
 pub mod service;
 
-use super::{server::BookServer, service::BookService};
+use std::io;
+use std::net::SocketAddr;
+
+use futures::{future, prelude::*};
+use tarpc::server::{BaseChannel, Channel, Handler};
+use tokio_serde::formats::Json;
+
+use self::{server::BookServer, service::BookService};
 
 pub async fn rpc_server(addr: &SocketAddr) -> io::Result<(impl Future<Output = ()>, SocketAddr)> {
     let incoming = tarpc::serde_transport::tcp::listen(addr, Json::default).await?;

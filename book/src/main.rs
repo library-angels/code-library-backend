@@ -1,30 +1,28 @@
+mod config;
+
+use std::{io, process};
+
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
 use once_cell::sync::OnceCell;
-use std::io;
-use std::process;
-
-use book_lib::{rpc_server, DB};
 
 #[macro_use]
 extern crate diesel_migrations;
 
-mod config;
+use book_lib::{rpc_server, DB};
 
 use crate::config::Configuration;
 
-static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
-static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
 static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
     println!(
         "SERVICE: {} | VERSION: {}\n",
-        PKG_NAME.unwrap_or("<unknown>"),
-        PKG_VERSION.unwrap_or("<unknown>")
+        option_env!("CARGO_PKG_NAME").unwrap_or("<unknown>"),
+        option_env!("CARGO_PKG_VERSION").unwrap_or("<unknown>")
     );
     env_logger::init();
     log::info!("Starting service");

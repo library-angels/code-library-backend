@@ -1,9 +1,9 @@
 use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
-use crate::db::models as db_models;
-
 pub use helpers::rpc::{Error, RpcResult};
+
+use crate::db::models as db_models;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Book {
