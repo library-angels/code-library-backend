@@ -67,6 +67,66 @@ paths:
                         application/json:
                             schema: { $ref: "#/components/schemas/ErrorMessage" }
                             example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
+    /book:
+        get:
+            tags: [book]
+            summary: Get (one page of) all books
+            parameters:
+                - name: page
+                  in: query
+                  description: "Index of page"
+                  schema: { type: integer, default: 1 }
+                - name: page_size
+                  in: query
+                  description: "Results per page"
+                  schema: { type: integer, default: 10 }
+            responses:
+                200:
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    page_list:
+                                        type: array
+                                        items: { $ref: "#/components/schemas/Book" }
+                                        minLength: 1
+                                    num_pages: { type: integer, example: 5 }
+                400:
+                    description: Request malformed
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            examples:
+                                generic:
+                                    value: { code: 400, msg: "BAD_REQUEST" }
+                                invalid_query_params:
+                                    value: { code: 404, msg: "INVALID_QUERY_PARAMS" }
+                401:
+                    description: Client is not authenticated
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 401, msg: "UNAUTHORIZED" }
+                403:
+                    description: Client is not allowed to see the resource
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 403, msg: "FORBIDDEN" }
+                404:
+                    description: Object not available
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 404, msg: "NOT_AVAILABLE" }
+                500:
+                    description: Internal error
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
 
 components:
     schemas:
