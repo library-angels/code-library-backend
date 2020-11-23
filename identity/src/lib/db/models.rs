@@ -1,5 +1,6 @@
-use super::schema::*;
 use std::time::SystemTime;
+
+use super::schema::*;
 
 #[derive(Queryable)]
 pub struct User {
