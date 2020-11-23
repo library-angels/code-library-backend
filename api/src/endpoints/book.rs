@@ -28,7 +28,11 @@ pub async fn list_books(
     let QueryParams { page, page_size } = query_params;
     if let Ok(mut client) = crate::rpc::book_client().await {
         if let Ok(rpc_result) = client
-            .list_books(context::current(), page, page_size.unwrap_or(10))
+            .list_books(
+                context::current(),
+                page.unwrap_or(1),
+                page_size.unwrap_or(10),
+            )
             .await
         {
             match rpc_result {
@@ -56,7 +60,7 @@ mod models {
 
     #[derive(Debug, Deserialize)]
     pub struct QueryParams {
-        pub page: u32,
+        pub page: Option<u32>,
         pub page_size: Option<u32>,
     }
 
