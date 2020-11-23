@@ -5,8 +5,8 @@ authors = ["Markus Merklinger <markus.merklinger@code.berlin>"]
 edition = "2018"
 
 [lib]
-name = "book_lib"
-path = "src/lib.rs"
+name = "book"
+path = "src/lib/lib.rs"
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }

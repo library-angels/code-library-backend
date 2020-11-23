@@ -2,7 +2,7 @@ use std::convert::Infallible;
 use tarpc::context;
 use warp::Reply;
 
-use book_lib::models::Error;
+use book::models::Error;
 
 use self::models::*;
 use crate::middleware::session::Session;
@@ -52,7 +52,7 @@ pub async fn list_books(
 mod models {
     use serde::{Deserialize, Serialize};
 
-    use book_lib::models::Book;
+    use book::models::Book;
 
     #[derive(Debug, Deserialize)]
     pub struct QueryParams {
