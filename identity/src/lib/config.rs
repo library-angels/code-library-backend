@@ -1,5 +1,8 @@
 use envconfig::Envconfig;
+use once_cell::sync::OnceCell;
 use std::net::{IpAddr, SocketAddr};
+
+pub static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
 
 #[derive(Envconfig, Debug)]
 pub struct Configuration {

@@ -25,6 +25,7 @@ dependencies = [
  "env_logger",
  "envconfig",
  "futures",
+ "helpers",
  "http",
  "hyper",
  "identity",
