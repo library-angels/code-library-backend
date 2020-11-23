@@ -8,7 +8,7 @@ on:
             - "**/cd-dev-book.yml"
 
 jobs:
-    deploy:
+    build_deploy:
         runs-on: ubuntu-latest
 
         env:
