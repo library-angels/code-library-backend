@@ -1,19 +1,19 @@
+use std::{io, process};
+
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
 use futures::{future, prelude::*};
-use identity::{
-    config::{Configuration, CONFIGURATION},
-    db::DB,
-    rpc::{server::IdentityServer, service::IdentityService},
-};
-use std::{io, process};
 use tarpc::server::{self, Channel, Handler};
 use tokio_serde::formats::Json;
 
 #[macro_use]
 extern crate diesel_migrations;
+
+use identity::config::{Configuration, CONFIGURATION};
+use identity::db::DB;
+use identity::rpc::{server::IdentityServer, service::IdentityService};
 
 static PKG_NAME: Option<&'static str> = option_env!("CARGO_PKG_NAME");
 static PKG_VERSION: Option<&'static str> = option_env!("CARGO_PKG_VERSION");
