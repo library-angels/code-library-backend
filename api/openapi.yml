@@ -19,8 +19,7 @@ tags:
 paths:
     /book/{book_id}:
         get:
-            tags:
-                - book
+            tags: [book]
             summary: Get specific book
             parameters:
                 - name: book_id
@@ -33,49 +32,40 @@ paths:
                     description: Success
                     content:
                         application/json:
-                            { schema: { $ref: "#/components/schemas/Book" } }
+                            schema: { $ref: "#/components/schemas/Book" }
                 400:
                     description: Request malformed
                     content:
                         application/json:
-                            schema:
-                                { $ref: "#/components/schemas/ErrorMessage" }
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
                             example: { code: 400, msg: "BAD_REQUEST" }
                 401:
                     description: Client is not authenticated
                     content:
                         application/json:
-                            schema:
-                                { $ref: "#/components/schemas/ErrorMessage" }
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
                             example: { code: 401, msg: "UNAUTHORIZED" }
                 403:
                     description: Client is not allowed to see the resource
                     content:
                         application/json:
-                            schema:
-                                { $ref: "#/components/schemas/ErrorMessage" }
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
                             example: { code: 403, msg: "FORBIDDEN" }
                 404:
                     description: Object not available
                     content:
                         application/json:
-                            schema:
-                                { $ref: "#/components/schemas/ErrorMessage" }
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
                             examples:
                                 generic:
                                     value: { code: 404, msg: "NOT_AVAILABLE" }
-                                book_id:
-                                    value:
-                                        {
-                                            code: 404,
-                                            msg: "BOOK_ID_NOT_AVAILABLE",
-                                        }
+                                book_id_not_available:
+                                    value: { code: 404, msg: "BOOK_ID_NOT_AVAILABLE" }
                 500:
                     description: Internal error
                     content:
                         application/json:
-                            schema:
-                                { $ref: "#/components/schemas/ErrorMessage" }
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
                             example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
 
 components:
@@ -97,18 +87,13 @@ components:
                     maxLength: 8
                     example: null
                 release_date: { type: string, format: date }
-                subtitle:
-                    type: string
-                    nullable: true
-                    example: null
+                subtitle: { type: string, nullable: true, example: null }
                 title: { type: string, example: The Rust Book }
                 category:
                     type: object
                     properties:
                         id: { type: integer }
-                        name:
-                            type: string
-                            enum: [DH, ID, IS, PM, SE, STS]
+                        name: { type: string, enum: [DH, ID, IS, PM, SE, STS] }
                 language:
                     type: object
                     properties:
@@ -151,10 +136,7 @@ components:
                                 maxLength: 8
                                 nullable: true
                                 example: null
-                            oclc:
-                                type: integer
-                                nullable: true
-                                example: null
+                            oclc: { type: integer, nullable: true, example: null }
                 subject_areas:
                     type: array
                     items:
