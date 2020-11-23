@@ -6,16 +6,13 @@ use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
-use once_cell::sync::OnceCell;
 
 #[macro_use]
 extern crate diesel_migrations;
 
 use book_lib::{rpc_server, DB};
 
-use crate::config::Configuration;
-
-static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
+use self::config::{Configuration, CONFIGURATION};
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
