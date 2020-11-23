@@ -3,7 +3,7 @@ use std::io;
 use tarpc::client;
 use tokio_serde::formats::Json;
 
-use book_lib::service::BookServiceClient;
+use book::service::BookServiceClient;
 use identity::rpc::service::IdentityServiceClient;
 
 use crate::CONFIGURATION;

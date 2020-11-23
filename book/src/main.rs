@@ -10,7 +10,7 @@ use envconfig::Envconfig;
 #[macro_use]
 extern crate diesel_migrations;
 
-use book_lib::{rpc_server, DB};
+use book::{rpc_server, DB};
 
 use self::config::{Configuration, CONFIGURATION};
 
