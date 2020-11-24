@@ -29,7 +29,7 @@ CREATE TABLE series (
 
 CREATE TABLE languages (
     id SERIAL PRIMARY KEY,
-    iso_code VARCHAR(2) UNIQUE NOT NULL,
+    iso_code VARCHAR(3) UNIQUE NOT NULL,
     name VARCHAR(100) NOT NULL
 );
 
