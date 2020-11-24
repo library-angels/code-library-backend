@@ -45,7 +45,7 @@ CREATE TABLE books (
     isbn VARCHAR(13) UNIQUE NOT NULL,
     issn VARCHAR(8),
     release_date DATE NOT NULL,
-    subtitle VARCHAR(100),
+    subtitle VARCHAR(500),
     title VARCHAR(100) NOT NULL,
     -- 
     category_id INTEGER NOT NULL REFERENCES categories (id) ON UPDATE CASCADE ON DELETE RESTRICT,
