@@ -50,8 +50,7 @@ CREATE TABLE books (
     -- 
     category_id INTEGER NOT NULL REFERENCES categories (id) ON UPDATE CASCADE ON DELETE RESTRICT,
     language_id INTEGER NOT NULL REFERENCES languages (id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    publisher_id INTEGER NOT NULL REFERENCES publishers (id) ON UPDATE CASCADE ON DELETE CASCADE,
-    series_id INTEGER NOT NULL REFERENCES series (id) ON UPDATE CASCADE ON DELETE CASCADE
+    publisher_id INTEGER NOT NULL REFERENCES publishers (id) ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE books_subject_areas (
@@ -66,4 +65,12 @@ CREATE TABLE books_authors (
     book_id INTEGER NOT NULL REFERENCES books (id) ON UPDATE CASCADE ON DELETE RESTRICT,
     person_id INTEGER NOT NULL REFERENCES persons (id) ON UPDATE CASCADE ON DELETE RESTRICT,
     UNIQUE(book_id, person_id)
+);
+
+CREATE TABLE books_series (
+    id SERIAL PRIMARY KEY,
+    book_id INTEGER NOT NULL REFERENCES books ON UPDATE CASCADE ON DELETE CASCADE,
+    series_id INTEGER NOT NULL REFERENCES series ON UPDATE CASCADE ON DELETE CASCADE,
+    -- `book_id` set `UNIQUE`, cause we assume that one book will only be part of one series
+    UNIQUE(book_id)
 );
