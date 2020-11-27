@@ -1,10 +1,11 @@
 use chrono::NaiveDate;
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Clone, Debug, Queryable)]
 pub struct Book {
-    pub id: i32,
+    pub id: Uuid,
     /// E.g. `SE20`, `STS5`
     pub code_identifier: String,
     /// International Standard Book Number (https://en.wikipedia.org/wiki/International_Standard_Book_Number)
@@ -17,7 +18,7 @@ pub struct Book {
 
     pub category_id: i32,
     pub language_id: i32,
-    pub publisher_id: i32,
+    pub publisher_id: Uuid,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
@@ -36,7 +37,7 @@ pub struct Language {
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
 pub struct Person {
-    pub id: i32,
+    pub id: Uuid,
     pub first_name: String,
     pub last_name: String,
     pub isni: Option<String>,
@@ -45,19 +46,19 @@ pub struct Person {
 }
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
 pub struct Publisher {
-    pub id: i32,
+    pub id: Uuid,
     pub name: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
 pub struct Series {
-    pub id: i32,
-    pub publisher_id: i32,
+    pub id: Uuid,
+    pub publisher_id: Uuid,
     pub name: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
 pub struct SubjectArea {
-    pub id: i32,
+    pub id: Uuid,
     pub name: String,
 }
