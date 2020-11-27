@@ -39,7 +39,7 @@ pub fn router() -> BoxedFilter<(impl Reply,)> {
             .and_then(book::list_books)
             // GET /book/<book_id>
             .or(middleware::session::authorization()
-                .and(warp::path::param::<u32>())
+                .and(warp::path::param())
                 .and(warp::path::end())
                 .and(warp::get())
                 .and_then(book::get_book_by_id)),
