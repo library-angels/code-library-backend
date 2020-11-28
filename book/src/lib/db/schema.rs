@@ -1,6 +1,6 @@
 table! {
     books (id) {
-        id -> Int4,
+        id -> Uuid,
         code_identifier -> Varchar,
         isbn -> Varchar,
         issn -> Nullable<Varchar>,
@@ -9,31 +9,31 @@ table! {
         title -> Varchar,
         category_id -> Int4,
         language_id -> Int4,
-        publisher_id -> Int4,
+        publisher_id -> Uuid,
     }
 }
 
 table! {
     books_authors (id) {
-        id -> Int4,
-        book_id -> Int4,
-        person_id -> Int4,
+        id -> Uuid,
+        book_id -> Uuid,
+        person_id -> Uuid,
     }
 }
 
 table! {
     books_series (id) {
-        id -> Int4,
-        book_id -> Int4,
-        series_id -> Int4,
+        id -> Uuid,
+        book_id -> Uuid,
+        series_id -> Uuid,
     }
 }
 
 table! {
     books_subject_areas (id) {
-        id -> Int4,
-        book_id -> Int4,
-        subject_area_id -> Int4,
+        id -> Uuid,
+        book_id -> Uuid,
+        subject_area_id -> Uuid,
     }
 }
 
@@ -54,7 +54,7 @@ table! {
 
 table! {
     persons (id) {
-        id -> Int4,
+        id -> Uuid,
         first_name -> Varchar,
         last_name -> Varchar,
         isni -> Nullable<Varchar>,
@@ -65,22 +65,22 @@ table! {
 
 table! {
     publishers (id) {
-        id -> Int4,
+        id -> Uuid,
         name -> Varchar,
     }
 }
 
 table! {
     series (id) {
-        id -> Int4,
-        publisher_id -> Int4,
+        id -> Uuid,
+        publisher_id -> Uuid,
         name -> Varchar,
     }
 }
 
 table! {
     subject_areas (id) {
-        id -> Int4,
+        id -> Uuid,
         name -> Varchar,
     }
 }

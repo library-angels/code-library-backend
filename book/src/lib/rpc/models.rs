@@ -2,12 +2,13 @@ use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 
 pub use helpers::rpc::{Error, RpcResult};
+use helpers::ulid::Ulid;
 
 use crate::db::models as db_models;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Book {
-    pub id: i32,
+    pub id: Ulid,
     /// E.g. SE20, STS5
     pub code_identifier: String,
     /// International Standard Book Number (https://en.wikipedia.org/wiki/International_Standard_Book_Number)

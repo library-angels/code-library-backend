@@ -3,6 +3,8 @@ use std::net::SocketAddr;
 
 use tarpc::context::Context;
 
+use helpers::ulid::Ulid;
+
 use super::models::{Book, RpcResult};
 use super::service::BookService;
 use crate::db::queries;
@@ -12,9 +14,7 @@ pub struct BookServer(pub SocketAddr);
 
 #[tarpc::server]
 impl BookService for BookServer {
-    async fn get_book(self, _: Context, book_id: u32) -> RpcResult<Book> {
-        let book_id = book_id as i32;
-
+    async fn get_book(self, _: Context, book_id: Ulid) -> RpcResult<Book> {
         let (raw_book, category, language, publisher) = queries::get_book_by_id(book_id)?;
 
         Ok(Book::new(
@@ -40,7 +40,7 @@ impl BookService for BookServer {
         let book_ids = book_list.iter().map(|(b, ..)| b.id).collect::<Vec<_>>();
 
         // map book_id to book
-        let mut book_map: HashMap<i32, Book> = HashMap::with_capacity(book_list.len());
+        let mut book_map: HashMap<Ulid, Book> = HashMap::with_capacity(book_list.len());
         for (b, c, l, p) in book_list.into_iter() {
             let new_book = Book::new(b, c, l, p, None, Vec::new(), Vec::new());
             if let Some(err_book) = book_map.insert(new_book.id, new_book) {
@@ -64,8 +64,8 @@ impl BookService for BookServer {
 }
 
 fn sort_vals_into_map<T>(
-    book_map: &mut HashMap<i32, Book>,
-    vec: Vec<(i32, T)>,
+    book_map: &mut HashMap<Ulid, Book>,
+    vec: Vec<(Ulid, T)>,
     push_val_into_book: &mut impl std::ops::FnMut(&mut Book, T),
 ) {
     for (book_id, v) in vec.into_iter() {
