@@ -3,7 +3,8 @@ use serde::{Deserialize, Serialize};
 
 pub use helpers::rpc::{Error, RpcResult};
 
-use crate::db::models as db_models;
+pub(crate) use crate::db::models::Book as RawBook;
+pub use crate::db::models::*;
 
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Book {
@@ -19,25 +20,25 @@ pub struct Book {
     pub title: String,
 
     // one-to-many
-    pub category: db_models::Category,
-    pub language: db_models::Language,
-    pub publisher: db_models::Publisher,
-    pub series: Option<db_models::Series>,
+    pub category: Category,
+    pub language: Language,
+    pub publisher: Publisher,
+    pub series: Option<Series>,
 
     // many-to-many
-    pub authors: Vec<db_models::Person>,
-    pub subject_areas: Vec<db_models::SubjectArea>,
+    pub authors: Vec<Person>,
+    pub subject_areas: Vec<SubjectArea>,
 }
 
 impl Book {
     pub fn new(
-        raw_book: db_models::Book,
-        category: db_models::Category,
-        language: db_models::Language,
-        publisher: db_models::Publisher,
-        series: Option<db_models::Series>,
-        authors: Vec<db_models::Person>,
-        subject_areas: Vec<db_models::SubjectArea>,
+        raw_book: RawBook,
+        category: Category,
+        language: Language,
+        publisher: Publisher,
+        series: Option<Series>,
+        authors: Vec<Person>,
+        subject_areas: Vec<SubjectArea>,
     ) -> Self {
         Self {
             id: raw_book.id,
@@ -56,15 +57,15 @@ impl Book {
         }
     }
 
-    pub fn push_author(&mut self, a: db_models::Person) {
+    pub fn push_author(&mut self, a: Person) {
         self.authors.push(a);
     }
 
-    pub fn push_subject_area(&mut self, s: db_models::SubjectArea) {
+    pub fn push_subject_area(&mut self, s: SubjectArea) {
         self.subject_areas.push(s);
     }
 
-    pub fn set_series(&mut self, s: db_models::Series) {
+    pub fn set_series(&mut self, s: Series) {
         self.series = Some(s);
     }
 }
