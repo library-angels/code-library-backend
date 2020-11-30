@@ -1,18 +1,17 @@
 mod config;
 
-use std::{io, process};
+use std::io;
+use std::sync::Arc;
 
-use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
 use dotenv::dotenv;
 use envconfig::Envconfig;
 
 #[macro_use]
 extern crate diesel_migrations;
 
-use book::{rpc_server, DB};
+use book::{db, rpc_server};
 
-use self::config::{Configuration, CONFIGURATION};
+use self::config::Configuration;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -24,51 +23,16 @@ async fn main() -> io::Result<()> {
     env_logger::init();
     log::info!("Starting service");
 
-    let configuration = {
-        dotenv().ok();
-        match Configuration::init_from_env() {
-            Ok(val) => val,
-            Err(e) => {
-                log::error!("{}", e);
-                log::error!("Terminating because of previous error.");
-                process::exit(1);
-            }
-        }
-    };
-    match CONFIGURATION.set(configuration) {
-        Ok(()) => log::info!("Successfully provided global service configuration"),
-        Err(_) => {
-            log::error!("Failed to provide global service configuration");
-            log::error!("Terminating because of previous error.");
-            process::exit(1);
-        }
-    }
+    dotenv().ok();
+    let configuration = Configuration::init_from_env().unwrap();
 
-    let db: Pool<ConnectionManager<PgConnection>> = {
-        match Pool::new(ConnectionManager::new(
-            CONFIGURATION.get().unwrap().db_connection_url(),
-        )) {
-            Ok(val) => val,
-            Err(e) => {
-                log::error!("{}", e);
-                log::error!("Terminating because of previous error.");
-                process::exit(1);
-            }
-        }
-    };
-    match DB.set(db) {
-        Ok(()) => log::info!("Successfully provided global database connection"),
-        Err(_) => {
-            log::error!("Failed to provide global database connection");
-            log::error!("Terminating because of previous error.");
-            process::exit(1);
-        }
-    }
+    let database_url = configuration.db_connection_url();
+    let db_pool = Arc::new(db::new_db_pool(&*database_url));
 
     embed_migrations!();
-    helpers::db::run_migration(embedded_migrations::run, &DB.get().unwrap());
+    helpers::db::run_migration(embedded_migrations::run, &db_pool);
 
-    let (server, addr) = rpc_server(&CONFIGURATION.get().unwrap().rpc_socket())
+    let (server, addr) = rpc_server(&configuration.rpc_socket(), db_pool)
         .await
         .unwrap();
     log::info!("Book RPC Server started on {}", addr);

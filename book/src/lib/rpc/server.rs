@@ -1,30 +1,46 @@
 use std::collections::HashMap;
 use std::net::SocketAddr;
+use std::sync::Arc;
 
 use tarpc::context::Context;
 
 use super::models::{Book, RpcResult};
 use super::service::BookService;
-use crate::db::queries;
+use crate::db::{queries, DbConn, DbPool};
 
 #[derive(Clone)]
-pub struct BookServer(pub SocketAddr);
+pub struct BookServer {
+    pub addr: SocketAddr,
+    db_pool: Arc<DbPool>,
+}
+
+impl BookServer {
+    pub fn new(addr: SocketAddr, db_pool: Arc<DbPool>) -> Self {
+        Self { addr, db_pool }
+    }
+    pub fn db_conn(&self) -> DbConn {
+        self.db_pool
+            .get()
+            .expect("Failed to retrieve connection from the pool")
+    }
+}
 
 #[tarpc::server]
 impl BookService for BookServer {
     async fn get_book(self, _: Context, book_id: u32) -> RpcResult<Book> {
         let book_id = book_id as i32;
 
-        let (raw_book, category, language, publisher) = queries::get_book_by_id(book_id)?;
+        let (raw_book, category, language, publisher) =
+            queries::get_book_by_id(book_id, &self.db_conn())?;
 
         Ok(Book::new(
             raw_book,
             category,
             language,
             publisher,
-            queries::get_book_series(book_id)?,
-            queries::get_book_authors(book_id)?,
-            queries::get_book_subject_areas(book_id)?,
+            queries::get_book_series(book_id, &self.db_conn())?,
+            queries::get_book_authors(book_id, &self.db_conn())?,
+            queries::get_book_subject_areas(book_id, &self.db_conn())?,
         ))
     }
 
@@ -35,7 +51,8 @@ impl BookService for BookServer {
         page_size: u32,
     ) -> RpcResult<(Vec<Book>, u32)> {
         // get books
-        let (book_list, num_pages) = queries::list_books(page as i64, page_size as i64)?;
+        let (book_list, num_pages) =
+            queries::list_books(page as i64, page_size as i64, &self.db_conn())?;
         // get ids of books
         let book_ids = book_list.iter().map(|(b, ..)| b.id).collect::<Vec<_>>();
 
@@ -49,11 +66,11 @@ impl BookService for BookServer {
         }
 
         // get authors, series, subject_areas for all books
-        let authors = queries::get_authors_of_book_list(&book_ids)?;
+        let authors = queries::get_authors_of_book_list(&book_ids, &self.db_conn())?;
         sort_vals_into_map(&mut book_map, authors, &mut Book::push_author);
-        let series = queries::get_series_of_book_list(&book_ids)?;
+        let series = queries::get_series_of_book_list(&book_ids, &self.db_conn())?;
         sort_vals_into_map(&mut book_map, series, &mut Book::set_series);
-        let subject_areas = queries::get_subject_areas_of_book_list(&book_ids)?;
+        let subject_areas = queries::get_subject_areas_of_book_list(&book_ids, &self.db_conn())?;
         sort_vals_into_map(&mut book_map, subject_areas, &mut Book::push_subject_area);
 
         // disolve map into list of `Book`s (can be simplified with https://github.com/rust-lang/rust/issues/75294)
