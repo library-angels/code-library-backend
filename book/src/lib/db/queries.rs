@@ -9,6 +9,10 @@ use super::DbConn;
 
 type RawBookAndArgs = (Book, Category, Language, Publisher);
 
+type ListResult<T> = QueryResult<Vec<(i32, T)>>;
+type PageResult<T> = QueryResult<(Vec<T>, i64)>;
+type VecResult<T> = QueryResult<Vec<T>>;
+
 /// Get category, language, publisher of a book and the book itself.
 ///
 /// ```sql
@@ -63,7 +67,7 @@ pub fn get_book_by_id(book_id: i32, conn: &DbConn) -> QueryResult<RawBookAndArgs
 /// )
 /// WHERE "books_authors"."book_id" = $1 -- binds: [1]
 /// ```
-pub fn get_book_authors(book_id: i32, conn: &DbConn) -> QueryResult<Vec<Person>> {
+pub fn get_book_authors(book_id: i32, conn: &DbConn) -> VecResult<Person> {
     books_authors::table
         .filter(books_authors::book_id.eq(book_id))
         .inner_join(persons::table)
@@ -103,7 +107,7 @@ pub fn get_book_series(book_id: i32, conn: &DbConn) -> QueryResult<Option<Series
 ///     )
 /// WHERE "books_subject_areas"."book_id" = $1 -- binds: [1]
 /// ```
-pub fn get_book_subject_areas(book_id: i32, conn: &DbConn) -> QueryResult<Vec<SubjectArea>> {
+pub fn get_book_subject_areas(book_id: i32, conn: &DbConn) -> VecResult<SubjectArea> {
     books_subject_areas::table
         .filter(books_subject_areas::book_id.eq(book_id))
         .inner_join(subject_areas::table)
@@ -129,7 +133,7 @@ pub fn get_book_subject_areas(book_id: i32, conn: &DbConn) -> QueryResult<Vec<Su
 ///     )
 /// WHERE "books_authors"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
 /// ```
-pub fn list_authors_of_books(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec<(i32, Person)>> {
+pub fn list_authors_of_books(book_ids: &[i32], conn: &DbConn) -> ListResult<Person> {
     books_authors::table
         .filter(books_authors::book_id.eq(any(book_ids)))
         .inner_join(persons::table)
@@ -171,11 +175,7 @@ pub fn list_authors_of_books(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec
 ///     ) t
 /// LIMIT $1 OFFSET $2 -- binds: [10, 0]
 /// ```
-pub fn list_books(
-    page: i64,
-    page_size: i64,
-    conn: &DbConn,
-) -> QueryResult<(Vec<RawBookAndArgs>, i64)> {
+pub fn list_books(page: i64, page_size: i64, conn: &DbConn) -> PageResult<RawBookAndArgs> {
     books::table
         .inner_join(categories::table)
         .inner_join(languages::table)
@@ -200,7 +200,7 @@ pub fn list_books(
 ///     )
 /// WHERE "books_series"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
 /// ```
-pub fn list_series_of_books(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec<(i32, Series)>> {
+pub fn list_series_of_books(book_ids: &[i32], conn: &DbConn) -> ListResult<Series> {
     books_series::table
         .filter(books_series::book_id.eq(any(book_ids)))
         .inner_join(series::table)
@@ -222,10 +222,7 @@ pub fn list_series_of_books(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec<
 ///     )
 /// WHERE "books_subject_areas"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
 /// ```
-pub fn list_subject_areas_of_books(
-    book_ids: &[i32],
-    conn: &DbConn,
-) -> QueryResult<Vec<(i32, SubjectArea)>> {
+pub fn list_subject_areas_of_books(book_ids: &[i32], conn: &DbConn) -> ListResult<SubjectArea> {
     books_subject_areas::table
         .filter(books_subject_areas::book_id.eq(any(book_ids)))
         .inner_join(subject_areas::table)
