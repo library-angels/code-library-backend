@@ -111,6 +111,32 @@ pub fn get_book_subject_areas(book_id: i32, conn: &DbConn) -> QueryResult<Vec<Su
         .get_results(conn)
 }
 
+/// List all authors for any of the books.
+///
+/// Returns a `Vec<(i32, Person)>`, where the `i32` is the `book_id`.
+///
+/// ```sql
+/// SELECT "books_authors"."book_id",
+///     "persons"."id",
+///     "persons"."first_name",
+///     "persons"."last_name",
+///     "persons"."isni",
+///     "persons"."orcid",
+///     "persons"."oclc"
+/// FROM (
+///         "books_authors"
+///         INNER JOIN "persons" ON "books_authors"."person_id" = "persons"."id"
+///     )
+/// WHERE "books_authors"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
+/// ```
+pub fn list_authors_of_books(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec<(i32, Person)>> {
+    books_authors::table
+        .filter(books_authors::book_id.eq(any(book_ids)))
+        .inner_join(persons::table)
+        .select((books_authors::book_id, persons::all_columns))
+        .get_results(conn)
+}
+
 /// List (one page of) all books.
 ///
 /// ```sql
@@ -159,36 +185,7 @@ pub fn list_books(
         .load_and_count_pages(conn)
 }
 
-/// Get all authors for any of the books.
-///
-/// Returns a `Vec<(i32, Person)>`, where the `i32` is the `book_id`.
-///
-/// ```sql
-/// SELECT "books_authors"."book_id",
-///     "persons"."id",
-///     "persons"."first_name",
-///     "persons"."last_name",
-///     "persons"."isni",
-///     "persons"."orcid",
-///     "persons"."oclc"
-/// FROM (
-///         "books_authors"
-///         INNER JOIN "persons" ON "books_authors"."person_id" = "persons"."id"
-///     )
-/// WHERE "books_authors"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
-/// ```
-pub fn get_authors_of_book_list(
-    book_ids: &[i32],
-    conn: &DbConn,
-) -> QueryResult<Vec<(i32, Person)>> {
-    books_authors::table
-        .filter(books_authors::book_id.eq(any(book_ids)))
-        .inner_join(persons::table)
-        .select((books_authors::book_id, persons::all_columns))
-        .get_results(conn)
-}
-
-/// Get all series for any of the books.
+/// List all series for any of the books.
 ///
 /// Returns a `Vec<(i32, Series)>`, where the `i32` is the `book_id`.
 ///
@@ -203,7 +200,7 @@ pub fn get_authors_of_book_list(
 ///     )
 /// WHERE "books_series"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
 /// ```
-pub fn get_series_of_book_list(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec<(i32, Series)>> {
+pub fn list_series_of_books(book_ids: &[i32], conn: &DbConn) -> QueryResult<Vec<(i32, Series)>> {
     books_series::table
         .filter(books_series::book_id.eq(any(book_ids)))
         .inner_join(series::table)
@@ -211,7 +208,7 @@ pub fn get_series_of_book_list(book_ids: &[i32], conn: &DbConn) -> QueryResult<V
         .get_results(conn)
 }
 
-/// Get all subject areas for any of the books.
+/// List all subject areas for any of the books.
 ///
 /// Returns a `Vec<(i32, SubjectArea)>`, where the `i32` is the `book_id`.
 ///
@@ -225,7 +222,7 @@ pub fn get_series_of_book_list(book_ids: &[i32], conn: &DbConn) -> QueryResult<V
 ///     )
 /// WHERE "books_subject_areas"."book_id" = ANY($1) -- binds: [[1, 2, 3]]
 /// ```
-pub fn get_subject_areas_of_book_list(
+pub fn list_subject_areas_of_books(
     book_ids: &[i32],
     conn: &DbConn,
 ) -> QueryResult<Vec<(i32, SubjectArea)>> {
