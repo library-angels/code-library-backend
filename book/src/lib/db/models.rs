@@ -29,9 +29,9 @@ pub struct Category {
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
 pub struct Language {
     pub id: i32,
-    pub name: String,
     /// ISO 639-2/B (https://en.wikipedia.org/wiki/ISO_639-2)
     pub iso_code: String,
+    pub name: String,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
