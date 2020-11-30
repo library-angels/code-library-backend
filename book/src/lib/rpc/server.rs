@@ -66,11 +66,11 @@ impl BookService for BookServer {
         }
 
         // get authors, series, subject_areas for all books
-        let authors = queries::get_authors_of_book_list(&book_ids, &self.db_conn())?;
+        let authors = queries::list_authors_of_books(&book_ids, &self.db_conn())?;
         sort_vals_into_map(&mut book_map, authors, &mut Book::push_author);
-        let series = queries::get_series_of_book_list(&book_ids, &self.db_conn())?;
+        let series = queries::list_series_of_books(&book_ids, &self.db_conn())?;
         sort_vals_into_map(&mut book_map, series, &mut Book::set_series);
-        let subject_areas = queries::get_subject_areas_of_book_list(&book_ids, &self.db_conn())?;
+        let subject_areas = queries::list_subject_areas_of_books(&book_ids, &self.db_conn())?;
         sort_vals_into_map(&mut book_map, subject_areas, &mut Book::push_subject_area);
 
         // disolve map into list of `Book`s (can be simplified with https://github.com/rust-lang/rust/issues/75294)
