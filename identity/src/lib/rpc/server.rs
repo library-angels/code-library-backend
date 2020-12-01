@@ -11,7 +11,7 @@ use helpers::rpc::{Error, RpcResult};
 use super::{models::*, service::IdentityService};
 use crate::authentication::oauth;
 use crate::config::Configuration;
-use crate::db::{models, DbPool};
+use crate::db::{models, queries, DbPool};
 use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
@@ -41,11 +41,7 @@ impl IdentityServer {
 impl IdentityService for IdentityServer {
     /// Returns an user
     async fn get_user(self, _: context::Context, user_id: u32) -> RpcResult<User> {
-        use crate::db::schema::users::dsl;
-
-        let result = dsl::users
-            .find(user_id as i32)
-            .first::<models::User>(&self.get_db());
+        let result = queries::get_user(user_id as i32, &self.get_db());
 
         match result {
             Ok(val) => Ok(User {
@@ -70,19 +66,7 @@ impl IdentityService for IdentityServer {
         limit: u32,
         user_active: Option<bool>,
     ) -> RpcResult<Vec<User>> {
-        use crate::db::schema::users::dsl;
-
-        let results = match user_active {
-            Some(val) => dsl::users
-                .filter(dsl::active.eq(val))
-                .offset(offset as i64)
-                .limit(limit as i64)
-                .load::<models::User>(&self.get_db()),
-            None => dsl::users
-                .offset(offset as i64)
-                .limit(limit as i64)
-                .load::<models::User>(&self.get_db()),
-        };
+        let results = queries::list_users(limit.into(), offset.into(), user_active, &self.get_db());
 
         match results {
             Ok(val) => Ok(val
@@ -104,11 +88,7 @@ impl IdentityService for IdentityServer {
 
     /// Returns a role
     async fn get_role(self, _: context::Context, role_id: u32) -> RpcResult<Role> {
-        use crate::db::schema::roles::dsl;
-
-        let result = dsl::roles
-            .find(role_id as i32)
-            .first::<models::Role>(&self.get_db());
+        let result = queries::get_role(role_id as i32, &self.get_db());
 
         match result {
             Ok(val) => Ok(Role {
@@ -124,11 +104,7 @@ impl IdentityService for IdentityServer {
 
     /// Switches the status of an user account between enabled and disabled
     async fn update_user(self, _: context::Context, user_update: User) -> RpcResult<User> {
-        use crate::db::schema::users::dsl;
-
-        let result = diesel::update(dsl::users.find(user_update.id as i32))
-            .set(dsl::active.eq(user_update.active))
-            .get_result::<models::User>(&self.get_db());
+        let result = queries::update_user(user_update.into(), &self.get_db());
 
         match result {
             Ok(val) => Ok(User {
@@ -152,12 +128,7 @@ impl IdentityService for IdentityServer {
         offset: u32,
         limit: u32,
     ) -> RpcResult<Vec<Role>> {
-        use crate::db::schema::roles::dsl;
-
-        let results = dsl::roles
-            .offset(offset as i64)
-            .limit(limit as i64)
-            .load::<models::Role>(&self.get_db());
+        let results = queries::list_roles(offset.into(), limit.into(), &self.get_db());
 
         match results {
             Ok(val) => Ok(val
@@ -176,11 +147,7 @@ impl IdentityService for IdentityServer {
 
     /// Returns an user role
     async fn get_user_role(self, _: context::Context, user_role_id: u32) -> RpcResult<UserRole> {
-        use crate::db::schema::users_roles::dsl;
-
-        let result = dsl::users_roles
-            .find(user_role_id as i32)
-            .first::<models::UserRole>(&self.get_db());
+        let result = queries::get_user_role(user_role_id as i32, &self.get_db());
 
         match result {
             Ok(val) => Ok(UserRole {
@@ -201,18 +168,14 @@ impl IdentityService for IdentityServer {
         limit: u32,
         role_id: Option<u32>,
     ) -> RpcResult<Vec<UserRole>> {
-        use crate::db::schema::users_roles::dsl;
-
         let results = match role_id {
-            Some(val) => dsl::users_roles
-                .filter(dsl::role_id.eq(val as i32))
-                .offset(offset as i64)
-                .limit(limit as i64)
-                .load::<models::UserRole>(&self.get_db()),
-            None => dsl::users_roles
-                .offset(offset as i64)
-                .limit(limit as i64)
-                .load::<models::UserRole>(&self.get_db()),
+            Some(val) => queries::list_user_roles(
+                offset.into(),
+                limit.into(),
+                Some(val as i32),
+                &self.get_db(),
+            ),
+            None => queries::list_user_roles(offset.into(), limit.into(), None, &self.get_db()),
         };
 
         match results {
@@ -235,11 +198,7 @@ impl IdentityService for IdentityServer {
         _: context::Context,
         user_role_update: UserRole,
     ) -> RpcResult<UserRole> {
-        use crate::db::schema::users_roles::dsl;
-
-        let result = diesel::update(dsl::users_roles.find(user_role_update.id as i32))
-            .set(dsl::role_id.eq(user_role_update.role_id as i32))
-            .get_result::<models::UserRole>(&self.get_db());
+        let result = queries::update_user_role(user_role_update.into(), &self.get_db());
 
         match result {
             Ok(val) => Ok(UserRole {
@@ -354,10 +313,7 @@ impl IdentityService for IdentityServer {
                 val
             }
             Err(diesel::result::Error::NotFound) => {
-                match diesel::insert_into(users)
-                    .values(&user)
-                    .get_result::<models::User>(&self.get_db())
-                {
+                match queries::create_user(user, &self.get_db()) {
                     Ok(val) => {
                         log::info!("Successfully created account \"{}\"", &id_token.email);
                         val
