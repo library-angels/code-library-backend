@@ -2,15 +2,15 @@ use std::env::set_var;
 use std::sync::Arc;
 
 use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
 use envconfig::Envconfig;
 use tarpc::context;
 
 use helpers::rpc::Error;
+use identity::db::db_pool;
 use identity::db::schema::{users::dsl::users, users_roles::dsl::users_roles};
 use identity::rpc::models::{Role, SessionInfo, User, UserRole};
 use identity::rpc::{rpc_client, rpc_server, service::IdentityServiceClient};
-use identity::{config::Configuration, db::DbPool, session::jwt::Jwt};
+use identity::{config::Configuration, session::jwt::Jwt};
 
 mod sample_data;
 
@@ -105,8 +105,7 @@ async fn setup(
     let configuration = Arc::new(get_test_configuration());
     let db_test_context =
         DbTestContext::new(configuration.db_connection_base_url(), test_context_name);
-    let db: Arc<DbPool> =
-        Arc::new(Pool::new(ConnectionManager::new(db_test_context.get_connection_url())).unwrap());
+    let db = Arc::new(db_pool(&db_test_context.get_connection_url()));
     let (server, socket) = rpc_server(
         configuration.rpc_socket(),
         configuration.clone(),
