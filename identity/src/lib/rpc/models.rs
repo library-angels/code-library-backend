@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+pub type AuthorizationCode = String;
+
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct User {
     pub id: i32,
@@ -30,8 +32,6 @@ pub struct UserRole {
 pub struct OauthClientIdentifier {
     pub identifier: String,
 }
-
-pub type AuthorizationCode = String;
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct SessionToken {
