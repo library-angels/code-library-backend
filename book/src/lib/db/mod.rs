@@ -1,16 +1,14 @@
-pub mod models;
-pub mod queries;
-pub mod schema;
+pub(crate) mod models;
+pub(crate) mod queries;
+pub(crate) mod schema;
 
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel::PgConnection;
-use once_cell::sync::OnceCell;
 
-pub static DB: OnceCell<Pool<ConnectionManager<PgConnection>>> = OnceCell::new();
+pub type DbPool = Pool<ConnectionManager<PgConnection>>;
+pub type DbConn = PooledConnection<ConnectionManager<PgConnection>>;
 
-pub fn get_conn() -> PooledConnection<ConnectionManager<PgConnection>> {
-    DB.get()
-        .expect("No database connection set")
-        .get()
-        .expect("Failed to get database connection")
+pub fn new_db_pool(database_url: &str) -> DbPool {
+    Pool::new(ConnectionManager::new(database_url))
+        .expect("Failed creating new database connection")
 }
