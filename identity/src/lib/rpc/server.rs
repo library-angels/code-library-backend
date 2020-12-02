@@ -11,19 +11,21 @@ use helpers::rpc::{Error, RpcResult};
 use super::{models::*, service::IdentityService};
 use crate::authentication::oauth;
 use crate::config::Configuration;
-use crate::db::{models, Db};
+use crate::db::{models, DbPool};
 use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
 pub struct IdentityServer {
     pub addr: SocketAddr,
     pub conf: Arc<Configuration>,
-    pub db: Arc<Db>,
+    pub db_pool: Arc<DbPool>,
 }
 
 impl IdentityServer {
     fn get_db(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
-        self.db.get().expect("Can't retrieve connection from pool")
+        self.db_pool
+            .get()
+            .expect("Can't retrieve connection from pool")
     }
 }
 

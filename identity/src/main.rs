@@ -8,7 +8,7 @@ use envconfig::Envconfig;
 extern crate diesel_migrations;
 
 use identity::config::Configuration;
-use identity::db::Db;
+use identity::db::DbPool;
 use identity::rpc::rpc_server;
 
 #[tokio::main]
@@ -33,7 +33,7 @@ async fn main() -> io::Result<()> {
         }
     };
 
-    let db: Arc<Db> = {
+    let db: Arc<DbPool> = {
         match Pool::new(ConnectionManager::new(configuration.db_connection_url())) {
             Ok(val) => Arc::new(val),
             Err(e) => {

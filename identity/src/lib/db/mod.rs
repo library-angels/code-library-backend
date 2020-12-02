@@ -2,6 +2,7 @@ pub mod models;
 pub mod schema;
 
 use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool};
+use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 
-pub type Db = Pool<ConnectionManager<PgConnection>>;
+pub type DbPool = Pool<ConnectionManager<PgConnection>>;
+pub type DbConn = PooledConnection<ConnectionManager<PgConnection>>;
