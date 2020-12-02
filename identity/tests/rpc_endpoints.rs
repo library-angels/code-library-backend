@@ -10,7 +10,7 @@ use helpers::rpc::Error;
 use identity::db::schema::{users::dsl::users, users_roles::dsl::users_roles};
 use identity::rpc::models::{Role, SessionInfo, User, UserRole};
 use identity::rpc::{rpc_client, rpc_server, service::IdentityServiceClient};
-use identity::{config::Configuration, db::Db, session::jwt::Jwt};
+use identity::{config::Configuration, db::DbPool, session::jwt::Jwt};
 
 mod sample_data;
 
@@ -105,7 +105,7 @@ async fn setup(
     let configuration = Arc::new(get_test_configuration());
     let db_test_context =
         DbTestContext::new(configuration.db_connection_base_url(), test_context_name);
-    let db: Arc<Db> =
+    let db: Arc<DbPool> =
         Arc::new(Pool::new(ConnectionManager::new(db_test_context.get_connection_url())).unwrap());
     let (server, socket) = rpc_server(
         configuration.rpc_socket(),
