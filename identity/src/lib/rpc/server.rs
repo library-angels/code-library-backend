@@ -6,7 +6,9 @@ use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, PooledConnection};
 use tarpc::context;
 
-use super::service::*;
+use helpers::rpc::{Error, RpcResult};
+
+use super::{models::*, service::IdentityService};
 use crate::authentication::oauth;
 use crate::config::Configuration;
 use crate::db::{models, Db};
