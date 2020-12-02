@@ -723,6 +723,7 @@ dependencies = [
  "once_cell",
  "serde",
  "serde_json",
+ "stdext",
  "tarpc",
  "tokio",
  "tokio-serde",
@@ -1678,6 +1679,12 @@ name = "static_assertions"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a2eb9349b6444b326872e140eb1cf5e7c522154d69e7a0ffb0fb81c06b37543f"
+
+[[package]]
+name = "stdext"
+version = "0.2.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4a61b4ae487cb43d0479907e74d36f8813e9940bd3b1adcbecc69fe8a0cee3ec"
 
 [[package]]
 name = "syn"

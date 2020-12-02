@@ -22,7 +22,7 @@ pub trait IdentityService {
     async fn session_info(token: String) -> RpcResult<SessionInfo>;
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct User {
     pub id: i32,
     pub sub: String,
@@ -33,7 +33,7 @@ pub struct User {
     pub active: bool,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct Role {
     pub id: i32,
     pub name: String,
@@ -41,26 +41,26 @@ pub struct Role {
     pub access_manage_roles: bool,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct UserRole {
     pub id: i32,
     pub user_id: i32,
     pub role_id: i32,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct OauthClientIdentifier {
     pub identifier: String,
 }
 
 pub type AuthorizationCode = String;
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct SessionToken {
     pub token: String,
 }
 
-#[derive(Debug, Deserialize, Serialize)]
+#[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct SessionInfo {
     pub sub: u32,
     pub given_name: String,

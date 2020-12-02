@@ -1,4 +1,6 @@
-use std::{net::SocketAddr, sync::Arc, time::Duration, time::SystemTime};
+use std::net::SocketAddr;
+use std::sync::Arc;
+use std::time::{Duration, SystemTime};
 
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, PooledConnection};
