@@ -1,12 +1,9 @@
-use std::{io, process, sync::Arc};
-
-use dotenv::dotenv;
-use envconfig::Envconfig;
+use std::{io, sync::Arc};
 
 #[macro_use]
 extern crate diesel_migrations;
 
-use identity::config::Configuration;
+use identity::config::{configuration, Configuration};
 use identity::db::{db_pool, DbPool};
 use identity::rpc::rpc_server;
 
@@ -20,17 +17,7 @@ async fn main() -> io::Result<()> {
     env_logger::init();
     log::info!("Starting service");
 
-    let configuration: Arc<Configuration> = {
-        dotenv().ok();
-        match Configuration::init_from_env() {
-            Ok(val) => Arc::new(val),
-            Err(e) => {
-                log::error!("{}", e);
-                log::error!("Terminating because of previous error.");
-                process::exit(1);
-            }
-        }
-    };
+    let configuration: Arc<Configuration> = Arc::new(configuration());
 
     let db_pool: Arc<DbPool> = Arc::new(db_pool(&configuration.db_connection_url()));
 
