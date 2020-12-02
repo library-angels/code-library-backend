@@ -1,4 +1,4 @@
-use std::time::SystemTime;
+use chrono::NaiveDateTime;
 
 use super::schema::*;
 
@@ -11,7 +11,7 @@ pub struct User {
     pub family_name: String,
     pub picture: String,
     pub oauth_access_token: String,
-    pub oauth_access_token_valid: SystemTime,
+    pub oauth_access_token_valid: NaiveDateTime,
     pub oauth_refresh_token: String,
     pub active: bool,
 }
@@ -25,7 +25,7 @@ pub struct UserAddUpdate {
     pub family_name: String,
     pub picture: String,
     pub oauth_access_token: String,
-    pub oauth_access_token_valid: SystemTime,
+    pub oauth_access_token_valid: NaiveDateTime,
     pub oauth_refresh_token: Option<String>,
     pub active: bool,
 }
