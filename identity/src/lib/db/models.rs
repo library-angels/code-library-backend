@@ -3,7 +3,7 @@ use chrono::{NaiveDateTime, Utc};
 use super::schema::*;
 use crate::rpc::models as RpcModels;
 
-#[derive(Queryable)]
+#[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct User {
     pub id: i32,
     pub sub: String,
@@ -34,7 +34,7 @@ impl From<RpcModels::User> for User {
     }
 }
 
-#[derive(AsChangeset, Insertable)]
+#[derive(Clone, Debug, AsChangeset, Insertable, PartialEq)]
 #[table_name = "users"]
 pub struct UserAddUpdate {
     pub sub: String,
@@ -48,7 +48,7 @@ pub struct UserAddUpdate {
     pub active: bool,
 }
 
-#[derive(Queryable)]
+#[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct Role {
     pub id: i32,
     pub name: String,
@@ -56,7 +56,7 @@ pub struct Role {
     pub access_manage_roles: bool,
 }
 
-#[derive(Queryable)]
+#[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct UserRole {
     pub id: i32,
     pub user_id: i32,
@@ -73,7 +73,7 @@ impl From<RpcModels::UserRole> for UserRole {
     }
 }
 
-#[derive(AsChangeset, Insertable)]
+#[derive(Clone, Debug, AsChangeset, Insertable, PartialEq)]
 #[table_name = "users_roles"]
 pub struct UserRoleAddUpdate {
     pub user_id: i32,
