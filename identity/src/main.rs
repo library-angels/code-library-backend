@@ -3,6 +3,7 @@ use std::{io, sync::Arc};
 #[macro_use]
 extern crate diesel_migrations;
 
+use helpers::db::run_migration;
 use identity::{config::configuration, db::db_pool, rpc::rpc_server};
 
 #[tokio::main]
@@ -20,7 +21,7 @@ async fn main() -> io::Result<()> {
     let db_pool = db_pool(&configuration.db_connection_url());
 
     embed_migrations!();
-    helpers::db::run_migration(embedded_migrations::run, &db_pool);
+    run_migration(embedded_migrations::run, &db_pool);
 
     let (server, addr) = rpc_server(
         configuration.rpc_socket(),
