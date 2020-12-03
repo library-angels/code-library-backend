@@ -13,7 +13,7 @@ use self::server::IdentityServer;
 use self::service::{IdentityService, IdentityServiceClient};
 use crate::{config::Configuration, db::DbPool};
 
-pub async fn rpc_server(
+pub async fn get_rpc_server(
     addr: SocketAddr,
     configuration: Arc<Configuration>,
     db_pool: Arc<DbPool>,
@@ -39,7 +39,7 @@ pub async fn rpc_server(
     Ok((fut, addr))
 }
 
-pub async fn rpc_client(addr: SocketAddr) -> std::io::Result<IdentityServiceClient> {
+pub async fn get_rpc_client(addr: SocketAddr) -> std::io::Result<IdentityServiceClient> {
     IdentityServiceClient::new(
         Config::default(),
         tarpc::serde_transport::tcp::connect(addr, Json::default).await?,

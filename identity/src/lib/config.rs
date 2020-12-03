@@ -57,7 +57,7 @@ impl Configuration {
     }
 }
 
-pub fn configuration() -> Configuration {
+pub fn get_configuration() -> Configuration {
     dotenv().ok();
     Configuration::init_from_env().expect("Failed to create configuration")
 }

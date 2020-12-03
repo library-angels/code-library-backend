@@ -6,10 +6,10 @@ use envconfig::Envconfig;
 use tarpc::context;
 
 use helpers::rpc::Error;
-use identity::db::db_pool;
+use identity::db::get_db_pool;
 use identity::db::schema::{users::dsl::users, users_roles::dsl::users_roles};
 use identity::rpc::models::{Role, SessionInfo, User, UserRole};
-use identity::rpc::{rpc_client, rpc_server, service::IdentityServiceClient};
+use identity::rpc::{get_rpc_client, get_rpc_server, service::IdentityServiceClient};
 use identity::{config::Configuration, session::jwt::Jwt};
 
 mod sample_data;
@@ -105,15 +105,15 @@ async fn setup(
     let configuration = Arc::new(get_test_configuration());
     let db_test_context =
         DbTestContext::new(configuration.db_connection_base_url(), test_context_name);
-    let db = Arc::new(db_pool(&db_test_context.get_connection_url()));
-    let (server, socket) = rpc_server(
+    let db = Arc::new(get_db_pool(&db_test_context.get_connection_url()));
+    let (server, socket) = get_rpc_server(
         configuration.rpc_socket(),
         configuration.clone(),
         db.clone(),
     )
     .await
     .unwrap();
-    let client = rpc_client(socket).await.unwrap();
+    let client = get_rpc_client(socket).await.unwrap();
 
     Ok((server, client, configuration, db_test_context))
 }

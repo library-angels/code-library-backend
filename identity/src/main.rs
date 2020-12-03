@@ -4,7 +4,7 @@ use std::{io, sync::Arc};
 extern crate diesel_migrations;
 
 use helpers::db::run_migration;
-use identity::{config::configuration, db::db_pool, rpc::rpc_server};
+use identity::{config::get_configuration, db::get_db_pool, rpc::get_rpc_server};
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -16,14 +16,14 @@ async fn main() -> io::Result<()> {
     env_logger::init();
     log::info!("Starting service");
 
-    let configuration = configuration();
+    let configuration = get_configuration();
 
-    let db_pool = db_pool(&configuration.db_connection_url());
+    let db_pool = get_db_pool(&configuration.db_connection_url());
 
     embed_migrations!();
     run_migration(embedded_migrations::run, &db_pool);
 
-    let (server, addr) = rpc_server(
+    let (server, addr) = get_rpc_server(
         configuration.rpc_socket(),
         Arc::new(configuration),
         Arc::new(db_pool),
