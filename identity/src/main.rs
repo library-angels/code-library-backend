@@ -3,9 +3,7 @@ use std::{io, sync::Arc};
 #[macro_use]
 extern crate diesel_migrations;
 
-use identity::config::configuration;
-use identity::db::db_pool;
-use identity::rpc::rpc_server;
+use identity::{config::configuration, db::db_pool, rpc::rpc_server};
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
