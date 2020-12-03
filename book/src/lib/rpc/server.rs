@@ -60,8 +60,8 @@ impl BookService for BookServer {
         let mut book_map: HashMap<i32, Book> = HashMap::with_capacity(book_list.len());
         for (b, c, l, p) in book_list.into_iter() {
             let new_book = Book::new(b, c, l, p, None, Vec::new(), Vec::new());
-            if let Some(err_book) = book_map.insert(new_book.id, new_book) {
-                panic!("Duplicate book id: {}", err_book.id);
+            if let Some(err_book) = book_map.insert(new_book.id(), new_book) {
+                panic!("Duplicate book id: {}", err_book.id());
             }
         }
 
