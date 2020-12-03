@@ -16,12 +16,20 @@ use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
 pub struct IdentityServer {
-    pub addr: SocketAddr,
-    pub conf: Arc<Configuration>,
-    pub db_pool: Arc<DbPool>,
+    addr: SocketAddr,
+    conf: Arc<Configuration>,
+    db_pool: Arc<DbPool>,
 }
 
 impl IdentityServer {
+    pub fn new(addr: SocketAddr, conf: Arc<Configuration>, db_pool: Arc<DbPool>) -> Self {
+        Self {
+            addr,
+            conf,
+            db_pool,
+        }
+    }
+
     fn get_db(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
         self.db_pool
             .get()
