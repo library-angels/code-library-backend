@@ -1,5 +1,6 @@
 use std::net::{IpAddr, SocketAddr};
 
+use dotenv::dotenv;
 use envconfig::Envconfig;
 
 #[derive(Envconfig, Debug, Clone)]
@@ -54,4 +55,9 @@ impl Configuration {
     pub fn jwt_secret(&self) -> String {
         self.jwt_secret.clone()
     }
+}
+
+pub fn get_configuration() -> Configuration {
+    dotenv().ok();
+    Configuration::init_from_env().expect("Failed to create configuration")
 }
