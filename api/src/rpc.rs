@@ -19,9 +19,5 @@ pub async fn identity_client() -> io::Result<IdentityServiceClient> {
 
 pub async fn book_client() -> io::Result<BookServiceClient> {
     let addr = CONFIGURATION.get().unwrap().book_service_socket();
-    BookServiceClient::new(
-        client::Config::default(),
-        tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
-    )
-    .spawn()
+    book::rpc_client(&addr).await
 }
