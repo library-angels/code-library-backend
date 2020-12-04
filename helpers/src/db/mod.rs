@@ -4,13 +4,19 @@ use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
 use diesel_migrations::RunMigrationsError;
 
+pub type DbPool = Pool<ConnectionManager<PgConnection>>;
+pub type DbConn = PooledConnection<ConnectionManager<PgConnection>>;
+
+pub fn get_db_pool(database_url: &str) -> DbPool {
+    Pool::new(ConnectionManager::new(database_url))
+        .expect("Failed creating new database connection")
+}
+
 pub fn run_migration(
-    run_embedded_migration: impl FnOnce(
-        &PooledConnection<ConnectionManager<PgConnection>>,
-    ) -> Result<(), RunMigrationsError>,
-    db: &Pool<ConnectionManager<PgConnection>>,
+    run_embedded_migration: impl FnOnce(&DbConn) -> Result<(), RunMigrationsError>,
+    db_pool: &DbPool,
 ) {
-    match run_embedded_migration(&db.get().unwrap()) {
+    match run_embedded_migration(&db_pool.get().unwrap()) {
         Ok(()) => log::info!("Successfully applied migrations on database."),
         Err(err) => {
             let error_type = match &err {
