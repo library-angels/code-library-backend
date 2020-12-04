@@ -24,6 +24,10 @@ impl From<Error> for RpcError {
         match e {
             Error::AuthorizationCodeLength => RpcError::InvalidData,
             Error::AuthorizationCodeInvalidCharacter => RpcError::InvalidData,
+            Error::TokenRequestEndpointInvalidResponse => RpcError::InternalError,
+            Error::TokenRequestEndpointNotReachable => RpcError::InternalError,
+            Error::TokenRequestContentInvalid => RpcError::InternalError,
+            Error::TokenRequestDeserialization => RpcError::InternalError,
             _ => RpcError::InternalError,
         }
     }

@@ -239,16 +239,9 @@ impl IdentityService for IdentityServer {
             oauth::GrantType::AuthorizationCode,
         );
 
-        let tokenset = match request
+        let tokenset = request
             .exchange_code(oauth::DiscoveryDocument::get_token_endpoint())
-            .await
-        {
-            Ok(val) => val,
-            Err(e) => {
-                println!("{:?}", e);
-                return Err(Error::InternalError);
-            }
-        };
+            .await?;
 
         let id_token = match oauth::IdToken::new(&tokenset.id_token) {
             Ok(val) => val,
