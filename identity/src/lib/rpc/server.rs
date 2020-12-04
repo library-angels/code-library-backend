@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
-use std::time::{Duration, SystemTime};
 
+use chrono::{Duration, Utc};
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, PooledConnection};
 use tarpc::context;
@@ -339,8 +339,8 @@ impl IdentityService for IdentityServer {
             family_name: id_token.family_name.clone(),
             picture: id_token.picture.clone(),
             oauth_access_token: tokenset.access_token.clone(),
-            oauth_access_token_valid: SystemTime::now()
-                + Duration::from_secs(tokenset.expires_in.into()),
+            oauth_access_token_valid: Utc::now().naive_utc()
+                + Duration::seconds(tokenset.expires_in.into()),
             oauth_refresh_token: tokenset.refresh_token,
             active: true,
         };
