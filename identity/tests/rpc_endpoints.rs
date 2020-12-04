@@ -1,4 +1,4 @@
-use std::env::set_var;
+use std::env::{set_var, var};
 use std::sync::Arc;
 
 use diesel::prelude::*;
@@ -84,9 +84,15 @@ impl Drop for DbTestContext {
 
 fn get_test_configuration() -> Configuration {
     set_var("RPC_HOST_PORT", "0");
-    set_var("OAUTH_CLIENT_IDENTIFIER", "test_oauth_client_identifier");
-    set_var("OAUTH_CLIENT_SECRET", "test_oauth_client_secret");
-    set_var("JWT_SECRET", "test_jwt_secret");
+    if var("OAUTH_CLIENT_IDENTIFIER").is_err() {
+        set_var("OAUTH_CLIENT_IDENTIFIER", "test_oauth_client_identifier");
+    }
+    if var("OAUTH_CLIENT_SECRET").is_err() {
+        set_var("OAUTH_CLIENT_SECRET", "test_oauth_client_secret");
+    }
+    if var("JWT_SECRET").is_err() {
+        set_var("JWT_SECRET", "test_jwt_secret");
+    }
 
     Configuration::init_from_env().unwrap()
 }
@@ -355,10 +361,7 @@ async fn oauth_client_identifier() {
         .unwrap();
 
     // Assert
-    assert_eq!(
-        "test_oauth_client_identifier".to_string(),
-        result.identifier
-    );
+    assert_eq!(var("OAUTH_CLIENT_IDENTIFIER").unwrap(), result.identifier);
 }
 
 // test session info with valid jwt signature
