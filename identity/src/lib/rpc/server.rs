@@ -229,10 +229,7 @@ impl IdentityService for IdentityServer {
     ) -> RpcResult<SessionToken> {
         use crate::db::schema::users::dsl::*;
 
-        let authorization_code = match oauth::AuthorizationCode::new(code) {
-            Ok(val) => val,
-            Err(_) => return Err(Error::InvalidData),
-        };
+        let authorization_code = oauth::AuthorizationCode::new(code)?;
 
         let request = oauth::TokenRequest::new(
             authorization_code,

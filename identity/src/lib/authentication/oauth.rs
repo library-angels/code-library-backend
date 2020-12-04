@@ -22,6 +22,8 @@ impl From<Error> for RpcError {
     fn from(e: Error) -> Self {
         log::debug!("{:?}", e);
         match e {
+            Error::AuthorizationCodeLength => RpcError::InvalidData,
+            Error::AuthorizationCodeInvalidCharacter => RpcError::InvalidData,
             _ => RpcError::InternalError,
         }
     }
