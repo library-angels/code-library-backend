@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::net::SocketAddr;
 use std::sync::Arc;
 
 use tarpc::context::Context;
@@ -10,14 +9,14 @@ use crate::db::{queries, DbConn, DbPool};
 
 #[derive(Clone)]
 pub struct BookServer {
-    pub addr: SocketAddr,
     db_pool: Arc<DbPool>,
 }
 
 impl BookServer {
-    pub fn new(addr: SocketAddr, db_pool: Arc<DbPool>) -> Self {
-        Self { addr, db_pool }
+    pub fn new(db_pool: Arc<DbPool>) -> Self {
+        Self { db_pool }
     }
+
     pub fn db_conn(&self) -> DbConn {
         self.db_pool
             .get()
