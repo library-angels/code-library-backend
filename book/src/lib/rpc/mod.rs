@@ -8,10 +8,16 @@ use std::sync::Arc;
 
 use futures::{future, prelude::*};
 use tarpc::server::{BaseChannel, Channel, Handler};
+use tarpc::{client::Config, serde_transport::tcp};
 use tokio_serde::formats::Json;
 
-use self::{server::BookServer, service::BookService};
+use self::server::BookServer;
+use self::service::{BookService, BookServiceClient};
 use crate::db::DbPool;
+
+pub async fn rpc_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
+    BookServiceClient::new(Config::default(), tcp::connect(addr, Json::default).await?).spawn()
+}
 
 pub async fn rpc_server(
     addr: &SocketAddr,
