@@ -241,12 +241,11 @@ impl IdentityService for IdentityServer {
             oauth::RedirectUri::PostMessage,
             oauth::GrantType::AuthorizationCode,
         );
-        use hyper::Uri;
-        let token_endpoint = "https://oauth2.googleapis.com/token"
-            .parse::<Uri>()
-            .unwrap();
 
-        let tokenset = match request.exchange_code(token_endpoint).await {
+        let tokenset = match request
+            .exchange_code(oauth::DiscoveryDocument::get_token_endpoint())
+            .await
+        {
             Ok(val) => val,
             Err(e) => {
                 println!("{:?}", e);

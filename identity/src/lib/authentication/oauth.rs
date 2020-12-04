@@ -17,6 +17,14 @@ pub enum Error {
     IdTokenInvalid,
 }
 
+pub struct DiscoveryDocument {}
+
+impl DiscoveryDocument {
+    pub fn get_token_endpoint() -> Uri {
+        "https://oauth2.googleapis.com/token".parse().unwrap()
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct AuthorizationCode {
     code: String,
