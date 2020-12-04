@@ -2,22 +2,25 @@ use chrono::NaiveDate;
 use diesel::Queryable;
 use serde::{Deserialize, Serialize};
 
-#[derive(Clone, Debug, Queryable)]
+#[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
 pub struct Book {
     pub id: i32,
     /// E.g. `SE20`, `STS5`
-    pub code_identifier: String,
+    code_identifier: String,
     /// International Standard Book Number (https://en.wikipedia.org/wiki/International_Standard_Book_Number)
-    pub isbn: String,
+    isbn: String,
     /// International Standard Serial Number (https://en.wikipedia.org/wiki/International_Standard_Serial_Number)
-    pub issn: Option<String>,
-    pub release_date: NaiveDate,
-    pub subtitle: Option<String>,
-    pub title: String,
+    issn: Option<String>,
+    release_date: NaiveDate,
+    subtitle: Option<String>,
+    title: String,
 
-    pub category_id: i32,
-    pub language_id: i32,
-    pub publisher_id: i32,
+    #[serde(skip)]
+    category_id: i32,
+    #[serde(skip)]
+    language_id: i32,
+    #[serde(skip)]
+    publisher_id: i32,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
