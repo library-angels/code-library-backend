@@ -28,7 +28,7 @@ impl From<Error> for RpcError {
             Error::TokenRequestEndpointNotReachable => RpcError::InternalError,
             Error::TokenRequestContentInvalid => RpcError::InternalError,
             Error::TokenRequestDeserialization => RpcError::InternalError,
-            _ => RpcError::InternalError,
+            Error::IdTokenInvalid => RpcError::InternalError,
         }
     }
 }

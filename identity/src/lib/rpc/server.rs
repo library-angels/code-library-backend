@@ -243,10 +243,7 @@ impl IdentityService for IdentityServer {
             .exchange_code(oauth::DiscoveryDocument::get_token_endpoint())
             .await?;
 
-        let id_token = match oauth::IdToken::new(&tokenset.id_token) {
-            Ok(val) => val,
-            Err(_) => return Err(Error::InternalError),
-        };
+        let id_token = oauth::IdToken::new(&tokenset.id_token)?;
 
         match users
             .filter(sub.eq(&id_token.sub))
