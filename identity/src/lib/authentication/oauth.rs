@@ -1,3 +1,4 @@
+use helpers::rpc::Error as RpcError;
 use hyper::{Body, Client, Request, StatusCode, Uri};
 use hyper_tls::HttpsConnector;
 use jsonwebtoken::dangerous_insecure_decode;
@@ -15,6 +16,15 @@ pub enum Error {
     TokenRequestContentInvalid,
     TokenRequestDeserialization,
     IdTokenInvalid,
+}
+
+impl From<Error> for RpcError {
+    fn from(e: Error) -> Self {
+        log::debug!("{:?}", e);
+        match e {
+            _ => RpcError::InternalError,
+        }
+    }
 }
 
 pub struct DiscoveryDocument {}
