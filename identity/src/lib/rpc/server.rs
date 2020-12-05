@@ -11,7 +11,7 @@ use helpers::rpc::{Error, RpcResult};
 use super::{models::*, service::IdentityService};
 use crate::authentication::{create_user_from_oauth_authentication, oauth};
 use crate::config::Configuration;
-use crate::db::{models, queries, DbPool};
+use crate::db::{queries, DbPool};
 use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
@@ -227,8 +227,6 @@ impl IdentityService for IdentityServer {
         _: context::Context,
         code: AuthorizationCode,
     ) -> RpcResult<SessionToken> {
-        use crate::db::schema::users::dsl::*;
-
         let authorization_code = oauth::AuthorizationCode::new(code)?;
 
         let request = oauth::TokenRequest::new(
@@ -261,31 +259,15 @@ impl IdentityService for IdentityServer {
         let user =
             create_user_from_oauth_authentication(&id_token, &tokenset, Utc::now().naive_utc());
 
-        let user = match diesel::update(users.filter(sub.eq(&user.sub)))
-            .set(&user)
-            .get_result::<models::User>(&self.get_db())
-        {
-            Ok(val) => {
-                log::info!("Successfully updated account \"{}\"", &id_token.email);
-                val
-            }
-            Err(diesel::result::Error::NotFound) => {
-                match queries::create_user(user, &self.get_db()) {
-                    Ok(val) => {
-                        log::info!("Successfully created account \"{}\"", &id_token.email);
-                        val
-                    }
-                    Err(_) => {
-                        log::error!("Failed to create account \"{}\"", &id_token.email);
-                        return Err(Error::InternalError);
-                    }
-                }
-            }
-            Err(_) => {
-                log::error!("Failed to create account \"{}\"", &id_token.email);
-                return Err(Error::InternalError);
-            }
+        let user = match account_status {
+            AccountStatus::Active => queries::update_user_by_sub(user, &self.get_db())?,
+            AccountStatus::New => queries::create_user(user, &self.get_db())?,
+            _ => return Err(Error::InternalError),
         };
+        log::info!(
+            "Successfully created/updated account \"{}\"",
+            &id_token.email
+        );
 
         Ok(SessionToken {
             token: Jwt::new(
