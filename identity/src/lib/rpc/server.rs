@@ -227,8 +227,10 @@ impl IdentityService for IdentityServer {
         _: context::Context,
         code: AuthorizationCode,
     ) -> RpcResult<SessionToken> {
+        // Checks if the authorization code has a valid form
         let authorization_code = oauth::AuthorizationCode::new(code)?;
 
+        // Creates a TokenRequest instance
         let request = oauth::TokenRequest::new(
             authorization_code,
             self.conf.oauth_client_identifier.clone(),
@@ -237,16 +239,20 @@ impl IdentityService for IdentityServer {
             oauth::GrantType::AuthorizationCode,
         );
 
+        // Exchanges the TokenRequest for a Tokenset
         let tokenset = request
             .exchange_code(oauth::DiscoveryDocument::get_token_endpoint())
             .await?;
 
+        // Creates an IdToken from the TokenSet
         let id_token = oauth::IdToken::new(&tokenset.id_token)?;
 
+        // Checks the status of the user about to authenticate
         use crate::authentication::{check_account_status, AccountStatus};
         let account_status =
             check_account_status(queries::get_user_by_sub(&id_token.sub, &self.get_db()))?;
 
+        // Checks if the user account is inactive or authentication has missing refresh token for new account
         if account_status == AccountStatus::Inactive {
             log::info!("Rejected inactive account \"{}\"", &id_token.email);
             return Err(Error::InvalidInput);
@@ -256,9 +262,11 @@ impl IdentityService for IdentityServer {
             return Err(Error::InvalidInput);
         }
 
+        // Creates an user model instance from IdToken and TokenSet
         let user =
             create_user_from_oauth_authentication(&id_token, &tokenset, Utc::now().naive_utc());
 
+        // Create or update user record in database
         let user = match account_status {
             AccountStatus::Active => queries::update_user_by_sub(user, &self.get_db())?,
             AccountStatus::New => queries::create_user(user, &self.get_db())?,
@@ -269,6 +277,7 @@ impl IdentityService for IdentityServer {
             &id_token.email
         );
 
+        // Create and return SessionToken
         Ok(SessionToken {
             token: Jwt::new(
                 user.id as u32,
