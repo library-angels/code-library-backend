@@ -49,6 +49,14 @@ pub fn update_user(user: User, db: &DbConn) -> QueryResult<User> {
         .get_result(db)
 }
 
+pub fn update_user_by_sub(user: UserAddUpdate, db: &DbConn) -> QueryResult<User> {
+    use schema::users::dsl::*;
+
+    diesel::update(users.filter(sub.eq(&user.sub)))
+        .set(&user)
+        .get_result(db)
+}
+
 pub fn get_role(role_id: i32, db: &DbConn) -> QueryResult<Role> {
     use schema::roles::dsl::roles;
 
