@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use chrono::{Duration, Utc};
+use chrono::Utc;
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, PooledConnection};
 use tarpc::context;
@@ -9,7 +9,7 @@ use tarpc::context;
 use helpers::rpc::{Error, RpcResult};
 
 use super::{models::*, service::IdentityService};
-use crate::authentication::oauth;
+use crate::authentication::{create_user_from_oauth_authentication, oauth};
 use crate::config::Configuration;
 use crate::db::{models, queries, DbPool};
 use crate::session::jwt::Jwt;
@@ -258,18 +258,8 @@ impl IdentityService for IdentityServer {
             return Err(Error::InvalidInput);
         }
 
-        let user = models::UserAddUpdate {
-            sub: id_token.sub.clone(),
-            email: id_token.email.clone(),
-            given_name: id_token.given_name.clone(),
-            family_name: id_token.family_name.clone(),
-            picture: id_token.picture.clone(),
-            oauth_access_token: tokenset.access_token.clone(),
-            oauth_access_token_valid: Utc::now().naive_utc()
-                + Duration::seconds(tokenset.expires_in.into()),
-            oauth_refresh_token: tokenset.refresh_token,
-            active: true,
-        };
+        let user =
+            create_user_from_oauth_authentication(&id_token, &tokenset, Utc::now().naive_utc());
 
         let user = match diesel::update(users.filter(sub.eq(&user.sub)))
             .set(&user)
