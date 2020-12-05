@@ -32,7 +32,17 @@ pub fn create_user_from_oauth_authentication(
     token_set: &TokenSet,
     creation_time: NaiveDateTime,
 ) -> UserAddUpdate {
-    unimplemented!()
+    UserAddUpdate {
+        sub: id_token.sub.clone(),
+        email: id_token.email.clone(),
+        given_name: id_token.given_name.clone(),
+        family_name: id_token.family_name.clone(),
+        picture: id_token.picture.clone(),
+        oauth_access_token: token_set.access_token.clone(),
+        oauth_access_token_valid: creation_time + Duration::seconds(token_set.expires_in.into()),
+        oauth_refresh_token: token_set.refresh_token.clone(),
+        active: true,
+    }
 }
 
 #[cfg(test)]
