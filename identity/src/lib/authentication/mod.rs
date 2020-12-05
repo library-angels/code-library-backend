@@ -12,7 +12,17 @@ pub enum AccountStatus {
 }
 
 pub fn check_account_status(query_result: QueryResult<User>) -> Result<AccountStatus, Error> {
-    unimplemented!();
+    match query_result {
+        Ok(val) => {
+            if val.active {
+                Ok(AccountStatus::Active)
+            } else {
+                Ok(AccountStatus::Inactive)
+            }
+        }
+        Err(Error::NotFound) => Ok(AccountStatus::New),
+        Err(e) => Err(e),
+    }
 }
 
 #[cfg(test)]
