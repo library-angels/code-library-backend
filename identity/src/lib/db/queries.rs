@@ -17,6 +17,12 @@ pub fn get_user(user_id: i32, db: &DbConn) -> QueryResult<User> {
     users.find(user_id).first(db)
 }
 
+pub fn get_user_by_sub(sub: &str, db: &DbConn) -> QueryResult<User> {
+    use schema::users::dsl;
+
+    dsl::users.filter(dsl::sub.eq(sub)).get_result(db)
+}
+
 pub fn list_users(
     offset: i64,
     limit: i64,

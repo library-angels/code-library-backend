@@ -245,36 +245,17 @@ impl IdentityService for IdentityServer {
 
         let id_token = oauth::IdToken::new(&tokenset.id_token)?;
 
-        match users
-            .filter(sub.eq(&id_token.sub))
-            .get_result::<models::User>(&self.get_db())
-        {
-            Ok(val) => {
-                if !val.active {
-                    log::info!(
-                        "Rejected authentication for deactivated account \"{}\"",
-                        &id_token.email
-                    );
-                    return Err(Error::InvalidInput);
-                }
-            }
-            Err(diesel::result::Error::NotFound) => {
-                log::info!(
-                    "Starting authentication for new account \"{}\"",
-                    &id_token.email
-                );
-                if tokenset.refresh_token.is_none() {
-                    log::info!("Failed to start authentication (missing refresh token) for new account \"{}\"", &id_token.email);
-                    return Err(Error::InvalidInput);
-                }
-            }
-            Err(_) => {
-                log::error!(
-                    "Failed to fetch information for account \"{}\"",
-                    &id_token.email
-                );
-                return Err(Error::InternalError);
-            }
+        use crate::authentication::{check_account_status, AccountStatus};
+        let account_status =
+            check_account_status(queries::get_user_by_sub(&id_token.sub, &self.get_db()))?;
+
+        if account_status == AccountStatus::Inactive {
+            log::info!("Rejected inactive account \"{}\"", &id_token.email);
+            return Err(Error::InvalidInput);
+        } else if account_status == AccountStatus::New && tokenset.refresh_token.is_none() {
+            log::info!("Rejected new account \"{}\"", &id_token.email);
+            log::info!("Missing refresh token for account \"{}\"", &id_token.email);
+            return Err(Error::InvalidInput);
         }
 
         let user = models::UserAddUpdate {
