@@ -254,11 +254,11 @@ impl IdentityService for IdentityServer {
 
         // Checks if the user account is inactive or authentication has missing refresh token for new account
         if account_status == AccountStatus::Inactive {
-            log::info!("Rejected inactive account \"{}\"", &id_token.email);
+            log::info!("Rejected inactive account '{}'", &id_token.email);
             return Err(Error::InvalidInput);
         } else if account_status == AccountStatus::New && tokenset.refresh_token.is_none() {
-            log::info!("Rejected new account \"{}\"", &id_token.email);
-            log::info!("Missing refresh token for account \"{}\"", &id_token.email);
+            log::info!("Rejected new account '{}'", &id_token.email);
+            log::info!("Missing refresh token for account '{}'", &id_token.email);
             return Err(Error::InvalidInput);
         }
 
@@ -272,10 +272,7 @@ impl IdentityService for IdentityServer {
             AccountStatus::New => queries::create_user(user, &self.get_db())?,
             _ => return Err(Error::InternalError),
         };
-        log::info!(
-            "Successfully created/updated account \"{}\"",
-            &id_token.email
-        );
+        log::info!("Successfully created/updated account '{}'", &id_token.email);
 
         // Create and return SessionToken
         Ok(SessionToken {
