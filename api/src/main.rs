@@ -1,7 +1,9 @@
+mod config;
+
 use dotenv::dotenv;
 use envconfig::Envconfig;
 
-use api::{server, Configuration, CONFIGURATION};
+use crate::config::Configuration;
 
 #[tokio::main]
 async fn main() {
@@ -14,13 +16,12 @@ async fn main() {
     log::info!("Starting service");
 
     dotenv().ok();
-    let configuration = Configuration::init_from_env().unwrap();
-    CONFIGURATION
-        .set(configuration)
-        .expect("Failed to provide global service configuration");
+    let conf = Configuration::init_from_env().unwrap();
+    let addr = conf.api_socket;
+    let book_addr = conf.identity_socket;
+    let identity_addr = conf.identity_socket;
 
-    let addr = CONFIGURATION.get().unwrap().http_socket();
-    let server = server().bind(addr);
+    let server = api::server(book_addr, identity_addr).bind(addr);
     log::info!("API Server started on {}", addr);
     server.await
 }

@@ -1,4 +1,6 @@
 pub mod session {
+    use std::net::SocketAddr;
+
     use tarpc::context;
     use warp::{reject, Filter, Rejection};
 
@@ -7,31 +9,35 @@ pub mod session {
         pub sub: String,
     }
 
-    pub fn authorization() -> impl Filter<Extract = (Session,), Error = Rejection> + Copy {
-        warp::header::<String>("authorization").and_then(|header: String| async move {
-            let token = header
-                .strip_prefix("Bearer ")
-                .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
+    pub fn authorization(
+        addr: SocketAddr,
+    ) -> impl Filter<Extract = (Session,), Error = Rejection> + Clone {
+        warp::header::<String>("authorization")
+            .and(warp::any().map(move || addr))
+            .and_then(|header: String, addr: SocketAddr| async move {
+                let token = header
+                    .strip_prefix("Bearer ")
+                    .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
 
-            let mut client = crate::rpc::identity_client().await.map_err(|e| {
-                log::error!("Identity service error: {}", e);
-                reject::custom(super::rejection::NotAuthenticated)
-            })?;
-
-            let token_content = client
-                .session_info(context::current(), token.into())
-                .await
-                .map_err(|e| {
-                    log::error!("Identity service communication error: {}", e);
+                let mut client = crate::rpc::identity_client(&addr).await.map_err(|e| {
+                    log::error!("Identity service error: {}", e);
                     reject::custom(super::rejection::NotAuthenticated)
-                })?
-                .map_err(|_e| reject::custom(super::rejection::NotAuthenticated))?;
+                })?;
 
-            Ok::<Session, Rejection>(Session {
-                token: token.into(),
-                sub: token_content.sub.to_string(),
+                let token_content = client
+                    .session_info(context::current(), token.into())
+                    .await
+                    .map_err(|e| {
+                        log::error!("Identity service communication error: {}", e);
+                        reject::custom(super::rejection::NotAuthenticated)
+                    })?
+                    .map_err(|_e| reject::custom(super::rejection::NotAuthenticated))?;
+
+                Ok::<Session, Rejection>(Session {
+                    token: token.into(),
+                    sub: token_content.sub.to_string(),
+                })
             })
-        })
     }
 }
 

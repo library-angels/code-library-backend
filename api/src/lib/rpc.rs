@@ -1,4 +1,4 @@
-use std::io;
+use std::{io, net::SocketAddr};
 
 use tarpc::client;
 use tokio_serde::formats::Json;
@@ -6,10 +6,7 @@ use tokio_serde::formats::Json;
 use book::service::BookServiceClient;
 use identity::rpc::service::IdentityServiceClient;
 
-use crate::CONFIGURATION;
-
-pub async fn identity_client() -> io::Result<IdentityServiceClient> {
-    let addr = CONFIGURATION.get().unwrap().identity_service_socket();
+pub async fn identity_client(addr: &SocketAddr) -> io::Result<IdentityServiceClient> {
     IdentityServiceClient::new(
         client::Config::default(),
         tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
@@ -17,7 +14,6 @@ pub async fn identity_client() -> io::Result<IdentityServiceClient> {
     .spawn()
 }
 
-pub async fn book_client() -> io::Result<BookServiceClient> {
-    let addr = CONFIGURATION.get().unwrap().book_service_socket();
-    book::rpc_client(&addr).await
+pub async fn book_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
+    book::rpc_client(addr).await
 }

@@ -1,4 +1,5 @@
-use std::{collections::HashMap, convert::Infallible};
+use std::{collections::HashMap, convert::Infallible, net::SocketAddr};
+
 use tarpc::context;
 use warp::Reply;
 
@@ -6,8 +7,8 @@ use helpers::rpc::Error;
 
 use crate::response;
 
-pub async fn get_oauth_client_identifier() -> Result<impl Reply, Infallible> {
-    let mut client = match crate::rpc::identity_client().await {
+pub async fn get_oauth_client_identifier(addr: SocketAddr) -> Result<impl Reply, Infallible> {
+    let mut client = match crate::rpc::identity_client(&addr).await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
@@ -34,8 +35,9 @@ pub async fn get_oauth_client_identifier() -> Result<impl Reply, Infallible> {
 
 pub async fn create_oauth_authentication(
     body: HashMap<String, String>,
+    addr: SocketAddr,
 ) -> Result<impl Reply, Infallible> {
-    let mut client = match crate::rpc::identity_client().await {
+    let mut client = match crate::rpc::identity_client(&addr).await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
@@ -61,9 +63,10 @@ pub async fn create_oauth_authentication(
 }
 
 pub async fn get_session_info(
+    addr: SocketAddr,
     session: crate::middleware::session::Session,
 ) -> Result<impl Reply, Infallible> {
-    let mut client = match crate::rpc::identity_client().await {
+    let mut client = match crate::rpc::identity_client(&addr).await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);

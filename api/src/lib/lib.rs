@@ -1,17 +1,13 @@
-use once_cell::sync::OnceCell;
-use warp::{filters::BoxedFilter, Reply};
+use std::net::SocketAddr as Addr;
 
-mod config;
+use warp::{filters::BoxedFilter, Reply, Server};
+
 mod endpoints;
 mod middleware;
 mod response;
 mod router;
 mod rpc;
 
-pub use crate::config::Configuration;
-
-pub static CONFIGURATION: OnceCell<Configuration> = OnceCell::new();
-
-pub fn server() -> warp::Server<BoxedFilter<(impl Reply,)>> {
-    warp::serve(crate::router::router())
+pub fn server(book_addr: Addr, identity_addr: Addr) -> Server<BoxedFilter<(impl Reply,)>> {
+    warp::serve(crate::router::router(book_addr, identity_addr))
 }
