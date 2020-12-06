@@ -1,7 +1,6 @@
 mod config;
 
 use std::io;
-use std::sync::Arc;
 
 use dotenv::dotenv;
 use envconfig::Envconfig;
@@ -27,7 +26,7 @@ async fn main() -> io::Result<()> {
     let configuration = Configuration::init_from_env().unwrap();
 
     let database_url = configuration.db_connection_url();
-    let db_pool = Arc::new(db::get_db_pool(&*database_url));
+    let db_pool = db::get_db_pool(&*database_url);
 
     embed_migrations!();
     helpers::db::run_migration(embedded_migrations::run, &db_pool);
