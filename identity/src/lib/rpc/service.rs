@@ -18,6 +18,6 @@ pub trait IdentityService {
     ) -> RpcResult<Vec<UserRole>>;
     async fn update_user_role(user_role_update: UserRole) -> RpcResult<UserRole>;
     async fn oauth_client_identifier() -> RpcResult<OauthClientIdentifier>;
-    async fn oauth_authentication(code: AuthorizationCode) -> RpcResult<SessionToken>;
+    async fn oauth_authentication(code: OauthAuthorizationCode) -> RpcResult<SessionToken>;
     async fn session_info(token: String) -> RpcResult<SessionInfo>;
 }

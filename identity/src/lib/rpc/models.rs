@@ -2,7 +2,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::session::jwt::Jwt;
 
-pub type AuthorizationCode = String;
+pub type OauthAuthorizationCode = String;
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct User {

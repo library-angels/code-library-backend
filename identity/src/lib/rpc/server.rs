@@ -1,7 +1,7 @@
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use chrono::Utc;
+use chrono::{Duration, Utc};
 use diesel::prelude::*;
 use diesel::r2d2::{ConnectionManager, PooledConnection};
 use tarpc::context;
@@ -9,7 +9,12 @@ use tarpc::context;
 use helpers::rpc::{Error, RpcResult};
 
 use super::{models::*, service::IdentityService};
-use crate::authentication::{create_user_from_oauth_authentication, oauth};
+use crate::authentication::oauth::{
+    AuthorizationCode, DiscoveryDocument, GrantType, IdToken, RedirectUri, TokenRequest,
+};
+use crate::authentication::{
+    check_account_status, create_user_from_oauth_authentication, AccountStatus,
+};
 use crate::config::Configuration;
 use crate::db::{queries, DbPool};
 use crate::session::jwt::Jwt;
@@ -225,30 +230,29 @@ impl IdentityService for IdentityServer {
     async fn oauth_authentication(
         self,
         _: context::Context,
-        code: AuthorizationCode,
+        code: OauthAuthorizationCode,
     ) -> RpcResult<SessionToken> {
         // Checks if the authorization code has a valid form
-        let authorization_code = oauth::AuthorizationCode::new(code)?;
+        let authorization_code = AuthorizationCode::new(code)?;
 
         // Creates a TokenRequest instance
-        let request = oauth::TokenRequest::new(
+        let request = TokenRequest::new(
             authorization_code,
             self.conf.oauth_client_identifier.clone(),
             self.conf.oauth_client_secret.clone(),
-            oauth::RedirectUri::PostMessage,
-            oauth::GrantType::AuthorizationCode,
+            RedirectUri::PostMessage,
+            GrantType::AuthorizationCode,
         );
 
         // Exchanges the TokenRequest for a Tokenset
         let tokenset = request
-            .exchange_code(oauth::DiscoveryDocument::get_token_endpoint())
+            .exchange_code(DiscoveryDocument::get_token_endpoint())
             .await?;
 
         // Creates an IdToken from the TokenSet
-        let id_token = oauth::IdToken::new(&tokenset.id_token)?;
+        let id_token = IdToken::new(&tokenset.id_token)?;
 
         // Checks the status of the user about to authenticate
-        use crate::authentication::{check_account_status, AccountStatus};
         let account_status =
             check_account_status(queries::get_user_by_sub(&id_token.sub, &self.get_db()))?;
 

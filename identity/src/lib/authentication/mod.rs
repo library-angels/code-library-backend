@@ -3,8 +3,8 @@ pub mod oauth;
 use chrono::{Duration, NaiveDateTime};
 use diesel::result::{Error, QueryResult};
 
+use self::oauth::{IdToken, TokenSet};
 use crate::db::models::{User, UserAddUpdate};
-use oauth::{IdToken, TokenSet};
 
 #[derive(Debug, PartialEq)]
 pub enum AccountStatus {

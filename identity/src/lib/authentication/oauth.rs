@@ -1,8 +1,9 @@
-use helpers::rpc::Error as RpcError;
 use hyper::{Body, Client, Request, StatusCode, Uri};
 use hyper_tls::HttpsConnector;
 use jsonwebtoken::dangerous_insecure_decode;
 use serde::{Deserialize, Serialize, Serializer};
+
+use helpers::rpc::Error as RpcError;
 
 type ClientIdentifier = String;
 type ClientSecret = String;
