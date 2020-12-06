@@ -14,9 +14,9 @@ pub mod session {
     pub fn authorization(
         addr: SocketAddr,
     ) -> impl Filter<Extract = (Session,), Error = Rejection> + Clone {
-        warp::header::<String>("authorization")
-            .and(warp::any().map(move || addr))
-            .and_then(|header: String, addr: SocketAddr| async move {
+        let addr = warp::any().map(move || addr);
+        warp::header::<String>("authorization").and(addr).and_then(
+            |header: String, addr: SocketAddr| async move {
                 let token = header
                     .strip_prefix("Bearer ")
                     .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
@@ -39,7 +39,8 @@ pub mod session {
                     token: token.into(),
                     sub: token_content.sub.to_string(),
                 })
-            })
+            },
+        )
     }
 }
 
