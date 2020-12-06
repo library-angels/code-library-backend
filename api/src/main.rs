@@ -18,7 +18,7 @@ async fn main() {
     dotenv().ok();
     let conf = Configuration::init_from_env().unwrap();
     let addr = conf.api_socket;
-    let book_addr = conf.identity_socket;
+    let book_addr = conf.book_socket;
     let identity_addr = conf.identity_socket;
 
     let server = api::server(book_addr, identity_addr).bind(addr);
