@@ -34,9 +34,12 @@ impl From<Error> for RpcError {
     }
 }
 
+/// Represents the Google Discovery Document
+/// https://accounts.google.com/.well-known/openid-configuration
 pub struct DiscoveryDocument {}
 
 impl DiscoveryDocument {
+    /// Returns the `token_endpoint` key value
     pub fn get_token_endpoint() -> Uri {
         "https://oauth2.googleapis.com/token".parse().unwrap()
     }
