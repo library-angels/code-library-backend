@@ -21,15 +21,11 @@ pub enum Error {
 
 impl From<Error> for RpcError {
     fn from(e: Error) -> Self {
+        use Error::*;
         log::debug!("{:?}", e);
         match e {
-            Error::AuthorizationCodeLength => RpcError::InvalidData,
-            Error::AuthorizationCodeInvalidCharacter => RpcError::InvalidData,
-            Error::TokenRequestEndpointInvalidResponse => RpcError::InternalError,
-            Error::TokenRequestEndpointNotReachable => RpcError::InternalError,
-            Error::TokenRequestContentInvalid => RpcError::InternalError,
-            Error::TokenRequestDeserialization => RpcError::InternalError,
-            Error::IdTokenInvalid => RpcError::InternalError,
+            AuthorizationCodeLength | AuthorizationCodeInvalidCharacter => RpcError::InvalidData,
+            _ => RpcError::InternalError,
         }
     }
 }
