@@ -44,6 +44,6 @@ pub struct SessionInfo {
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
-    pub iat: u64,
-    pub exp: u64,
+    pub iat: i64,
+    pub exp: i64,
 }

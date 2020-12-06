@@ -1,5 +1,4 @@
-use std::time::{Duration, SystemTime};
-
+use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 
@@ -9,8 +8,8 @@ pub struct Jwt {
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
-    pub iat: u64,
-    pub exp: u64,
+    pub iat: i64,
+    pub exp: i64,
 }
 
 #[derive(Debug)]
@@ -24,19 +23,17 @@ impl Jwt {
         given_name: String,
         family_name: String,
         picture: String,
-        jwt_validity: u64,
+        jwt_validity: u32,
     ) -> Jwt {
-        let iat = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .unwrap();
-        let exp = iat + Duration::from_secs(jwt_validity);
+        let iat = Utc::now();
+        let exp = iat + Duration::seconds(jwt_validity.into());
         Jwt {
             sub,
             given_name,
             family_name,
             picture,
-            iat: iat.as_secs(),
-            exp: exp.as_secs(),
+            iat: iat.timestamp(),
+            exp: exp.timestamp(),
         }
     }
 
@@ -80,7 +77,7 @@ mod tests {
         assert_eq!("given_name", jwt.given_name);
         assert_eq!("family_name", jwt.family_name);
         assert_eq!("picture", jwt.picture);
-        assert_eq!(validity, jwt.exp - jwt.iat);
+        assert_eq!(3600, jwt.exp - jwt.iat);
     }
 
     #[test]
