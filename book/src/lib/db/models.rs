@@ -6,21 +6,21 @@ use serde::{Deserialize, Serialize};
 pub struct Book {
     pub id: i32,
     /// E.g. `SE20`, `STS5`
-    code_identifier: String,
+    pub code_identifier: String,
     /// International Standard Book Number (https://en.wikipedia.org/wiki/International_Standard_Book_Number)
-    isbn: String,
+    pub isbn: String,
     /// International Standard Serial Number (https://en.wikipedia.org/wiki/International_Standard_Serial_Number)
-    issn: Option<String>,
-    release_date: NaiveDate,
-    subtitle: Option<String>,
-    title: String,
+    pub issn: Option<String>,
+    pub release_date: NaiveDate,
+    pub subtitle: Option<String>,
+    pub title: String,
 
     #[serde(skip)]
-    category_id: i32,
+    pub category_id: i32,
     #[serde(skip)]
-    language_id: i32,
+    pub language_id: i32,
     #[serde(skip)]
-    publisher_id: i32,
+    pub publisher_id: i32,
 }
 
 #[derive(Clone, Debug, Deserialize, Queryable, Serialize)]
