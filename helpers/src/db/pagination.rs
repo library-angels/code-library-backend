@@ -1,10 +1,8 @@
-use diesel::pg::Pg;
 use diesel::prelude::*;
 use diesel::query_builder::*;
 use diesel::query_dsl::methods::LoadQuery;
 use diesel::result::Error as DieselError;
-use diesel::sql_types::BigInt;
-use diesel::QueryId;
+use diesel::{pg::Pg, sql_types::BigInt, QueryId};
 use std::{error::Error, fmt};
 
 const DEFAULT_PER_PAGE: i64 = 10;

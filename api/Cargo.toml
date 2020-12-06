@@ -5,8 +5,8 @@ authors = ["Markus Merklinger <markus.merklinger@code.berlin>"]
 edition = "2018"
 
 [lib]
-path = "src/lib.rs"
-name = "api_lib"
+path = "src/lib/lib.rs"
+name = "api"
 
 [dependencies]
 book = { path = "../book" }
