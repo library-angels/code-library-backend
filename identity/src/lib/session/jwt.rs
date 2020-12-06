@@ -1,5 +1,4 @@
-use std::time::{Duration, SystemTime};
-
+use chrono::{DateTime, Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
 
@@ -9,8 +8,8 @@ pub struct Jwt {
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
-    pub iat: u64,
-    pub exp: u64,
+    pub iat: i64,
+    pub exp: i64,
 }
 
 #[derive(Debug)]
@@ -24,19 +23,16 @@ impl Jwt {
         given_name: String,
         family_name: String,
         picture: String,
-        jwt_validity: u64,
+        creation_time: DateTime<Utc>,
+        validity: Duration,
     ) -> Jwt {
-        let iat = SystemTime::now()
-            .duration_since(SystemTime::UNIX_EPOCH)
-            .unwrap();
-        let exp = iat + Duration::from_secs(jwt_validity);
         Jwt {
             sub,
             given_name,
             family_name,
             picture,
-            iat: iat.as_secs(),
-            exp: exp.as_secs(),
+            iat: creation_time.timestamp(),
+            exp: (creation_time + validity).timestamp(),
         }
     }
 
@@ -63,16 +59,20 @@ impl Jwt {
 
 #[cfg(test)]
 mod tests {
+    use chrono::TimeZone;
+
     use super::*;
 
     #[test]
     fn jwt_creation() {
-        let validity = 3600;
+        let creation_time = Utc.ymd(2020, 1, 1).and_hms(0, 0, 0);
+        let validity = Duration::seconds(3600);
         let jwt = Jwt::new(
             1,
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
+            creation_time,
             validity,
         );
 
@@ -80,7 +80,8 @@ mod tests {
         assert_eq!("given_name", jwt.given_name);
         assert_eq!("family_name", jwt.family_name);
         assert_eq!("picture", jwt.picture);
-        assert_eq!(validity, jwt.exp - jwt.iat);
+        assert_eq!(1577836800, jwt.iat);
+        assert_eq!(3600, jwt.exp - jwt.iat);
     }
 
     #[test]
@@ -90,7 +91,8 @@ mod tests {
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
-            3600,
+            Utc::now(),
+            Duration::seconds(3600),
         );
 
         let jwt_encoded = jwt.encode("super_secret");

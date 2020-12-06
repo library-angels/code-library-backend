@@ -1,6 +1,7 @@
 use std::env::{set_var, var};
 use std::sync::Arc;
 
+use chrono::{Duration, Utc};
 use diesel::prelude::*;
 use envconfig::Envconfig;
 use tarpc::context;
@@ -379,7 +380,8 @@ async fn session_info_valid_token() {
         "John".into(),
         "Doe".into(),
         "https://example.com/avatar.jpg".into(),
-        3600,
+        Utc::now(),
+        Duration::seconds(3600),
     );
 
     let result = client
@@ -419,7 +421,8 @@ async fn session_info_invalid_token() {
         "John".into(),
         "Doe".into(),
         "https://example.com/person.jpg".into(),
-        3600,
+        Utc::now(),
+        Duration::seconds(3600),
     );
 
     // Act
