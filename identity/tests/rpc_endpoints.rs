@@ -343,6 +343,7 @@ async fn update_user_role_verify() {
 #[tokio::test]
 async fn oauth_authentication() {
     // Check if test requirements are met
+    // This test will silently fail if the envrionment variable "OAUTH_AUTHORIZATION_CODE" is not set
     let authorization_code = match var("OAUTH_AUTHORIZATION_CODE") {
         Ok(val) => val,
         Err(_) => return,
