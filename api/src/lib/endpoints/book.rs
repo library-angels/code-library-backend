@@ -1,4 +1,5 @@
-use std::convert::Infallible;
+use std::{convert::Infallible, net::SocketAddr};
+
 use tarpc::context;
 use warp::Reply;
 
@@ -8,8 +9,12 @@ use self::models::*;
 use crate::middleware::session::Session;
 use crate::response;
 
-pub async fn get_book_by_id(_: Session, id: u32) -> Result<impl Reply, Infallible> {
-    if let Ok(mut client) = crate::rpc::book_client().await {
+pub async fn get_book_by_id(
+    _: Session,
+    addr: SocketAddr,
+    id: u32,
+) -> Result<impl Reply, Infallible> {
+    if let Ok(mut client) = book::rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_book(context::current(), id).await {
             match rpc_result {
                 Ok(book) => return Ok(response::okay_with_json(&book)),
@@ -23,10 +28,11 @@ pub async fn get_book_by_id(_: Session, id: u32) -> Result<impl Reply, Infallibl
 
 pub async fn list_books(
     _: Session,
+    addr: SocketAddr,
     query_params: models::QueryParams,
 ) -> Result<impl Reply, Infallible> {
     let QueryParams { page, page_size } = query_params;
-    if let Ok(mut client) = crate::rpc::book_client().await {
+    if let Ok(mut client) = book::rpc_client(&addr).await {
         if let Ok(rpc_result) = client
             .list_books(
                 context::current(),
