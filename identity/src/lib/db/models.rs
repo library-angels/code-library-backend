@@ -1,8 +1,9 @@
-use chrono::NaiveDateTime;
+use chrono::{NaiveDateTime, Utc};
 
 use super::schema::*;
+use crate::rpc::models as RpcModels;
 
-#[derive(Queryable)]
+#[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct User {
     pub id: i32,
     pub sub: String,
@@ -16,7 +17,24 @@ pub struct User {
     pub active: bool,
 }
 
-#[derive(AsChangeset, Insertable)]
+impl From<RpcModels::User> for User {
+    fn from(user: RpcModels::User) -> Self {
+        User {
+            id: user.id,
+            sub: user.sub,
+            email: user.email,
+            given_name: user.given_name,
+            family_name: user.family_name,
+            picture: user.picture,
+            oauth_access_token: "".into(),
+            oauth_access_token_valid: Utc::now().naive_utc(),
+            oauth_refresh_token: "".into(),
+            active: user.active,
+        }
+    }
+}
+
+#[derive(Clone, Debug, AsChangeset, Insertable, PartialEq)]
 #[table_name = "users"]
 pub struct UserAddUpdate {
     pub sub: String,
@@ -30,7 +48,7 @@ pub struct UserAddUpdate {
     pub active: bool,
 }
 
-#[derive(Queryable)]
+#[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct Role {
     pub id: i32,
     pub name: String,
@@ -38,14 +56,24 @@ pub struct Role {
     pub access_manage_roles: bool,
 }
 
-#[derive(Queryable)]
+#[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct UserRole {
     pub id: i32,
     pub user_id: i32,
     pub role_id: i32,
 }
 
-#[derive(AsChangeset, Insertable)]
+impl From<RpcModels::UserRole> for UserRole {
+    fn from(user_role: RpcModels::UserRole) -> Self {
+        UserRole {
+            id: user_role.id,
+            user_id: user_role.user_id,
+            role_id: user_role.role_id,
+        }
+    }
+}
+
+#[derive(Clone, Debug, AsChangeset, Insertable, PartialEq)]
 #[table_name = "users_roles"]
 pub struct UserRoleAddUpdate {
     pub user_id: i32,
