@@ -4,6 +4,8 @@ pub mod session {
     use tarpc::context;
     use warp::{reject, Filter, Rejection};
 
+    use identity::rpc::get_rpc_client;
+
     pub struct Session {
         pub token: String,
         pub sub: String,
@@ -19,7 +21,7 @@ pub mod session {
                     .strip_prefix("Bearer ")
                     .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
 
-                let mut client = crate::rpc::identity_client(&addr).await.map_err(|e| {
+                let mut client = get_rpc_client(addr).await.map_err(|e| {
                     log::error!("Identity service error: {}", e);
                     reject::custom(super::rejection::NotAuthenticated)
                 })?;
