@@ -1,5 +1,4 @@
 use std::collections::HashMap;
-use std::sync::Arc;
 
 use tarpc::context::Context;
 
@@ -9,11 +8,11 @@ use crate::db::{queries, DbConn, DbPool};
 
 #[derive(Clone)]
 pub struct BookServer {
-    db_pool: Arc<DbPool>,
+    db_pool: DbPool,
 }
 
 impl BookServer {
-    pub fn new(db_pool: Arc<DbPool>) -> Self {
+    pub fn new(db_pool: DbPool) -> Self {
         Self { db_pool }
     }
 

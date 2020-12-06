@@ -4,7 +4,6 @@ pub mod service;
 
 use std::io;
 use std::net::SocketAddr;
-use std::sync::Arc;
 
 use futures::{future, prelude::*};
 use tarpc::{
@@ -34,8 +33,6 @@ pub async fn rpc_server(
     const CHANNEL_PER_IP: u32 = 10;
     const MAX_CURRENT_CHANNEL: usize = 10;
 
-    let db_pool = Arc::new(db_pool);
-
     let incoming = tcp::listen(addr, Json::default).await?;
     let addr = incoming.local_addr();
 
@@ -46,7 +43,7 @@ pub async fn rpc_server(
         .map(BaseChannel::with_defaults)
         .max_channels_per_key(CHANNEL_PER_IP, keymaker)
         .map(move |channel| {
-            let server = BookServer::new(Arc::clone(&db_pool));
+            let server = BookServer::new(db_pool.clone());
             channel.respond_with(server.serve()).execute()
         })
         .buffer_unordered(MAX_CURRENT_CHANNEL)
