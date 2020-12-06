@@ -390,14 +390,7 @@ impl IdentityService for IdentityServer {
     /// Returns the validity and content of a session token
     async fn session_info(self, _: context::Context, token: String) -> RpcResult<SessionInfo> {
         match Jwt::decode(&self.conf.jwt_secret(), &token) {
-            Ok(val) => Ok(SessionInfo {
-                sub: val.sub,
-                given_name: val.given_name,
-                family_name: val.family_name,
-                picture: val.picture,
-                iat: val.iat,
-                exp: val.exp,
-            }),
+            Ok(val) => Ok(val.into()),
             Err(_) => Err(Error::InvalidData),
         }
     }

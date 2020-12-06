@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+use crate::session::jwt::Jwt;
+
 pub type AuthorizationCode = String;
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -46,4 +48,17 @@ pub struct SessionInfo {
     pub picture: String,
     pub iat: i64,
     pub exp: i64,
+}
+
+impl From<Jwt> for SessionInfo {
+    fn from(jwt: Jwt) -> Self {
+        Self {
+            sub: jwt.sub,
+            given_name: jwt.given_name,
+            family_name: jwt.family_name,
+            picture: jwt.picture,
+            iat: jwt.iat,
+            exp: jwt.exp,
+        }
+    }
 }
