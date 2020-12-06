@@ -380,7 +380,8 @@ impl IdentityService for IdentityServer {
                 user.given_name,
                 user.family_name,
                 user.picture,
-                3600,
+                Utc::now(),
+                Duration::seconds(3600),
             )
             .encode(&self.conf.jwt_secret()),
         })
