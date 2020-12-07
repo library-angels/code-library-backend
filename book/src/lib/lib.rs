@@ -1,6 +1,6 @@
 pub mod db;
 mod rpc;
-#[cfg(feature = "test-data")]
+#[cfg(any(test, feature = "test-data"))]
 pub mod test_data;
 
 #[macro_use]

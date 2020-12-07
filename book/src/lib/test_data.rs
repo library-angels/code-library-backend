@@ -1,8 +1,10 @@
 use chrono::NaiveDate;
 use diesel::prelude::*;
 
-use crate::db::{queries::RawBookAndArgs, DbConn};
+use crate::db::DbConn;
 use crate::models::*;
+
+pub type RawBookAndArgs = (RawBook, Category, Language, Publisher);
 
 pub fn insert_data(db_conn: &DbConn) -> QueryResult<()> {
     let queries = vec![
@@ -100,7 +102,7 @@ pub fn raw_book_1() -> RawBook {
     }
 }
 
-pub fn raw_book_and_args() -> RawBookAndArgs {
+pub fn raw_book_and_args_1() -> RawBookAndArgs {
     (raw_book_1(), category_1(), language_1(), publisher_1())
 }
 

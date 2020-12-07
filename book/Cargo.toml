@@ -9,6 +9,7 @@ name = "book"
 path = "src/lib/lib.rs"
 
 [dependencies]
+cfg-if = "1"
 chrono = { version = "0.4", features = ["serde"] }
 diesel = { version = "1.4", features = ["chrono", "postgres", "r2d2"] }
 diesel_migrations = "1.4"

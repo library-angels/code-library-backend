@@ -7,7 +7,7 @@ use super::models::*;
 use super::schema::*;
 use super::DbConn;
 
-pub type RawBookAndArgs = (Book, Category, Language, Publisher);
+type RawBookAndArgs = (Book, Category, Language, Publisher);
 
 type ListResult<T> = QueryResult<Vec<(i32, T)>>;
 type PageResult<T> = QueryResult<(Vec<T>, i64)>;

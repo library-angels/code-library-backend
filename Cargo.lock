@@ -114,6 +114,7 @@ dependencies = [
 name = "book"
 version = "0.1.0"
 dependencies = [
+ "cfg-if 1.0.0",
  "chrono",
  "diesel",
  "diesel_migrations",
