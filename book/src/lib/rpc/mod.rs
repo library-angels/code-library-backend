@@ -51,3 +51,46 @@ pub async fn rpc_server(
 
     Ok((server, addr))
 }
+
+#[cfg(test)]
+mod tests {
+    use std::net::TcpListener;
+
+    use helpers::result::StdResult;
+
+    use super::*;
+    use crate::db;
+
+    const DATABASE_URL: &str = "postgres://postgres:password@localhost";
+
+    #[tokio::test]
+    async fn rpc_server_binding_should_work() -> StdResult<()> {
+        // Arrange
+        let db_pool = db::get_db_pool(DATABASE_URL);
+
+        // Act
+        let _ = rpc_server(&addr(), db_pool).await?;
+
+        // Assert
+        Ok(())
+    }
+
+    #[tokio::test]
+    #[should_panic]
+    async fn rpc_server_binding_should_fail() {
+        // Arrange
+        let socket = TcpListener::bind(addr()).unwrap();
+        let addr = socket.local_addr().unwrap();
+
+        let db_pool = db::get_db_pool(DATABASE_URL);
+
+        // Act
+        let _ = rpc_server(&addr, db_pool).await.unwrap();
+
+        // Assert
+    }
+
+    fn addr() -> SocketAddr {
+        SocketAddr::from(([127, 0, 0, 1], 0))
+    }
+}
