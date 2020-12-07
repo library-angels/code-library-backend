@@ -1,3 +1,5 @@
+#[cfg(test)]
+mod component_tests;
 pub mod db;
 mod rpc;
 #[cfg(any(test, feature = "test-data"))]
