@@ -3,6 +3,8 @@ use hyper_tls::HttpsConnector;
 use jsonwebtoken::dangerous_insecure_decode;
 use serde::{Deserialize, Serialize, Serializer};
 
+use helpers::rpc::Error as RpcError;
+
 type ClientIdentifier = String;
 type ClientSecret = String;
 
@@ -15,6 +17,28 @@ pub enum Error {
     TokenRequestContentInvalid,
     TokenRequestDeserialization,
     IdTokenInvalid,
+}
+
+impl From<Error> for RpcError {
+    fn from(e: Error) -> Self {
+        use Error::*;
+        log::debug!("{:?}", e);
+        match e {
+            AuthorizationCodeLength | AuthorizationCodeInvalidCharacter => RpcError::InvalidData,
+            _ => RpcError::InternalError,
+        }
+    }
+}
+
+/// Represents the Google Discovery Document
+/// https://accounts.google.com/.well-known/openid-configuration
+pub struct DiscoveryDocument {}
+
+impl DiscoveryDocument {
+    /// Returns the `token_endpoint` key value
+    pub fn get_token_endpoint() -> Uri {
+        "https://oauth2.googleapis.com/token".parse().unwrap()
+    }
 }
 
 #[derive(Debug, PartialEq)]

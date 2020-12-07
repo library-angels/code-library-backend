@@ -149,6 +149,34 @@ async fn db_get_user_not_exists() {
     assert_eq!(Err(Error::NotFound), result);
 }
 
+// get an user by its sub
+#[tokio::test]
+async fn db_get_user_by_sub() {
+    // Arrange
+    let (_configuration, db_pool, _db_test_context) = setup(stdext::function_name!().into())
+        .await
+        .expect("Could not set up test environment");
+
+    let expected_result = User {
+        id: 2,
+        sub: "2".into(),
+        email: "jack.kerr@example.net".into(),
+        given_name: "Jack".into(),
+        family_name: "Kerr".into(),
+        picture: "https://example.com/avatar.jpg".into(),
+        oauth_access_token: "access_token".into(),
+        oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
+        oauth_refresh_token: "refresh_token".into(),
+        active: true,
+    };
+
+    // Act
+    let result = queries::get_user_by_sub("2", &db_pool.get().unwrap());
+
+    // Assert
+    assert_eq!(Ok(expected_result), result);
+}
+
 // list active users with offset/limit
 #[tokio::test]
 async fn db_list_users_exists_active() {
@@ -242,6 +270,46 @@ async fn db_update_user_verify() {
 
     // Act
     let result = queries::update_user(expected_result.clone(), &db_pool.get().unwrap());
+
+    // Assert
+    assert_eq!(Ok(expected_result), result);
+}
+
+// verify update user by sub
+#[tokio::test]
+async fn db_update_user_by_sub_verify() {
+    // Arrange
+    let (_configuration, db_pool, _db_test_context) = setup(stdext::function_name!().into())
+        .await
+        .expect("Could not set up test environment");
+
+    let expected_result = User {
+        id: 2,
+        sub: "2".into(),
+        email: "jack.kerr@example.net".into(),
+        given_name: "Jack".into(),
+        family_name: "Kerr".into(),
+        picture: "https://example.com/avatar.jpg".into(),
+        oauth_access_token: "access_token_new".into(),
+        oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
+        oauth_refresh_token: "refresh_token".into(),
+        active: true,
+    };
+
+    let expected_change = UserAddUpdate {
+        sub: "2".into(),
+        email: "jack.kerr@example.net".into(),
+        given_name: "Jack".into(),
+        family_name: "Kerr".into(),
+        picture: "https://example.com/avatar.jpg".into(),
+        oauth_access_token: "access_token_new".into(),
+        oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
+        oauth_refresh_token: None,
+        active: true,
+    };
+
+    // Act
+    let result = queries::update_user_by_sub(expected_change, &db_pool.get().unwrap());
 
     // Assert
     assert_eq!(Ok(expected_result), result);

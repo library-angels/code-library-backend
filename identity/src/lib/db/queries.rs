@@ -17,6 +17,12 @@ pub fn get_user(user_id: i32, db: &DbConn) -> QueryResult<User> {
     users.find(user_id).first(db)
 }
 
+pub fn get_user_by_sub(sub: &str, db: &DbConn) -> QueryResult<User> {
+    use schema::users::dsl;
+
+    dsl::users.filter(dsl::sub.eq(sub)).get_result(db)
+}
+
 pub fn list_users(
     offset: i64,
     limit: i64,
@@ -40,6 +46,14 @@ pub fn update_user(user: User, db: &DbConn) -> QueryResult<User> {
 
     diesel::update(users.find(user.id as i32))
         .set(active.eq(user.active))
+        .get_result(db)
+}
+
+pub fn update_user_by_sub(user: UserAddUpdate, db: &DbConn) -> QueryResult<User> {
+    use schema::users::dsl::*;
+
+    diesel::update(users.filter(sub.eq(&user.sub)))
+        .set(&user)
         .get_result(db)
 }
 

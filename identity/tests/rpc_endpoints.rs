@@ -339,10 +339,32 @@ async fn update_user_role_verify() {
     assert_eq!(Ok(expected_result), result);
 }
 
-/*
- * TODO: test oauth_authentication
- * Reason: Return of method is currently unpredictable, because it is based on time.
- */
+// test oauth authentication
+#[tokio::test]
+async fn oauth_authentication() {
+    // Check if test requirements are met
+    // This test will silently fail if the envrionment variable "OAUTH_AUTHORIZATION_CODE" is not set
+    let authorization_code = match var("OAUTH_AUTHORIZATION_CODE") {
+        Ok(val) => val,
+        Err(_) => return,
+    };
+
+    // Arrange
+    let (server, mut client, _configuration, _db_test_context) =
+        setup(stdext::function_name!().into())
+            .await
+            .expect("Could not set up test environment");
+    tokio::spawn(server);
+
+    // Act
+    let result = client
+        .oauth_authentication(context::current(), authorization_code)
+        .await
+        .unwrap();
+
+    // Assert
+    assert!(result.is_ok());
+}
 
 // test client identifier
 #[tokio::test]

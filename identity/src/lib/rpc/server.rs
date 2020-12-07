@@ -9,9 +9,14 @@ use tarpc::context;
 use helpers::rpc::{Error, RpcResult};
 
 use super::{models::*, service::IdentityService};
-use crate::authentication::oauth;
+use crate::authentication::oauth::{
+    AuthorizationCode, DiscoveryDocument, GrantType, IdToken, RedirectUri, TokenRequest,
+};
+use crate::authentication::{
+    check_account_status, create_user_from_oauth_authentication, AccountStatus,
+};
 use crate::config::Configuration;
-use crate::db::{models, queries, DbPool};
+use crate::db::{queries, DbPool};
 use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
@@ -225,111 +230,55 @@ impl IdentityService for IdentityServer {
     async fn oauth_authentication(
         self,
         _: context::Context,
-        code: AuthorizationCode,
+        code: OauthAuthorizationCode,
     ) -> RpcResult<SessionToken> {
-        use crate::db::schema::users::dsl::*;
+        // Checks if the authorization code has a valid form
+        let authorization_code = AuthorizationCode::new(code)?;
 
-        let authorization_code = match oauth::AuthorizationCode::new(code) {
-            Ok(val) => val,
-            Err(_) => return Err(Error::InvalidData),
-        };
-
-        let request = oauth::TokenRequest::new(
+        // Creates a TokenRequest instance
+        let request = TokenRequest::new(
             authorization_code,
             self.conf.oauth_client_identifier.clone(),
             self.conf.oauth_client_secret.clone(),
-            oauth::RedirectUri::PostMessage,
-            oauth::GrantType::AuthorizationCode,
+            RedirectUri::PostMessage,
+            GrantType::AuthorizationCode,
         );
-        use hyper::Uri;
-        let token_endpoint = "https://oauth2.googleapis.com/token"
-            .parse::<Uri>()
-            .unwrap();
 
-        let tokenset = match request.exchange_code(token_endpoint).await {
-            Ok(val) => val,
-            Err(e) => {
-                println!("{:?}", e);
-                return Err(Error::InternalError);
-            }
-        };
+        // Exchanges the TokenRequest for a Tokenset
+        let tokenset = request
+            .exchange_code(DiscoveryDocument::get_token_endpoint())
+            .await?;
 
-        let id_token = match oauth::IdToken::new(&tokenset.id_token) {
-            Ok(val) => val,
-            Err(_) => return Err(Error::InternalError),
-        };
+        // Creates an IdToken from the TokenSet
+        let id_token = IdToken::new(&tokenset.id_token)?;
 
-        match users
-            .filter(sub.eq(&id_token.sub))
-            .get_result::<models::User>(&self.get_db())
-        {
-            Ok(val) => {
-                if !val.active {
-                    log::info!(
-                        "Rejected authentication for deactivated account \"{}\"",
-                        &id_token.email
-                    );
-                    return Err(Error::InvalidInput);
-                }
-            }
-            Err(diesel::result::Error::NotFound) => {
-                log::info!(
-                    "Starting authentication for new account \"{}\"",
-                    &id_token.email
-                );
-                if tokenset.refresh_token.is_none() {
-                    log::info!("Failed to start authentication (missing refresh token) for new account \"{}\"", &id_token.email);
-                    return Err(Error::InvalidInput);
-                }
-            }
-            Err(_) => {
-                log::error!(
-                    "Failed to fetch information for account \"{}\"",
-                    &id_token.email
-                );
-                return Err(Error::InternalError);
-            }
+        // Checks the status of the user about to authenticate
+        let account_status =
+            check_account_status(queries::get_user_by_sub(&id_token.sub, &self.get_db()))?;
+
+        // Checks if the user account is inactive or authentication has missing refresh token for new account
+        if account_status == AccountStatus::Inactive {
+            log::info!("Rejected inactive account '{}'", &id_token.email);
+            return Err(Error::InvalidInput);
+        } else if account_status == AccountStatus::New && tokenset.refresh_token.is_none() {
+            log::info!("Rejected new account '{}'", &id_token.email);
+            log::info!("Missing refresh token for account '{}'", &id_token.email);
+            return Err(Error::InvalidInput);
         }
 
-        let user = models::UserAddUpdate {
-            sub: id_token.sub.clone(),
-            email: id_token.email.clone(),
-            given_name: id_token.given_name.clone(),
-            family_name: id_token.family_name.clone(),
-            picture: id_token.picture.clone(),
-            oauth_access_token: tokenset.access_token.clone(),
-            oauth_access_token_valid: Utc::now().naive_utc()
-                + Duration::seconds(tokenset.expires_in.into()),
-            oauth_refresh_token: tokenset.refresh_token,
-            active: true,
-        };
+        // Creates an user model instance from IdToken and TokenSet
+        let user =
+            create_user_from_oauth_authentication(&id_token, &tokenset, Utc::now().naive_utc());
 
-        let user = match diesel::update(users.filter(sub.eq(&user.sub)))
-            .set(&user)
-            .get_result::<models::User>(&self.get_db())
-        {
-            Ok(val) => {
-                log::info!("Successfully updated account \"{}\"", &id_token.email);
-                val
-            }
-            Err(diesel::result::Error::NotFound) => {
-                match queries::create_user(user, &self.get_db()) {
-                    Ok(val) => {
-                        log::info!("Successfully created account \"{}\"", &id_token.email);
-                        val
-                    }
-                    Err(_) => {
-                        log::error!("Failed to create account \"{}\"", &id_token.email);
-                        return Err(Error::InternalError);
-                    }
-                }
-            }
-            Err(_) => {
-                log::error!("Failed to create account \"{}\"", &id_token.email);
-                return Err(Error::InternalError);
-            }
+        // Create or update user record in database
+        let user = match account_status {
+            AccountStatus::Active => queries::update_user_by_sub(user, &self.get_db())?,
+            AccountStatus::New => queries::create_user(user, &self.get_db())?,
+            _ => return Err(Error::InternalError),
         };
+        log::info!("Successfully created/updated account '{}'", &id_token.email);
 
+        // Create and return SessionToken
         Ok(SessionToken {
             token: Jwt::new(
                 user.id as u32,
