@@ -31,13 +31,18 @@ pub async fn list_books(
     addr: SocketAddr,
     query_params: models::QueryParams,
 ) -> Result<impl Reply, Infallible> {
-    let QueryParams { page, page_size } = query_params;
+    let QueryParams {
+        page,
+        page_size,
+        category,
+    } = query_params;
     if let Ok(mut client) = book::rpc_client(&addr).await {
         if let Ok(rpc_result) = client
             .list_books(
                 context::current(),
                 page.unwrap_or(1),
                 page_size.unwrap_or(10),
+                category,
             )
             .await
         {
@@ -68,6 +73,7 @@ mod models {
     pub struct QueryParams {
         pub page: Option<u32>,
         pub page_size: Option<u32>,
+        pub category: Option<String>,
     }
 
     #[derive(Debug, Serialize)]

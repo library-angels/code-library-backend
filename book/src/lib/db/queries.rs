@@ -175,14 +175,29 @@ pub fn list_authors_of_books(book_ids: &[i32], conn: &DbConn) -> ListResult<Pers
 ///     ) t
 /// LIMIT $1 OFFSET $2 -- binds: [10, 0]
 /// ```
-pub fn list_books(page: i64, page_size: i64, conn: &DbConn) -> PageResult<RawBookAndArgs> {
-    books::table
-        .inner_join(categories::table)
-        .inner_join(languages::table)
-        .inner_join(publishers::table)
-        .paginate(page)
-        .per_page(page_size)
-        .load_and_count_pages(conn)
+pub fn list_books(
+    page: i64,
+    page_size: i64,
+    category: Option<String>,
+    conn: &DbConn,
+) -> PageResult<RawBookAndArgs> {
+    match category {
+        Some(c) => books::table
+            .inner_join(categories::table)
+            .filter(categories::name.eq(c))
+            .inner_join(languages::table)
+            .inner_join(publishers::table)
+            .paginate(page)
+            .per_page(page_size)
+            .load_and_count_pages(conn),
+        None => books::table
+            .inner_join(categories::table)
+            .inner_join(languages::table)
+            .inner_join(publishers::table)
+            .paginate(page)
+            .per_page(page_size)
+            .load_and_count_pages(conn),
+    }
 }
 
 /// List all series for any of the books.
