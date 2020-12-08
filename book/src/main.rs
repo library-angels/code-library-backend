@@ -29,7 +29,7 @@ async fn main() -> io::Result<()> {
     let db_pool = db::get_db_pool(&*database_url);
 
     embed_migrations!();
-    helpers::db::run_migration(embedded_migrations::run, &db_pool);
+    helpers::db::run_migration(embedded_migrations::run, &db_pool.get().unwrap());
 
     let (server, addr) = rpc_server(&configuration.rpc_socket(), db_pool)
         .await

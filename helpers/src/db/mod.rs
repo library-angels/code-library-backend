@@ -1,7 +1,10 @@
 pub mod pagination;
 
-use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, Pool, PooledConnection};
+use diesel::{
+    pg::{Pg, PgConnection},
+    r2d2::{ConnectionManager, Pool, PooledConnection},
+    Connection,
+};
 use diesel_migrations::RunMigrationsError;
 
 pub type DbPool = Pool<ConnectionManager<PgConnection>>;
@@ -12,11 +15,12 @@ pub fn get_db_pool(database_url: &str) -> DbPool {
         .expect("Failed creating new database connection")
 }
 
-pub fn run_migration(
-    run_embedded_migration: impl FnOnce(&DbConn) -> Result<(), RunMigrationsError>,
-    db_pool: &DbPool,
-) {
-    match run_embedded_migration(&db_pool.get().unwrap()) {
+pub fn run_migration<T, U>(run_embedded_migration: T, conn: &U)
+where
+    T: FnOnce(&U) -> Result<(), RunMigrationsError>,
+    U: Connection<Backend = Pg>,
+{
+    match run_embedded_migration(conn) {
         Ok(()) => log::info!("Successfully applied migrations on database."),
         Err(err) => {
             let error_type = match &err {

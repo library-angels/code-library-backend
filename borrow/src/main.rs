@@ -76,7 +76,7 @@ async fn main() -> io::Result<()> {
     }
 
     embed_migrations!();
-    helpers::db::run_migration(embedded_migrations::run, &DB.get().unwrap());
+    helpers::db::run_migration(embedded_migrations::run, &DB.get().unwrap().get().unwrap());
 
     tarpc::serde_transport::tcp::listen(&CONFIGURATION.get().unwrap().rpc_socket(), Json::default)
         .await?

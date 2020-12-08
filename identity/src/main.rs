@@ -21,7 +21,7 @@ async fn main() -> io::Result<()> {
     let db_pool = get_db_pool(&configuration.db_connection_url());
 
     embed_migrations!();
-    run_migration(embedded_migrations::run, &db_pool);
+    run_migration(embedded_migrations::run, &db_pool.get().unwrap());
 
     let (server, addr) = get_rpc_server(
         configuration.rpc_socket(),
