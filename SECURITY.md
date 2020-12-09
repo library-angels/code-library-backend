@@ -193,4 +193,4 @@ Eve is a student with a `@code.berlin`-email address and can
 
 ## Foodnotes
 1. "[R]isk-based approach to designing secure systems [...], based on identifying threats in order to develop mitigations to them." _([source](https://martinfowler.com/articles/agile-threat-modelling.html))_
-1. "[A] user story from the point of view of a malicious adversary" _([source](https://rietta.com/blog/what-is-an-abuser-story-software/))_, used to "identify how attackers may abuse the system and jeopardize stakeholders' assets." _([source](https://rietta.com/blog/what-is-an-abuser-story-software/))_
+1. "[A] user story from the point of view of a malicious adversary" _([source](https://rietta.com/blog/what-is-an-abuser-story-software/))_, used to "identify how attackers may abuse the system and jeopardize stakeholders' assets." _([source](https://handouts.secappdev.org/handouts/2008/abuser%20stories.pdf))_
