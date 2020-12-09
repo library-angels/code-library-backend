@@ -1,6 +1,6 @@
 use chrono::NaiveDate;
 
-use identity::db::models::{UserAddUpdate, UserRoleAddUpdate};
+use identity::db::models::UserAddUpdate;
 
 pub fn users() -> Vec<UserAddUpdate> {
     vec![
@@ -14,6 +14,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "2".into(),
@@ -25,6 +26,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "3".into(),
@@ -36,6 +38,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "4".into(),
@@ -47,6 +50,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: false,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "5".into(),
@@ -58,6 +62,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "6".into(),
@@ -69,6 +74,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "7".into(),
@@ -80,6 +86,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "8".into(),
@@ -91,6 +98,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "9".into(),
@@ -102,6 +110,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "10".into(),
@@ -113,6 +122,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
+            role_id: 1,
         },
         UserAddUpdate {
             sub: "11".into(),
@@ -124,54 +134,6 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-        },
-    ]
-}
-
-pub fn users_roles() -> Vec<UserRoleAddUpdate> {
-    vec![
-        UserRoleAddUpdate {
-            user_id: 1,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 2,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 3,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 4,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 5,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 6,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 7,
-            role_id: 1,
-        },
-        UserRoleAddUpdate {
-            user_id: 8,
-            role_id: 2,
-        },
-        UserRoleAddUpdate {
-            user_id: 9,
-            role_id: 2,
-        },
-        UserRoleAddUpdate {
-            user_id: 10,
-            role_id: 3,
-        },
-        UserRoleAddUpdate {
-            user_id: 11,
             role_id: 1,
         },
     ]
