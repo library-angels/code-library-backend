@@ -252,8 +252,6 @@ async fn get_role_exists() {
     let expected_result = Role {
         id: 2,
         name: "Manager".into(),
-        access_manage_books: true,
-        access_manage_roles: false,
     };
 
     // Act
@@ -294,14 +292,10 @@ async fn list_roles_exists() {
         Role {
             id: 2,
             name: "Manager".into(),
-            access_manage_books: true,
-            access_manage_roles: false,
         },
         Role {
             id: 3,
             name: "Administrator".into(),
-            access_manage_books: true,
-            access_manage_roles: true,
         },
     ];
 
