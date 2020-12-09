@@ -55,6 +55,4 @@ pub struct UserAddUpdate {
 pub struct Role {
     pub id: i32,
     pub name: String,
-    pub access_manage_books: bool,
-    pub access_manage_roles: bool,
 }
