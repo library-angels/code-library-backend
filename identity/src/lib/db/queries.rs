@@ -68,35 +68,3 @@ pub fn list_roles(offset: i64, limit: i64, db: &DbConn) -> QueryResult<Vec<Role>
 
     roles.offset(offset).limit(limit).load(db)
 }
-
-pub fn get_user_role(user_role_id: i32, db: &DbConn) -> QueryResult<UserRole> {
-    use schema::users_roles::dsl::users_roles;
-
-    users_roles.find(user_role_id).first(db)
-}
-
-pub fn list_user_roles(
-    offset: i64,
-    limit: i64,
-    role_id: Option<i32>,
-    db: &DbConn,
-) -> QueryResult<Vec<UserRole>> {
-    use schema::users_roles::dsl;
-
-    match role_id {
-        Some(val) => dsl::users_roles
-            .filter(dsl::role_id.eq(val))
-            .offset(offset)
-            .limit(limit)
-            .load(db),
-        None => dsl::users_roles.offset(offset).limit(limit).load(db),
-    }
-}
-
-pub fn update_user_role(user_role: UserRole, db: &DbConn) -> QueryResult<UserRole> {
-    use schema::users_roles::dsl::*;
-
-    diesel::update(users_roles.find(user_role.id as i32))
-        .set(role_id.eq(user_role.role_id as i32))
-        .get_result(db)
-}

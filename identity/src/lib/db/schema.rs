@@ -25,7 +25,4 @@ table! {
 
 joinable!(users -> roles (role_id));
 
-allow_tables_to_appear_in_same_query!(
-    roles,
-    users,
-);
+allow_tables_to_appear_in_same_query!(roles, users,);

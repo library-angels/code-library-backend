@@ -13,6 +13,7 @@ pub struct User {
     pub family_name: String,
     pub picture: String,
     pub active: bool,
+    pub role_id: i32,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
@@ -21,13 +22,6 @@ pub struct Role {
     pub name: String,
     pub access_manage_books: bool,
     pub access_manage_roles: bool,
-}
-
-#[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
-pub struct UserRole {
-    pub id: i32,
-    pub user_id: i32,
-    pub role_id: i32,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]

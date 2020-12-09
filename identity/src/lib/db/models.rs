@@ -15,6 +15,7 @@ pub struct User {
     pub oauth_access_token_valid: NaiveDateTime,
     pub oauth_refresh_token: String,
     pub active: bool,
+    pub role_id: i32,
 }
 
 impl From<RpcModels::User> for User {
@@ -30,6 +31,7 @@ impl From<RpcModels::User> for User {
             oauth_access_token_valid: Utc::now().naive_utc(),
             oauth_refresh_token: "".into(),
             active: user.active,
+            role_id: user.role_id,
         }
     }
 }
@@ -46,6 +48,7 @@ pub struct UserAddUpdate {
     pub oauth_access_token_valid: NaiveDateTime,
     pub oauth_refresh_token: Option<String>,
     pub active: bool,
+    pub role_id: i32,
 }
 
 #[derive(Clone, Debug, PartialEq, Queryable)]
@@ -54,28 +57,4 @@ pub struct Role {
     pub name: String,
     pub access_manage_books: bool,
     pub access_manage_roles: bool,
-}
-
-#[derive(Clone, Debug, PartialEq, Queryable)]
-pub struct UserRole {
-    pub id: i32,
-    pub user_id: i32,
-    pub role_id: i32,
-}
-
-impl From<RpcModels::UserRole> for UserRole {
-    fn from(user_role: RpcModels::UserRole) -> Self {
-        UserRole {
-            id: user_role.id,
-            user_id: user_role.user_id,
-            role_id: user_role.role_id,
-        }
-    }
-}
-
-#[derive(Clone, Debug, AsChangeset, Insertable, PartialEq)]
-#[table_name = "users_roles"]
-pub struct UserRoleAddUpdate {
-    pub user_id: i32,
-    pub role_id: i32,
 }
