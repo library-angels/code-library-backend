@@ -47,10 +47,11 @@ impl BookService for BookServer {
         _: Context,
         page: u32,
         page_size: u32,
+        category: Option<String>,
     ) -> RpcResult<(Vec<Book>, u32)> {
         // get books
         let (book_list, num_pages) =
-            queries::list_books(page as i64, page_size as i64, &self.db_conn())?;
+            queries::list_books(page as i64, page_size as i64, category, &self.db_conn())?;
         // get ids of books
         let book_ids = book_list.iter().map(|(b, ..)| b.id).collect::<Vec<_>>();
 
