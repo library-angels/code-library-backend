@@ -19,18 +19,10 @@ table! {
         oauth_access_token_valid -> Timestamp,
         oauth_refresh_token -> Varchar,
         active -> Bool,
-    }
-}
-
-table! {
-    users_roles (id) {
-        id -> Int4,
-        user_id -> Int4,
         role_id -> Int4,
     }
 }
 
-joinable!(users_roles -> roles (role_id));
-joinable!(users_roles -> users (user_id));
+joinable!(users -> roles (role_id));
 
-allow_tables_to_appear_in_same_query!(roles, users, users_roles,);
+allow_tables_to_appear_in_same_query!(roles, users,);

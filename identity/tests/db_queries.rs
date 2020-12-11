@@ -7,7 +7,7 @@ use diesel::{prelude::*, result::Error};
 use envconfig::Envconfig;
 
 use identity::config::Configuration;
-use identity::db::schema::{users::dsl::users, users_roles::dsl::users_roles};
+use identity::db::schema::users::dsl::users;
 use identity::db::{get_db_pool, models::*, queries};
 
 mod sample_data;
@@ -45,11 +45,6 @@ impl DbTestContext {
             .values(&sample_data::users())
             .execute(&conn)
             .expect("Error inserting 'users' sample data");
-
-        diesel::insert_into(users_roles)
-            .values(&sample_data::users_roles())
-            .execute(&conn)
-            .expect("Error inserting 'users_roles' sample data");
 
         Self {
             connection_url,
@@ -125,6 +120,7 @@ async fn db_get_user_exists() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: true,
+        role_id: 1,
     };
 
     // Act
@@ -168,6 +164,7 @@ async fn db_get_user_by_sub() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: true,
+        role_id: 1,
     };
 
     // Act
@@ -197,6 +194,7 @@ async fn db_list_users_exists_active() {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: true,
+            role_id: 1,
         },
         User {
             id: 5,
@@ -209,6 +207,7 @@ async fn db_list_users_exists_active() {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: true,
+            role_id: 1,
         },
     ];
 
@@ -238,6 +237,7 @@ async fn db_list_users_exists_inactive() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: false,
+        role_id: 1,
     }];
 
     // Act
@@ -266,6 +266,7 @@ async fn db_update_user_verify() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: false,
+        role_id: 1,
     };
 
     // Act
@@ -294,6 +295,7 @@ async fn db_update_user_by_sub_verify() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: true,
+        role_id: 1,
     };
 
     let expected_change = UserAddUpdate {
@@ -306,6 +308,7 @@ async fn db_update_user_by_sub_verify() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: None,
         active: true,
+        role_id: 1,
     };
 
     // Act
@@ -377,27 +380,6 @@ async fn list_roles_exists() {
 
     // Act
     let result = queries::list_roles(1, 2, &db_pool.get().unwrap());
-
-    // Assert
-    assert_eq!(Ok(expected_result), result);
-}
-
-// update user role
-#[tokio::test]
-async fn db_update_user_role_verify() {
-    // Arrange
-    let (_configuration, db_pool, _db_test_context) = setup(stdext::function_name!().into())
-        .await
-        .expect("Could not set up test environment");
-
-    let expected_result = UserRole {
-        id: 3,
-        user_id: 3,
-        role_id: 3,
-    };
-
-    // Act
-    let result = queries::update_user_role(expected_result.clone(), &db_pool.get().unwrap());
 
     // Assert
     assert_eq!(Ok(expected_result), result);

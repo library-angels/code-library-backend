@@ -57,6 +57,7 @@ impl IdentityService for IdentityServer {
                 family_name: val.family_name,
                 picture: val.picture,
                 active: val.active,
+                role_id: val.role_id,
             }),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
             Err(_) => Err(Error::InternalError),
@@ -84,6 +85,7 @@ impl IdentityService for IdentityServer {
                     family_name: x.family_name.clone(),
                     picture: x.picture.clone(),
                     active: x.active,
+                    role_id: x.role_id,
                 })
                 .collect::<Vec<User>>()),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
@@ -120,6 +122,7 @@ impl IdentityService for IdentityServer {
                 family_name: val.family_name.clone(),
                 picture: val.picture.clone(),
                 active: val.active,
+                role_id: val.role_id,
             }),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
             Err(_) => Err(Error::InternalError),
@@ -145,72 +148,6 @@ impl IdentityService for IdentityServer {
                     access_manage_roles: x.access_manage_roles,
                 })
                 .collect::<Vec<Role>>()),
-            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
-            Err(_) => Err(Error::InternalError),
-        }
-    }
-
-    /// Returns an user role
-    async fn get_user_role(self, _: context::Context, user_role_id: u32) -> RpcResult<UserRole> {
-        let result = queries::get_user_role(user_role_id as i32, &self.get_db());
-
-        match result {
-            Ok(val) => Ok(UserRole {
-                id: val.id,
-                user_id: val.user_id,
-                role_id: val.role_id,
-            }),
-            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
-            Err(_) => Err(Error::InternalError),
-        }
-    }
-
-    /// Returns a list of users
-    async fn list_user_roles(
-        self,
-        _: context::Context,
-        offset: u32,
-        limit: u32,
-        role_id: Option<u32>,
-    ) -> RpcResult<Vec<UserRole>> {
-        let results = match role_id {
-            Some(val) => queries::list_user_roles(
-                offset.into(),
-                limit.into(),
-                Some(val as i32),
-                &self.get_db(),
-            ),
-            None => queries::list_user_roles(offset.into(), limit.into(), None, &self.get_db()),
-        };
-
-        match results {
-            Ok(val) => Ok(val
-                .iter()
-                .map(|x| UserRole {
-                    id: x.id,
-                    user_id: x.user_id,
-                    role_id: x.role_id,
-                })
-                .collect::<Vec<UserRole>>()),
-            Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
-            Err(_) => Err(Error::InternalError),
-        }
-    }
-
-    /// Assigns a role to an user account
-    async fn update_user_role(
-        self,
-        _: context::Context,
-        user_role_update: UserRole,
-    ) -> RpcResult<UserRole> {
-        let result = queries::update_user_role(user_role_update.into(), &self.get_db());
-
-        match result {
-            Ok(val) => Ok(UserRole {
-                id: val.id,
-                user_id: val.user_id,
-                role_id: val.role_id,
-            }),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
             Err(_) => Err(Error::InternalError),
         }

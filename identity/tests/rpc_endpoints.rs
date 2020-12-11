@@ -8,8 +8,8 @@ use tarpc::context;
 
 use helpers::rpc::Error;
 use identity::db::get_db_pool;
-use identity::db::schema::{users::dsl::users, users_roles::dsl::users_roles};
-use identity::rpc::models::{Role, SessionInfo, User, UserRole};
+use identity::db::schema::users::dsl::users;
+use identity::rpc::models::{Role, SessionInfo, User};
 use identity::rpc::{get_rpc_client, get_rpc_server, service::IdentityServiceClient};
 use identity::{config::Configuration, session::jwt::Jwt};
 
@@ -48,11 +48,6 @@ impl DbTestContext {
             .values(&sample_data::users())
             .execute(&conn)
             .expect("Error inserting 'users' sample data");
-
-        diesel::insert_into(users_roles)
-            .values(&sample_data::users_roles())
-            .execute(&conn)
-            .expect("Error inserting 'users_roles' sample data");
 
         Self {
             connection_url,
@@ -143,6 +138,7 @@ async fn get_user_exists() {
         family_name: "Kerr".into(),
         picture: "https://example.com/avatar.jpg".into(),
         active: true,
+        role_id: 1,
     };
 
     // Act
@@ -188,6 +184,7 @@ async fn list_users_exists() {
             family_name: "Wilkins".into(),
             picture: "https://example.com/avatar.jpg".into(),
             active: true,
+            role_id: 1,
         },
         User {
             id: 5,
@@ -197,6 +194,7 @@ async fn list_users_exists() {
             family_name: "Henderson".into(),
             picture: "https://example.com/avatar.jpg".into(),
             active: true,
+            role_id: 1,
         },
     ];
 
@@ -228,6 +226,7 @@ async fn update_user_verify() {
         family_name: "Kerr".into(),
         picture: "https://example.com/avatar.jpg".into(),
         active: false,
+        role_id: 1,
     };
 
     // Act
@@ -308,32 +307,6 @@ async fn list_roles_exists() {
 
     // Act
     let result = client.list_roles(context::current(), 1, 2).await.unwrap();
-
-    // Assert
-    assert_eq!(Ok(expected_result), result);
-}
-
-// update user role
-#[tokio::test]
-async fn update_user_role_verify() {
-    // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
-        setup(stdext::function_name!().into())
-            .await
-            .expect("Could not set up test environment");
-    tokio::spawn(server);
-
-    let expected_result = UserRole {
-        id: 3,
-        user_id: 3,
-        role_id: 3,
-    };
-
-    // Act
-    let result = client
-        .update_user_role(context::current(), expected_result.clone())
-        .await
-        .unwrap();
 
     // Assert
     assert_eq!(Ok(expected_result), result);

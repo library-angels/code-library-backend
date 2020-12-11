@@ -42,6 +42,7 @@ pub fn create_user_from_oauth_authentication(
         oauth_access_token_valid: creation_time + Duration::seconds(token_set.expires_in.into()),
         oauth_refresh_token: token_set.refresh_token.clone(),
         active: true,
+        role_id: 1,
     }
 }
 
@@ -65,6 +66,7 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: true,
+            role_id: 1,
         });
 
         assert_eq!(
@@ -87,6 +89,7 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: false,
+            role_id: 1,
         });
 
         assert_eq!(
@@ -139,6 +142,7 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 1, 1).and_hms(0, 1, 40),
             oauth_refresh_token: token_set.refresh_token.clone(),
             active: true,
+            role_id: 1,
         };
 
         let result = create_user_from_oauth_authentication(&id_token, &token_set, creation_time);
@@ -183,6 +187,7 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 1, 1).and_hms(0, 1, 40),
             oauth_refresh_token: token_set.refresh_token.clone(),
             active: true,
+            role_id: 1,
         };
 
         let result = create_user_from_oauth_authentication(&id_token, &token_set, creation_time);
