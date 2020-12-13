@@ -101,8 +101,6 @@ impl IdentityService for IdentityServer {
             Ok(val) => Ok(Role {
                 id: val.id,
                 name: val.name,
-                access_manage_books: val.access_manage_books,
-                access_manage_roles: val.access_manage_roles,
             }),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),
             Err(_) => Err(Error::InternalError),
@@ -144,8 +142,6 @@ impl IdentityService for IdentityServer {
                 .map(|x| Role {
                     id: x.id,
                     name: x.name.clone(),
-                    access_manage_books: x.access_manage_books,
-                    access_manage_roles: x.access_manage_roles,
                 })
                 .collect::<Vec<Role>>()),
             Err(diesel::result::Error::NotFound) => Err(Error::NotFound),

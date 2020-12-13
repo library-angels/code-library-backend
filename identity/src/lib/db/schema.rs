@@ -2,8 +2,6 @@ table! {
     roles (id) {
         id -> Int4,
         name -> Varchar,
-        access_manage_books -> Bool,
-        access_manage_roles -> Bool,
     }
 }
 
