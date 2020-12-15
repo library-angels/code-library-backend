@@ -1,0 +1,19 @@
+ALTER TABLE users ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE users ALTER COLUMN id SET DATA TYPE UUID USING uuid_generate_v4();
+DROP SEQUENCE users_id_seq;
+
+ALTER TABLE roles ADD COLUMN id_old INTEGER;
+UPDATE roles SET id_old = id;
+
+ALTER TABLE users ADD COLUMN role_id_new UUID;
+ALTER TABLE users DROP CONSTRAINT users_role_id_fkey;
+ALTER TABLE roles ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE roles ALTER COLUMN id SET DATA TYPE UUID USING uuid_generate_v4();
+DROP SEQUENCE roles_id_seq;
+UPDATE users SET role_id_new = (SELECT id FROM roles WHERE roles.id_old = users.role_id);
+
+ALTER TABLE roles DROP COLUMN id_old;
+ALTER TABLE users DROP COLUMN role_id;
+ALTER TABLE users RENAME COLUMN role_id_new TO role_id;
+ALTER TABLE users ALTER COLUMN role_id SET NOT NULL;
+ALTER TABLE users ADD FOREIGN KEY (role_id) REFERENCES roles ON UPDATE CASCADE ON DELETE CASCADE;
