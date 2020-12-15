@@ -2,6 +2,7 @@ pub mod oauth;
 
 use chrono::{Duration, NaiveDateTime};
 use diesel::result::{Error, QueryResult};
+use uuid::Uuid;
 
 use self::oauth::{IdToken, TokenSet};
 use crate::db::models::{User, UserAddUpdate};
@@ -31,8 +32,11 @@ pub fn create_user_from_oauth_authentication(
     id_token: &IdToken,
     token_set: &TokenSet,
     creation_time: NaiveDateTime,
+    user_id: Uuid,
+    role_id: Uuid,
 ) -> UserAddUpdate {
     UserAddUpdate {
+        id: user_id,
         sub: id_token.sub.clone(),
         email: id_token.email.clone(),
         given_name: id_token.given_name.clone(),
@@ -42,7 +46,7 @@ pub fn create_user_from_oauth_authentication(
         oauth_access_token_valid: creation_time + Duration::seconds(token_set.expires_in.into()),
         oauth_refresh_token: token_set.refresh_token.clone(),
         active: true,
-        role_id: 1,
+        role_id,
     }
 }
 

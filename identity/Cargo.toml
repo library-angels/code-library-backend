@@ -15,7 +15,7 @@ doc = false
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
-diesel = { version = "1.4", features = [ "chrono", "postgres", "r2d2"] }
+diesel = { version = "1.4", features = ["chrono", "postgres", "r2d2", "uuidv07"] }
 diesel_migrations = "1.4"
 dotenv = "0.15"
 env_logger = "0.8"
@@ -32,3 +32,4 @@ stdext = "0.2.1"
 tarpc = { version = "0.22", features = ["full"] }
 tokio = { version = "0.2", features = ["full"] }
 tokio-serde = { version = "0.6", features = ["json"] }
+uuid = { version = "0.7", features = ["serde", "v4"] }

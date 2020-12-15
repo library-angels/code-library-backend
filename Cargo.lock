@@ -267,6 +267,7 @@ dependencies = [
  "diesel_derives",
  "pq-sys",
  "r2d2",
+ "uuid",
 ]
 
 [[package]]
@@ -714,6 +715,7 @@ dependencies = [
  "tarpc",
  "tokio",
  "tokio-serde",
+ "uuid",
 ]
 
 [[package]]
@@ -2003,6 +2005,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "90dbc611eb48397705a6b0f6e917da23ae517e4d127123d2cf7674206627d32a"
 dependencies = [
  "rand 0.6.5",
+ "serde",
 ]
 
 [[package]]

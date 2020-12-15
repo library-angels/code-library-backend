@@ -1,10 +1,11 @@
 use chrono::{DateTime, Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Serialize, PartialEq, Debug, Deserialize)]
 pub struct Jwt {
-    pub sub: u32,
+    pub sub: Uuid,
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
@@ -19,7 +20,7 @@ pub enum JwtError {
 
 impl Jwt {
     pub fn new(
-        sub: u32,
+        sub: Uuid,
         given_name: String,
         family_name: String,
         picture: String,
