@@ -26,11 +26,7 @@ pub async fn get_rpc_server(
         .map(BaseChannel::with_defaults)
         .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(move |channel| {
-            let server = IdentityServer::new(
-                channel.as_ref().as_ref().peer_addr().unwrap(),
-                configuration.clone(),
-                db_pool.clone(),
-            );
+            let server = IdentityServer::new(configuration.clone(), db_pool.clone());
             channel.respond_with(server.serve()).execute()
         })
         .buffer_unordered(10)
