@@ -60,7 +60,7 @@ mod tests {
     #[test]
     fn check_active_account() {
         let query_result = Ok(User {
-            id: 1,
+            id: Uuid::new_v4(),
             sub: "1".into(),
             email: "john.doe@example.net".into(),
             given_name: "John".into(),
@@ -70,7 +70,7 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: true,
-            role_id: 1,
+            role_id: Uuid::new_v4(),
         });
 
         assert_eq!(
@@ -83,7 +83,7 @@ mod tests {
     #[test]
     fn check_inactive_account() {
         let query_result = Ok(User {
-            id: 1,
+            id: Uuid::new_v4(),
             sub: "1".into(),
             email: "john.doe@example.net".into(),
             given_name: "John".into(),
@@ -93,7 +93,7 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: false,
-            role_id: 1,
+            role_id: Uuid::new_v4(),
         });
 
         assert_eq!(
@@ -136,7 +136,11 @@ mod tests {
 
         let creation_time = NaiveDate::from_ymd(2020, 1, 1).and_hms(0, 0, 0);
 
+        let user_id = Uuid::new_v4();
+        let user_role_id = Uuid::new_v4();
+
         let expected_result = UserAddUpdate {
+            id: user_id,
             sub: id_token.sub.clone(),
             email: id_token.email.clone(),
             given_name: id_token.given_name.clone(),
@@ -146,10 +150,16 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 1, 1).and_hms(0, 1, 40),
             oauth_refresh_token: token_set.refresh_token.clone(),
             active: true,
-            role_id: 1,
+            role_id: user_role_id,
         };
 
-        let result = create_user_from_oauth_authentication(&id_token, &token_set, creation_time);
+        let result = create_user_from_oauth_authentication(
+            &id_token,
+            &token_set,
+            creation_time,
+            user_id,
+            user_role_id,
+        );
 
         assert_eq!(expected_result, result);
     }
@@ -180,8 +190,11 @@ mod tests {
         };
 
         let creation_time = NaiveDate::from_ymd(2020, 1, 1).and_hms(0, 0, 0);
+        let user_id = Uuid::new_v4();
+        let user_role_id = Uuid::new_v4();
 
         let expected_result = UserAddUpdate {
+            id: user_id,
             sub: id_token.sub.clone(),
             email: id_token.email.clone(),
             given_name: id_token.given_name.clone(),
@@ -191,10 +204,16 @@ mod tests {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 1, 1).and_hms(0, 1, 40),
             oauth_refresh_token: token_set.refresh_token.clone(),
             active: true,
-            role_id: 1,
+            role_id: user_role_id,
         };
 
-        let result = create_user_from_oauth_authentication(&id_token, &token_set, creation_time);
+        let result = create_user_from_oauth_authentication(
+            &id_token,
+            &token_set,
+            creation_time,
+            user_id,
+            user_role_id,
+        );
 
         assert_eq!(expected_result, result);
     }

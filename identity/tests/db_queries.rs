@@ -5,9 +5,10 @@ use chrono::NaiveDate;
 use diesel::r2d2::{ConnectionManager, Pool};
 use diesel::{prelude::*, result::Error};
 use envconfig::Envconfig;
+use uuid::Uuid;
 
 use identity::config::Configuration;
-use identity::db::schema::users::dsl::users;
+use identity::db::schema::{roles, users::dsl::users};
 use identity::db::{get_db_pool, models::*, queries};
 
 mod sample_data;
@@ -37,12 +38,22 @@ impl DbTestContext {
         let conn = PgConnection::establish(&format!("{}/{}", connection_url, db_name))
             .expect("Could not connect to database service");
 
+        // create uuid extension on database
+        diesel::sql_query("CREATE EXTENSION \"uuid-ossp\"")
+            .execute(&conn)
+            .unwrap_or_else(|_| panic!("Could not create extension"));
+
         // run migration
         embedded_migrations::run(&conn).expect("Failed to apply database migration");
 
+        let user_role: Role = roles::dsl::roles
+            .filter(roles::dsl::name.eq("User"))
+            .get_result(&conn)
+            .unwrap();
+
         // insert sample data for tests
         diesel::insert_into(users)
-            .values(&sample_data::users())
+            .values(&sample_data::users(user_role.id))
             .execute(&conn)
             .expect("Error inserting 'users' sample data");
 
@@ -109,8 +120,10 @@ async fn db_get_user_exists() {
         .await
         .expect("Could not set up test environment");
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = User {
-        id: 2,
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
@@ -120,11 +133,14 @@ async fn db_get_user_exists() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: true,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     // Act
-    let result = queries::get_user(2, &db_pool.get().unwrap());
+    let result = queries::get_user(
+        Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
+        &db_pool.get().unwrap(),
+    );
 
     // Assert
     assert_eq!(Ok(expected_result), result);
@@ -139,7 +155,7 @@ async fn db_get_user_not_exists() {
         .expect("Could not set up test environment");
 
     // Act
-    let result = queries::get_user(20, &db_pool.get().unwrap());
+    let result = queries::get_user(Uuid::new_v4(), &db_pool.get().unwrap());
 
     // Assert
     assert_eq!(Err(Error::NotFound), result);
@@ -153,8 +169,10 @@ async fn db_get_user_by_sub() {
         .await
         .expect("Could not set up test environment");
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = User {
-        id: 2,
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
@@ -164,7 +182,7 @@ async fn db_get_user_by_sub() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: true,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     // Act
@@ -182,9 +200,11 @@ async fn db_list_users_exists_active() {
         .await
         .expect("Could not set up test environment");
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = vec![
         User {
-            id: 3,
+            id: Uuid::parse_str("42cf1a7b-b7ca-4baf-9dfa-41f4f454a7cf").unwrap(),
             sub: "3".into(),
             email: "justin.wilkins@example.net".into(),
             given_name: "Justin".into(),
@@ -194,10 +214,10 @@ async fn db_list_users_exists_active() {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: true,
-            role_id: 1,
+            role_id: user_role.id,
         },
         User {
-            id: 5,
+            id: Uuid::parse_str("7cae5854-490c-4ee0-970b-8ec8a77c7c7a").unwrap(),
             sub: "5".into(),
             email: "richard.henderson@example.net".into(),
             given_name: "Richard".into(),
@@ -207,7 +227,7 @@ async fn db_list_users_exists_active() {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: "refresh_token".into(),
             active: true,
-            role_id: 1,
+            role_id: user_role.id,
         },
     ];
 
@@ -226,8 +246,10 @@ async fn db_list_users_exists_inactive() {
         .await
         .expect("Could not set up test environment");
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = vec![User {
-        id: 4,
+        id: Uuid::parse_str("ad996820-085d-4b02-8a3d-10f0527a1ba0").unwrap(),
         sub: "4".into(),
         email: "tim.jackson@example.net".into(),
         given_name: "Tim".into(),
@@ -237,7 +259,7 @@ async fn db_list_users_exists_inactive() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: false,
-        role_id: 1,
+        role_id: user_role.id,
     }];
 
     // Act
@@ -255,8 +277,10 @@ async fn db_update_user_verify() {
         .await
         .expect("Could not set up test environment");
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = User {
-        id: 2,
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
@@ -266,7 +290,7 @@ async fn db_update_user_verify() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: false,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     // Act
@@ -284,8 +308,10 @@ async fn db_update_user_by_sub_verify() {
         .await
         .expect("Could not set up test environment");
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = User {
-        id: 2,
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
@@ -295,10 +321,11 @@ async fn db_update_user_by_sub_verify() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: "refresh_token".into(),
         active: true,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     let expected_change = UserAddUpdate {
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
@@ -308,7 +335,7 @@ async fn db_update_user_by_sub_verify() {
         oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
         oauth_refresh_token: None,
         active: true,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     // Act
@@ -326,13 +353,15 @@ async fn db_get_role_exists() {
         .await
         .expect("Could not set up test environment");
 
+    let manager_role = queries::get_role_by_name("Manager", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = Role {
-        id: 2,
+        id: manager_role.id,
         name: "Manager".into(),
     };
 
     // Act
-    let result = queries::get_role(2, &db_pool.get().unwrap());
+    let result = queries::get_role(manager_role.id, &db_pool.get().unwrap());
 
     // Assert
     assert_eq!(Ok(expected_result), result);
@@ -347,7 +376,7 @@ async fn db_get_role_not_exists() {
         .expect("Could not set up test environment");
 
     // Act
-    let result = queries::get_role(20, &db_pool.get().unwrap());
+    let result = queries::get_role(Uuid::new_v4(), &db_pool.get().unwrap());
 
     // Assert
     assert_eq!(Err(Error::NotFound), result);
@@ -355,19 +384,23 @@ async fn db_get_role_not_exists() {
 
 // list roles with offset/limit
 #[tokio::test]
-async fn list_roles_exists() {
+async fn db_list_roles_exists() {
     // Arrange
     let (_configuration, db_pool, _db_test_context) = setup(stdext::function_name!().into())
         .await
         .expect("Could not set up test environment");
 
+    let manager_role = queries::get_role_by_name("Manager", &db_pool.get().unwrap()).unwrap();
+    let administrator_role =
+        queries::get_role_by_name("Administrator", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = vec![
         Role {
-            id: 2,
+            id: manager_role.id,
             name: "Manager".into(),
         },
         Role {
-            id: 3,
+            id: administrator_role.id,
             name: "Administrator".into(),
         },
     ];

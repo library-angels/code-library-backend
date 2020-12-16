@@ -5,10 +5,11 @@ use chrono::{Duration, Utc};
 use diesel::prelude::*;
 use envconfig::Envconfig;
 use tarpc::context;
+use uuid::Uuid;
 
 use helpers::rpc::Error;
-use identity::db::get_db_pool;
-use identity::db::schema::users::dsl::users;
+use identity::db::schema::{roles, users::dsl::users};
+use identity::db::{get_db_pool, models, queries, DbPool};
 use identity::rpc::models::{Role, SessionInfo, User};
 use identity::rpc::{get_rpc_client, get_rpc_server, service::IdentityServiceClient};
 use identity::{config::Configuration, session::jwt::Jwt};
@@ -40,12 +41,22 @@ impl DbTestContext {
         let conn = PgConnection::establish(&format!("{}/{}", connection_url, db_name))
             .expect("Could not connect to database service");
 
+        // create uuid extension on database
+        diesel::sql_query("CREATE EXTENSION \"uuid-ossp\"")
+            .execute(&conn)
+            .unwrap_or_else(|_| panic!("Could not create extension"));
+
         // run migration
         embedded_migrations::run(&conn).expect("Failed to apply database migration");
 
+        let user_role: models::Role = roles::dsl::roles
+            .filter(roles::dsl::name.eq("User"))
+            .get_result(&conn)
+            .unwrap();
+
         // insert sample data for tests
         diesel::insert_into(users)
-            .values(&sample_data::users())
+            .values(&sample_data::users(user_role.id))
             .execute(&conn)
             .expect("Error inserting 'users' sample data");
 
@@ -100,6 +111,7 @@ async fn setup(
         impl futures::Future<Output = ()>,
         IdentityServiceClient,
         Arc<Configuration>,
+        Arc<DbPool>,
         DbTestContext,
     ),
     (),
@@ -117,32 +129,40 @@ async fn setup(
     .unwrap();
     let client = get_rpc_client(socket).await.unwrap();
 
-    Ok((server, client, configuration, db_test_context))
+    Ok((server, client, configuration, db, db_test_context))
 }
 
 // get a valid user
 #[tokio::test]
 async fn get_user_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = User {
-        id: 2,
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
         family_name: "Kerr".into(),
         picture: "https://example.com/avatar.jpg".into(),
         active: true,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     // Act
-    let result = client.get_user(context::current(), 2).await.unwrap();
+    let result = client
+        .get_user(
+            context::current(),
+            Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
+        )
+        .await
+        .unwrap();
 
     // Assert
     assert_eq!(Ok(expected_result), result);
@@ -152,14 +172,17 @@ async fn get_user_exists() {
 #[tokio::test]
 async fn get_user_not_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
     // Act
-    let result = client.get_user(context::current(), 20).await.unwrap();
+    let result = client
+        .get_user(context::current(), Uuid::new_v4())
+        .await
+        .unwrap();
 
     // Assert
     assert_eq!(Err(Error::NotFound), result);
@@ -169,32 +192,34 @@ async fn get_user_not_exists() {
 #[tokio::test]
 async fn list_users_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = vec![
         User {
-            id: 3,
+            id: Uuid::parse_str("42cf1a7b-b7ca-4baf-9dfa-41f4f454a7cf").unwrap(),
             sub: "3".into(),
             email: "justin.wilkins@example.net".into(),
             given_name: "Justin".into(),
             family_name: "Wilkins".into(),
             picture: "https://example.com/avatar.jpg".into(),
             active: true,
-            role_id: 1,
+            role_id: user_role.id,
         },
         User {
-            id: 5,
+            id: Uuid::parse_str("7cae5854-490c-4ee0-970b-8ec8a77c7c7a").unwrap(),
             sub: "5".into(),
             email: "richard.henderson@example.net".into(),
             given_name: "Richard".into(),
             family_name: "Henderson".into(),
             picture: "https://example.com/avatar.jpg".into(),
             active: true,
-            role_id: 1,
+            role_id: user_role.id,
         },
     ];
 
@@ -212,21 +237,23 @@ async fn list_users_exists() {
 #[tokio::test]
 async fn update_user_verify() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
+    let user_role = queries::get_role_by_name("User", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = User {
-        id: 2,
+        id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
         sub: "2".into(),
         email: "jack.kerr@example.net".into(),
         given_name: "Jack".into(),
         family_name: "Kerr".into(),
         picture: "https://example.com/avatar.jpg".into(),
         active: false,
-        role_id: 1,
+        role_id: user_role.id,
     };
 
     // Act
@@ -243,19 +270,24 @@ async fn update_user_verify() {
 #[tokio::test]
 async fn get_role_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
+    let manager_role = queries::get_role_by_name("Manager", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = Role {
-        id: 2,
+        id: manager_role.id,
         name: "Manager".into(),
     };
 
     // Act
-    let result = client.get_role(context::current(), 2).await.unwrap();
+    let result = client
+        .get_role(context::current(), manager_role.id)
+        .await
+        .unwrap();
 
     // Assert
     assert_eq!(Ok(expected_result), result);
@@ -265,14 +297,17 @@ async fn get_role_exists() {
 #[tokio::test]
 async fn get_role_not_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
     // Act
-    let result = client.get_role(context::current(), 20).await.unwrap();
+    let result = client
+        .get_role(context::current(), Uuid::new_v4())
+        .await
+        .unwrap();
 
     // Assert
     assert_eq!(Err(Error::NotFound), result);
@@ -282,19 +317,23 @@ async fn get_role_not_exists() {
 #[tokio::test]
 async fn list_roles_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
+    let manager_role = queries::get_role_by_name("Manager", &db_pool.get().unwrap()).unwrap();
+    let administrator_role =
+        queries::get_role_by_name("Administrator", &db_pool.get().unwrap()).unwrap();
+
     let expected_result = vec![
         Role {
-            id: 2,
+            id: manager_role.id,
             name: "Manager".into(),
         },
         Role {
-            id: 3,
+            id: administrator_role.id,
             name: "Administrator".into(),
         },
     ];
@@ -317,7 +356,7 @@ async fn oauth_authentication() {
     };
 
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -337,7 +376,7 @@ async fn oauth_authentication() {
 #[tokio::test]
 async fn oauth_client_identifier() {
     // Arrange
-    let (server, mut client, _configuration, _db_test_context) =
+    let (server, mut client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -358,14 +397,14 @@ async fn oauth_client_identifier() {
 #[tokio::test]
 async fn session_info_valid_token() {
     // Arrange
-    let (server, mut client, configuration, _db_test_context) =
+    let (server, mut client, configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
     let token = Jwt::new(
-        1,
+        Uuid::new_v4(),
         "John".into(),
         "Doe".into(),
         "https://example.com/avatar.jpg".into(),
@@ -399,14 +438,14 @@ async fn session_info_valid_token() {
 #[tokio::test]
 async fn session_info_invalid_token() {
     // Arrange
-    let (server, mut client, configuration, _db_test_context) =
+    let (server, mut client, configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
     tokio::spawn(server);
 
     let token = Jwt::new(
-        1,
+        Uuid::new_v4(),
         "John".into(),
         "Doe".into(),
         "https://example.com/person.jpg".into(),

@@ -1,10 +1,12 @@
 use chrono::NaiveDate;
+use uuid::Uuid;
 
 use identity::db::models::UserAddUpdate;
 
-pub fn users() -> Vec<UserAddUpdate> {
+pub fn users(role_id: Uuid) -> Vec<UserAddUpdate> {
     vec![
         UserAddUpdate {
+            id: Uuid::parse_str("d1854dea-c0b7-403c-bbe8-fba377453787").unwrap(),
             sub: "1".into(),
             email: "john.doe@example.net".into(),
             given_name: "John".into(),
@@ -14,9 +16,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("a930312e-eb70-41e4-bf74-d88bf661d4dd").unwrap(),
             sub: "2".into(),
             email: "jack.kerr@example.net".into(),
             given_name: "Jack".into(),
@@ -26,9 +29,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("42cf1a7b-b7ca-4baf-9dfa-41f4f454a7cf").unwrap(),
             sub: "3".into(),
             email: "justin.wilkins@example.net".into(),
             given_name: "Justin".into(),
@@ -38,9 +42,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("ad996820-085d-4b02-8a3d-10f0527a1ba0").unwrap(),
             sub: "4".into(),
             email: "tim.jackson@example.net".into(),
             given_name: "Tim".into(),
@@ -50,9 +55,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: false,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("7cae5854-490c-4ee0-970b-8ec8a77c7c7a").unwrap(),
             sub: "5".into(),
             email: "richard.henderson@example.net".into(),
             given_name: "Richard".into(),
@@ -62,9 +68,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("fda1f58a-34f4-41c3-9df7-e273b667a42a").unwrap(),
             sub: "6".into(),
             email: "olivia.springer@example.net".into(),
             given_name: "Olivia".into(),
@@ -74,9 +81,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("bcdbdba5-1f6e-4660-81d7-7c198a72dd36").unwrap(),
             sub: "7".into(),
             email: "alexander.carr@example.net".into(),
             given_name: "Alexander".into(),
@@ -86,9 +94,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("dbc9036d-c604-431c-962a-9d8c9a3346fe").unwrap(),
             sub: "8".into(),
             email: "yvonne.thomson@example.net".into(),
             given_name: "Yvonne".into(),
@@ -98,9 +107,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("854f83cf-4181-44cb-afd6-7f9a079ca6ee").unwrap(),
             sub: "9".into(),
             email: "alan.hemmings@example.net".into(),
             given_name: "Alan".into(),
@@ -110,9 +120,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("92b62715-8224-4ff7-a768-2270f38e68d5").unwrap(),
             sub: "10".into(),
             email: "eric.vance@example.net".into(),
             given_name: "Eric".into(),
@@ -122,9 +133,10 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
         UserAddUpdate {
+            id: Uuid::parse_str("167b72de-e83d-4179-925f-18e8304971cc").unwrap(),
             sub: "11".into(),
             email: "audrey.miller@example.net".into(),
             given_name: "Audrey".into(),
@@ -134,7 +146,7 @@ pub fn users() -> Vec<UserAddUpdate> {
             oauth_access_token_valid: NaiveDate::from_ymd(2020, 12, 31).and_hms(0, 0, 0),
             oauth_refresh_token: Some("refresh_token".into()),
             active: true,
-            role_id: 1,
+            role_id,
         },
     ]
 }
