@@ -1,5 +1,7 @@
-use envconfig::Envconfig;
 use std::net::{IpAddr, SocketAddr};
+
+use dotenv::dotenv;
+use envconfig::Envconfig;
 
 #[derive(Envconfig, Debug)]
 pub struct Configuration {
@@ -36,4 +38,9 @@ impl Configuration {
     pub fn rpc_socket(&self) -> SocketAddr {
         SocketAddr::new(self.rpc_host_ip, self.rpc_host_port)
     }
+}
+
+pub fn get_configuration() -> Configuration {
+    dotenv().ok();
+    Configuration::init_from_env().expect("Failed to create configuration")
 }
