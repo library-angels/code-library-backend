@@ -1,4 +1,3 @@
-pub mod models;
 pub mod server;
 pub mod service;
 
@@ -9,8 +8,8 @@ use tarpc::client::Config;
 use tarpc::server::{BaseChannel, Channel, Handler};
 use tokio_serde::formats::Json;
 
-use self::server::IdentityServer;
-use self::service::{IdentityService, IdentityServiceClient};
+use self::server::NotificationServer;
+use self::service::{NotificationService, NotificationServiceClient};
 use crate::{config::Configuration, db::DbPool};
 
 pub async fn get_rpc_server(
@@ -26,7 +25,7 @@ pub async fn get_rpc_server(
         .map(BaseChannel::with_defaults)
         .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(move |channel| {
-            let server = IdentityServer::new(configuration.clone(), db_pool.clone());
+            let server = NotificationServer::new(configuration.clone(), db_pool.clone());
             channel.respond_with(server.serve()).execute()
         })
         .buffer_unordered(10)
@@ -35,8 +34,8 @@ pub async fn get_rpc_server(
     Ok((fut, addr))
 }
 
-pub async fn get_rpc_client(addr: SocketAddr) -> std::io::Result<IdentityServiceClient> {
-    IdentityServiceClient::new(
+pub async fn get_rpc_client(addr: SocketAddr) -> std::io::Result<NotificationServiceClient> {
+    NotificationServiceClient::new(
         Config::default(),
         tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
     )

@@ -20,7 +20,6 @@ http = "0.2"
 hyper = "0.13"
 identity = { path = "../identity" }
 log = "0.4"
-once_cell = "1.5"
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 tarpc = { version = "0.22", features = ["full"] }

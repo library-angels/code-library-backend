@@ -1,9 +1,6 @@
-use std::net::SocketAddr;
 use std::sync::Arc;
 
 use chrono::{Duration, Utc};
-use diesel::prelude::*;
-use diesel::r2d2::{ConnectionManager, PooledConnection};
 use tarpc::context;
 
 use helpers::rpc::{Error, RpcResult};
@@ -16,26 +13,21 @@ use crate::authentication::{
     check_account_status, create_user_from_oauth_authentication, AccountStatus,
 };
 use crate::config::Configuration;
-use crate::db::{queries, DbPool};
+use crate::db::{queries, DbConn, DbPool};
 use crate::session::jwt::Jwt;
 
 #[derive(Clone)]
 pub struct IdentityServer {
-    addr: SocketAddr,
     conf: Arc<Configuration>,
     db_pool: Arc<DbPool>,
 }
 
 impl IdentityServer {
-    pub fn new(addr: SocketAddr, conf: Arc<Configuration>, db_pool: Arc<DbPool>) -> Self {
-        Self {
-            addr,
-            conf,
-            db_pool,
-        }
+    pub fn new(conf: Arc<Configuration>, db_pool: Arc<DbPool>) -> Self {
+        Self { conf, db_pool }
     }
 
-    fn get_db(&self) -> PooledConnection<ConnectionManager<PgConnection>> {
+    fn get_db(&self) -> DbConn {
         self.db_pool
             .get()
             .expect("Can't retrieve connection from pool")
