@@ -23,7 +23,7 @@ envconfig = "0.9"
 futures = "0.3"
 helpers = { path = "../helpers" }
 hyper = "0.13"
-hyper-tls = "0.4"
+hyper-tls = "0.5"
 jsonwebtoken = "7.2"
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
