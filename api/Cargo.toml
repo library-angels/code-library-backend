@@ -17,7 +17,7 @@ envconfig = "0.9"
 futures = "0.3"
 helpers = { path = "../helpers" }
 http = "0.2"
-hyper = "0.13"
+hyper = "0.14"
 identity = { path = "../identity" }
 log = "0.4"
 serde = { version = "1.0", features = ["derive"] }
