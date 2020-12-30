@@ -1,5 +1,6 @@
 use diesel::prelude::*;
 use diesel::result::QueryResult;
+use uuid::Uuid;
 
 use super::models::*;
 use super::schema;
@@ -11,7 +12,7 @@ pub fn create_user(user: UserAddUpdate, db: &DbConn) -> QueryResult<User> {
     diesel::insert_into(users).values(&user).get_result(db)
 }
 
-pub fn get_user(user_id: i32, db: &DbConn) -> QueryResult<User> {
+pub fn get_user(user_id: Uuid, db: &DbConn) -> QueryResult<User> {
     use schema::users::dsl::users;
 
     users.find(user_id).first(db)
@@ -44,7 +45,7 @@ pub fn list_users(
 pub fn update_user(user: User, db: &DbConn) -> QueryResult<User> {
     use schema::users::dsl::*;
 
-    diesel::update(users.find(user.id as i32))
+    diesel::update(users.find(user.id))
         .set(active.eq(user.active))
         .get_result(db)
 }
@@ -57,10 +58,16 @@ pub fn update_user_by_sub(user: UserAddUpdate, db: &DbConn) -> QueryResult<User>
         .get_result(db)
 }
 
-pub fn get_role(role_id: i32, db: &DbConn) -> QueryResult<Role> {
+pub fn get_role(role_id: Uuid, db: &DbConn) -> QueryResult<Role> {
     use schema::roles::dsl::roles;
 
     roles.find(role_id).first(db)
+}
+
+pub fn get_role_by_name(role_name: &str, db: &DbConn) -> QueryResult<Role> {
+    use schema::roles::dsl::*;
+
+    roles.filter(name.eq(role_name)).get_result(db)
 }
 
 pub fn list_roles(offset: i64, limit: i64, db: &DbConn) -> QueryResult<Vec<Role>> {

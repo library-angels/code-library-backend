@@ -1,13 +1,13 @@
 table! {
     roles (id) {
-        id -> Int4,
+        id -> Uuid,
         name -> Varchar,
     }
 }
 
 table! {
     users (id) {
-        id -> Int4,
+        id -> Uuid,
         sub -> Varchar,
         email -> Varchar,
         given_name -> Varchar,
@@ -17,7 +17,7 @@ table! {
         oauth_access_token_valid -> Timestamp,
         oauth_refresh_token -> Varchar,
         active -> Bool,
-        role_id -> Int4,
+        role_id -> Uuid,
     }
 }
 

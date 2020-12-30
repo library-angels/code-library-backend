@@ -2,6 +2,7 @@ use std::sync::Arc;
 
 use chrono::{Duration, Utc};
 use tarpc::context;
+use uuid::Uuid;
 
 use helpers::rpc::{Error, RpcResult};
 
@@ -37,8 +38,8 @@ impl IdentityServer {
 #[tarpc::server]
 impl IdentityService for IdentityServer {
     /// Returns an user
-    async fn get_user(self, _: context::Context, user_id: u32) -> RpcResult<User> {
-        let result = queries::get_user(user_id as i32, &self.get_db());
+    async fn get_user(self, _: context::Context, user_id: Uuid) -> RpcResult<User> {
+        let result = queries::get_user(user_id, &self.get_db());
 
         match result {
             Ok(val) => Ok(User {
@@ -86,8 +87,8 @@ impl IdentityService for IdentityServer {
     }
 
     /// Returns a role
-    async fn get_role(self, _: context::Context, role_id: u32) -> RpcResult<Role> {
-        let result = queries::get_role(role_id as i32, &self.get_db());
+    async fn get_role(self, _: context::Context, role_id: Uuid) -> RpcResult<Role> {
+        let result = queries::get_role(role_id, &self.get_db());
 
         match result {
             Ok(val) => Ok(Role {
@@ -191,9 +192,17 @@ impl IdentityService for IdentityServer {
             return Err(Error::InvalidInput);
         }
 
+        // Get user role
+        let user_role = queries::get_role_by_name("User", &self.get_db())?;
+
         // Creates an user model instance from IdToken and TokenSet
-        let user =
-            create_user_from_oauth_authentication(&id_token, &tokenset, Utc::now().naive_utc());
+        let user = create_user_from_oauth_authentication(
+            &id_token,
+            &tokenset,
+            Utc::now().naive_utc(),
+            Uuid::new_v4(),
+            user_role.id,
+        );
 
         // Create or update user record in database
         let user = match account_status {
@@ -206,7 +215,7 @@ impl IdentityService for IdentityServer {
         // Create and return SessionToken
         Ok(SessionToken {
             token: Jwt::new(
-                user.id as u32,
+                user.id,
                 user.given_name,
                 user.family_name,
                 user.picture,

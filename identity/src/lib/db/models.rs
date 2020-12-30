@@ -1,11 +1,12 @@
 use chrono::{NaiveDateTime, Utc};
+use uuid::Uuid;
 
 use super::schema::*;
 use crate::rpc::models as RpcModels;
 
 #[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct User {
-    pub id: i32,
+    pub id: Uuid,
     pub sub: String,
     pub email: String,
     pub given_name: String,
@@ -15,7 +16,7 @@ pub struct User {
     pub oauth_access_token_valid: NaiveDateTime,
     pub oauth_refresh_token: String,
     pub active: bool,
-    pub role_id: i32,
+    pub role_id: Uuid,
 }
 
 impl From<RpcModels::User> for User {
@@ -39,6 +40,7 @@ impl From<RpcModels::User> for User {
 #[derive(Clone, Debug, AsChangeset, Insertable, PartialEq)]
 #[table_name = "users"]
 pub struct UserAddUpdate {
+    pub id: Uuid,
     pub sub: String,
     pub email: String,
     pub given_name: String,
@@ -48,11 +50,11 @@ pub struct UserAddUpdate {
     pub oauth_access_token_valid: NaiveDateTime,
     pub oauth_refresh_token: Option<String>,
     pub active: bool,
-    pub role_id: i32,
+    pub role_id: Uuid,
 }
 
 #[derive(Clone, Debug, PartialEq, Queryable)]
 pub struct Role {
-    pub id: i32,
+    pub id: Uuid,
     pub name: String,
 }

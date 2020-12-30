@@ -1,10 +1,11 @@
 use chrono::{DateTime, Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 #[derive(Serialize, PartialEq, Debug, Deserialize)]
 pub struct Jwt {
-    pub sub: u32,
+    pub sub: Uuid,
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
@@ -19,7 +20,7 @@ pub enum JwtError {
 
 impl Jwt {
     pub fn new(
-        sub: u32,
+        sub: Uuid,
         given_name: String,
         family_name: String,
         picture: String,
@@ -65,10 +66,11 @@ mod tests {
 
     #[test]
     fn jwt_creation() {
+        let id = Uuid::new_v4();
         let creation_time = Utc.ymd(2020, 1, 1).and_hms(0, 0, 0);
         let validity = Duration::seconds(3600);
         let jwt = Jwt::new(
-            1,
+            id,
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),
@@ -76,7 +78,7 @@ mod tests {
             validity,
         );
 
-        assert_eq!(1, jwt.sub);
+        assert_eq!(id, jwt.sub);
         assert_eq!("given_name", jwt.given_name);
         assert_eq!("family_name", jwt.family_name);
         assert_eq!("picture", jwt.picture);
@@ -87,7 +89,7 @@ mod tests {
     #[test]
     fn jwt_encoding_decoding() {
         let jwt = Jwt::new(
-            1,
+            Uuid::new_v4(),
             "given_name".to_string(),
             "family_name".to_string(),
             "picture".to_string(),

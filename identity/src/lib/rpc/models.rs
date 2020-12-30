@@ -1,4 +1,5 @@
 use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::session::jwt::Jwt;
 
@@ -6,19 +7,19 @@ pub type OauthAuthorizationCode = String;
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
 pub struct User {
-    pub id: i32,
+    pub id: Uuid,
     pub sub: String,
     pub email: String,
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
     pub active: bool,
-    pub role_id: i32,
+    pub role_id: Uuid,
 }
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct Role {
-    pub id: i32,
+    pub id: Uuid,
     pub name: String,
 }
 
@@ -34,7 +35,7 @@ pub struct SessionToken {
 
 #[derive(Debug, Deserialize, PartialEq, Serialize)]
 pub struct SessionInfo {
-    pub sub: u32,
+    pub sub: Uuid,
     pub given_name: String,
     pub family_name: String,
     pub picture: String,
