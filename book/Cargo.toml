@@ -24,7 +24,7 @@ tokio = { version = "0.2", features = ["full"] }
 tokio-serde = { version = "0.6", features = ["json"] }
 
 [dev-dependencies]
-uuid = { version = "0.7", features = ["v4"] }
+uuid = { version = "0.8", features = ["v4"] }
 
 [features]
 test-data = []
