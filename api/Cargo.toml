@@ -25,4 +25,4 @@ serde_json = "1.0"
 tarpc = { version = "0.22", features = ["full"] }
 tokio = { version = "0.2", features = ["full"] }
 tokio-serde = { version = "0.6", features = ["json"] }
-warp = "0.2"
+warp = "0.3"
