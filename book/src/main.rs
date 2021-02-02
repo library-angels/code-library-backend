@@ -1,5 +1,3 @@
-mod config;
-
 use std::io;
 
 use dotenv::dotenv;
@@ -10,7 +8,7 @@ extern crate diesel_migrations;
 
 use book::{db, rpc_server};
 
-use self::config::Configuration;
+use book::config::Configuration;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {

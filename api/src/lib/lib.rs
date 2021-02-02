@@ -2,6 +2,7 @@ use std::net::SocketAddr as Addr;
 
 use warp::{filters::BoxedFilter, Reply, Server};
 
+pub mod config;
 mod endpoints;
 mod middleware;
 mod response;

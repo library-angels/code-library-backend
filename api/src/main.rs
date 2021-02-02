@@ -1,9 +1,7 @@
-mod config;
-
 use dotenv::dotenv;
 use envconfig::Envconfig;
 
-use crate::config::Configuration;
+use api::config::Configuration;
 
 #[tokio::main]
 async fn main() {

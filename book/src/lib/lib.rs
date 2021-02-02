@@ -1,3 +1,4 @@
+pub mod config;
 pub mod db;
 mod rpc;
 #[cfg(feature = "test-data")]
