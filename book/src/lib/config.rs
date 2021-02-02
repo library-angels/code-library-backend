@@ -19,11 +19,8 @@ pub struct Configuration {
     #[envconfig(from = "DB_SECRET", default = "password")]
     db_secret: String,
 
-    #[envconfig(from = "RPC_HOST_IP", default = "127.0.0.1")]
-    rpc_host_ip: IpAddr,
-
-    #[envconfig(from = "RPC_HOST_PORT", default = "8082")]
-    rpc_host_port: u16,
+    #[envconfig(from = "SERVICE_SOCKET", default = "127.0.0.1:8082")]
+    service_socket: SocketAddr,
 }
 
 impl Configuration {
@@ -34,7 +31,7 @@ impl Configuration {
         )
     }
 
-    pub fn rpc_socket(&self) -> SocketAddr {
-        SocketAddr::new(self.rpc_host_ip, self.rpc_host_port)
+    pub fn service_socket(&self) -> SocketAddr {
+        self.service_socket
     }
 }
