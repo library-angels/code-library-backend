@@ -24,7 +24,7 @@ pub async fn get_rpc_server(
     let fut = incoming
         .filter_map(|r| future::ready(r.ok()))
         .map(BaseChannel::with_defaults)
-        .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
+        .max_channels_per_key(8, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(move |channel| {
             let server = IdentityServer::new(configuration.clone(), db_pool.clone());
             channel.respond_with(server.serve()).execute()
