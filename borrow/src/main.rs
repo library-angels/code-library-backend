@@ -24,7 +24,7 @@ async fn main() -> io::Result<()> {
     run_migration(embedded_migrations::run, &db_pool);
 
     let (server, addr) = get_rpc_server(
-        configuration.rpc_socket(),
+        configuration.service_socket(),
         Arc::new(configuration),
         Arc::new(db_pool),
     )

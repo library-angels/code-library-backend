@@ -29,7 +29,7 @@ async fn main() -> io::Result<()> {
     embed_migrations!();
     helpers::db::run_migration(embedded_migrations::run, &db_pool);
 
-    let (server, addr) = rpc_server(&configuration.rpc_socket(), db_pool)
+    let (server, addr) = rpc_server(&configuration.service_socket(), db_pool)
         .await
         .unwrap();
     log::info!("Book RPC Server started on {}", addr);

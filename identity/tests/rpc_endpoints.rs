@@ -90,7 +90,7 @@ impl Drop for DbTestContext {
 }
 
 fn get_test_configuration() -> Configuration {
-    set_var("RPC_HOST_PORT", "0");
+    set_var("SERVICE_SOCKET", "127.0.0.1:0");
     if var("OAUTH_CLIENT_IDENTIFIER").is_err() {
         set_var("OAUTH_CLIENT_IDENTIFIER", "test_oauth_client_identifier");
     }
@@ -121,7 +121,7 @@ async fn setup(
         DbTestContext::new(configuration.db_connection_base_url(), test_context_name);
     let db = Arc::new(get_db_pool(&db_test_context.get_connection_url()));
     let (server, socket) = get_rpc_server(
-        configuration.rpc_socket(),
+        configuration.service_socket(),
         configuration.clone(),
         db.clone(),
     )
