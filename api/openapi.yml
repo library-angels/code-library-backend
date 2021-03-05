@@ -120,7 +120,77 @@ paths:
                         application/json:
                             schema: { $ref: "#/components/schemas/ErrorMessage" }
                             example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
-
+    /identity/oauth/client_identifier:
+        get:
+            tags: [identity]
+            summary: Get the OAuth 2.0 client identifier of the application
+            responses:
+                200:
+                    description: Success
+                500:
+                    description: Internal error
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
+    /identity/oauth/authentication:
+        post:
+            tags: [identity]
+            summary: Request a session token with an OAuth 2.0 authorization token
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema: { $ref: "#/components/schemas/Authentication" }
+                            
+            responses:
+                200:
+                    description: Success
+                    content:
+                        application/json:
+                            schema:
+                                type: object
+                                properties:
+                                    token: { type: string }
+                400:
+                    description: Request malformed
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            examples:
+                                generic:
+                                    value: { code: 400, msg: "BAD_REQUEST" }
+                500:
+                    description: Internal error
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
+    /identity/session/info:
+        get:
+            tags: [identity]
+            summary: Get information about the current session
+            responses:
+                200:
+                    description: Success
+                401:
+                    description: Client is not authenticated
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 401, msg: "UNAUTHORIZED" }
+                403:
+                    description: Client is not allowed to see the resource
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 403, msg: "FORBIDDEN" }
+                500:
+                    description: Internal error
+                    content:
+                        application/json:
+                            schema: { $ref: "#/components/schemas/ErrorMessage" }
+                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
 components:
     schemas:
         Book:
@@ -197,6 +267,10 @@ components:
                         properties:
                             id: { type: integer }
                             name: { type: string, example: Software }
+        Authentication:
+            type: object
+            properties:
+                code: { type: string }
         ErrorMessage:
             type: object
             properties:
