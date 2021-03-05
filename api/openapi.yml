@@ -1,21 +1,14 @@
 openapi: 3.0.3
 info:
     title: CODE Library Backend
-    description: For most routes you need to authenticate via OAuth 2.0 with your `@code.berlin`-email.
     version: 0.1.0
 externalDocs:
-    description: GitHub repo
+    description: Github repository
     url: https://github.com/library-angels/code-library-backend
-
-servers:
-    - url: https://api.dev.library.code.berlin/
-    - url: https://api.library.code.berlin/
-    - url: http://127.0.0.1:8080/
-
 tags:
     - name: book
-    - name: identity
     - name: borrow
+    - name: identity
 paths:
     /book/{book_id}:
         get:
