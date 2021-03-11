@@ -595,7 +595,7 @@ dependencies = [
  "indexmap",
  "slab",
  "tokio 1.2.0",
- "tokio-util 0.6.1",
+ "tokio-util 0.6.4",
  "tracing",
  "tracing-futures",
 ]
@@ -1801,9 +1801,9 @@ dependencies = [
 
 [[package]]
 name = "tarpc"
-version = "0.24.1"
+version = "0.25.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e325774dd5b35d979e9f4db2b0f0d7d85dc2ff2b676a3150af56c09eafc14b07"
+checksum = "ee30a2603c9919d748bbee604cd75ae1fa152c8dd7aebe6c40b536af90e8188f"
 dependencies = [
  "anyhow",
  "fnv",
@@ -1817,14 +1817,14 @@ dependencies = [
  "tarpc-plugins",
  "tokio 1.2.0",
  "tokio-serde",
- "tokio-util 0.6.1",
+ "tokio-util 0.6.4",
 ]
 
 [[package]]
 name = "tarpc-plugins"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3240378a22b1195734e085ba71d1d4188d50f034aea82635acc430b7005afb5"
+checksum = "94e1e12437e5eb678462e60fc3c3c70d1f09904490c6ab9fec04242e27641ad9"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2002,17 +2002,17 @@ dependencies = [
 
 [[package]]
 name = "tokio-util"
-version = "0.6.1"
+version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12ae4751faa60b9f96dd8344d74592e5a17c0c9a220413dbc6942d14139bbfcc"
+checksum = "ec31e5cc6b46e653cf57762f36f71d5e6386391d88a72fd6db4508f8f676fb29"
 dependencies = [
  "bytes 1.0.0",
  "futures-core",
  "futures-sink",
  "log",
  "pin-project-lite 0.2.4",
+ "slab",
  "tokio 1.2.0",
- "tokio-stream",
 ]
 
 [[package]]
@@ -2205,7 +2205,7 @@ dependencies = [
  "tokio 1.2.0",
  "tokio-stream",
  "tokio-tungstenite",
- "tokio-util 0.6.1",
+ "tokio-util 0.6.4",
  "tower-service",
  "tracing",
  "tracing-futures",
