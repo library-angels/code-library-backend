@@ -11,7 +11,7 @@ use helpers::result::StdResult;
 #[tokio::test]
 async fn should_not_find_book() -> StdResult<()> {
     // Arrange
-    let mut client = utils::test_setup().await?;
+    let client = utils::test_setup().await?;
 
     // Act
     let book_not_found = client.get_book(context::current(), 4).await?;
@@ -28,7 +28,7 @@ async fn should_not_find_book() -> StdResult<()> {
 #[tokio::test]
 async fn should_find_book() -> StdResult<()> {
     // Arrange
-    let mut client = utils::test_setup().await?;
+    let client = utils::test_setup().await?;
 
     // Act
     let found_book = client.get_book(context::current(), 1).await?;

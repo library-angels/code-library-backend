@@ -21,7 +21,7 @@ pub mod session {
                     .strip_prefix("Bearer ")
                     .ok_or_else(|| reject::custom(super::rejection::NotAuthenticated))?;
 
-                let mut client = get_rpc_client(addr).await.map_err(|e| {
+                let client = get_rpc_client(addr).await.map_err(|e| {
                     log::error!("Identity service error: {}", e);
                     reject::custom(super::rejection::NotAuthenticated)
                 })?;

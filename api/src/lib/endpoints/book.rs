@@ -14,7 +14,7 @@ pub async fn get_book_by_id(
     addr: SocketAddr,
     id: u32,
 ) -> Result<impl Reply, Infallible> {
-    if let Ok(mut client) = book::rpc_client(&addr).await {
+    if let Ok(client) = book::rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_book(context::current(), id).await {
             match rpc_result {
                 Ok(book) => return Ok(response::okay_with_json(&book)),
@@ -36,7 +36,7 @@ pub async fn list_books(
         page_size,
         category,
     } = query_params;
-    if let Ok(mut client) = book::rpc_client(&addr).await {
+    if let Ok(client) = book::rpc_client(&addr).await {
         if let Ok(rpc_result) = client
             .list_books(
                 context::current(),

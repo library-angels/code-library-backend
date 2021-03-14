@@ -5,7 +5,7 @@ use std::{io, net::SocketAddr, sync::Arc};
 
 use futures::{future, prelude::*};
 use tarpc::client::Config;
-use tarpc::server::{BaseChannel, Channel, Handler};
+use tarpc::server::{BaseChannel, Channel, Incoming};
 use tokio_serde::formats::Json;
 
 use self::server::NotificationServer;
@@ -26,7 +26,7 @@ pub async fn get_rpc_server(
         .max_channels_per_key(1, |t| t.as_ref().peer_addr().unwrap().ip())
         .map(move |channel| {
             let server = NotificationServer::new(configuration.clone(), db_pool.clone());
-            channel.respond_with(server.serve()).execute()
+            channel.requests().execute(server.serve())
         })
         .buffer_unordered(10)
         .for_each(|_| async {});

@@ -8,9 +8,9 @@ use std::net::SocketAddr;
 use futures::{future, prelude::*};
 use tarpc::{
     client::Config,
-    rpc::{ClientMessage, Response},
     serde_transport::{tcp, Transport},
-    server::{BaseChannel, Channel, Handler},
+    server::{BaseChannel, Channel, Incoming},
+    ClientMessage, Response,
 };
 use tokio::net::TcpStream;
 use tokio_serde::formats::Json;
@@ -44,7 +44,7 @@ pub async fn rpc_server(
         .max_channels_per_key(CHANNEL_PER_IP, keymaker)
         .map(move |channel| {
             let server = BookServer::new(db_pool.clone());
-            channel.respond_with(server.serve()).execute()
+            channel.requests().execute(server.serve())
         })
         .buffer_unordered(MAX_CURRENT_CHANNEL)
         .for_each(|_| async {});
