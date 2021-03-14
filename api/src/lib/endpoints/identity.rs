@@ -9,7 +9,7 @@ use identity::rpc::get_rpc_client;
 use crate::response;
 
 pub async fn get_oauth_client_identifier(addr: SocketAddr) -> Result<impl Reply, Infallible> {
-    let mut client = match get_rpc_client(addr).await {
+    let client = match get_rpc_client(addr).await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
@@ -38,7 +38,7 @@ pub async fn create_oauth_authentication(
     body: HashMap<String, String>,
     addr: SocketAddr,
 ) -> Result<impl Reply, Infallible> {
-    let mut client = match get_rpc_client(addr).await {
+    let client = match get_rpc_client(addr).await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);
@@ -67,7 +67,7 @@ pub async fn get_session_info(
     addr: SocketAddr,
     session: crate::middleware::session::Session,
 ) -> Result<impl Reply, Infallible> {
-    let mut client = match get_rpc_client(addr).await {
+    let client = match get_rpc_client(addr).await {
         Ok(val) => val,
         Err(e) => {
             log::error!("Identity service error: {}", e);

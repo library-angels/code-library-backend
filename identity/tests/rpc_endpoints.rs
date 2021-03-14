@@ -136,7 +136,7 @@ async fn setup(
 #[tokio::test]
 async fn get_user_exists() {
     // Arrange
-    let (server, mut client, _configuration, db_pool, _db_test_context) =
+    let (server, client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -172,7 +172,7 @@ async fn get_user_exists() {
 #[tokio::test]
 async fn get_user_not_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_pool, _db_test_context) =
+    let (server, client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -192,7 +192,7 @@ async fn get_user_not_exists() {
 #[tokio::test]
 async fn list_users_exists() {
     // Arrange
-    let (server, mut client, _configuration, db_pool, _db_test_context) =
+    let (server, client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -237,7 +237,7 @@ async fn list_users_exists() {
 #[tokio::test]
 async fn update_user_verify() {
     // Arrange
-    let (server, mut client, _configuration, db_pool, _db_test_context) =
+    let (server, client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -270,7 +270,7 @@ async fn update_user_verify() {
 #[tokio::test]
 async fn get_role_exists() {
     // Arrange
-    let (server, mut client, _configuration, db_pool, _db_test_context) =
+    let (server, client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -297,7 +297,7 @@ async fn get_role_exists() {
 #[tokio::test]
 async fn get_role_not_exists() {
     // Arrange
-    let (server, mut client, _configuration, _db_pool, _db_test_context) =
+    let (server, client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -317,7 +317,7 @@ async fn get_role_not_exists() {
 #[tokio::test]
 async fn list_roles_exists() {
     // Arrange
-    let (server, mut client, _configuration, db_pool, _db_test_context) =
+    let (server, client, _configuration, db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -356,7 +356,7 @@ async fn oauth_authentication() {
     };
 
     // Arrange
-    let (server, mut client, _configuration, _db_pool, _db_test_context) =
+    let (server, client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -376,7 +376,7 @@ async fn oauth_authentication() {
 #[tokio::test]
 async fn oauth_client_identifier() {
     // Arrange
-    let (server, mut client, _configuration, _db_pool, _db_test_context) =
+    let (server, client, _configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -397,7 +397,7 @@ async fn oauth_client_identifier() {
 #[tokio::test]
 async fn session_info_valid_token() {
     // Arrange
-    let (server, mut client, configuration, _db_pool, _db_test_context) =
+    let (server, client, configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
@@ -438,7 +438,7 @@ async fn session_info_valid_token() {
 #[tokio::test]
 async fn session_info_invalid_token() {
     // Arrange
-    let (server, mut client, configuration, _db_pool, _db_test_context) =
+    let (server, client, configuration, _db_pool, _db_test_context) =
         setup(stdext::function_name!().into())
             .await
             .expect("Could not set up test environment");
