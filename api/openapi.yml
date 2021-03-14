@@ -1,211 +1,2077 @@
 openapi: 3.0.3
 info:
-    title: CODE Library Backend
-    description: For most routes you need to authenticate via OAuth 2.0 with your `@code.berlin`-email.
-    version: 0.1.0
+  title: CODE Library Backend
+  version: 0.1.0
 externalDocs:
-    description: GitHub repo
-    url: https://github.com/library-angels/code-library-backend
-
-servers:
-    - url: https://api.dev.library.code.berlin/
-    - url: https://api.library.code.berlin/
-    - url: http://127.0.0.1:8080/
-
+  description: Github repository
+  url: 'https://github.com/library-angels/code-library-backend'
 tags:
-    - name: book
-    - name: identity
-    - name: borrow
+  - name: book
+  - name: identity
 paths:
-    /book/{book_id}:
-        get:
-            tags: [book]
-            summary: Get specific book
-            parameters:
-                - name: book_id
-                  in: path
-                  description: "Database primary key of a book object"
-                  required: true
-                  schema: { type: integer }
-            responses:
-                200:
-                    description: Success
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/Book" }
-                400:
-                    description: Request malformed
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 400, msg: "BAD_REQUEST" }
-                401:
-                    description: Client is not authenticated
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 401, msg: "UNAUTHORIZED" }
-                403:
-                    description: Client is not allowed to see the resource
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 403, msg: "FORBIDDEN" }
-                404:
-                    description: Object not available
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            examples:
-                                generic:
-                                    value: { code: 404, msg: "NOT_AVAILABLE" }
-                                book_id_not_available:
-                                    value: { code: 404, msg: "BOOK_ID_NOT_AVAILABLE" }
-                500:
-                    description: Internal error
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
-    /book:
-        get:
-            tags: [book]
-            summary: Get (one page of) all books
-            parameters:
-                - name: page
-                  in: query
-                  description: "Index of page"
-                  schema: { type: integer, default: 1 }
-                - name: page_size
-                  in: query
-                  description: "Results per page"
-                  schema: { type: integer, default: 10 }
-            responses:
-                200:
-                    description: Success
-                    content:
-                        application/json:
-                            schema:
-                                type: object
-                                properties:
-                                    page_list:
-                                        type: array
-                                        items: { $ref: "#/components/schemas/Book" }
-                                        minLength: 1
-                                    num_pages: { type: integer, example: 5 }
-                400:
-                    description: Request malformed
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            examples:
-                                generic:
-                                    value: { code: 400, msg: "BAD_REQUEST" }
-                                invalid_query_params:
-                                    value: { code: 404, msg: "INVALID_QUERY_PARAMS" }
-                401:
-                    description: Client is not authenticated
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 401, msg: "UNAUTHORIZED" }
-                403:
-                    description: Client is not allowed to see the resource
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 403, msg: "FORBIDDEN" }
-                404:
-                    description: Object not available
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 404, msg: "NOT_AVAILABLE" }
-                500:
-                    description: Internal error
-                    content:
-                        application/json:
-                            schema: { $ref: "#/components/schemas/ErrorMessage" }
-                            example: { code: 500, msg: "INTERNAL_SERVER_ERROR" }
-
+  '/book':
+    get:
+      tags:
+        - book
+      summary: List books
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+        - name: sort
+          in: query
+          description: Sort items
+          schema:
+            type: string
+            items:
+              type: string
+              enum:
+                - TitleAsc
+                - TitleDesc
+                - PublicationAsc
+                - PublicationDesc
+        - name: search_fields
+          in: query
+          description: Fields used in full text search
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - Title
+                - Author
+        - name: search_keywords
+          in: query
+          description: Keywords used for full text search
+          schema:
+            type: array
+            items:
+              type: string
+        - name: category
+          in: query
+          description: Filter items for associated category
+          schema:
+            type: array
+            items:
+              type: string
+        - name: tags
+          in: query
+          description: Filter items for associated tags
+          schema:
+            type: array
+            items:
+              type: string
+        - name: subject_area
+          in: query
+          description: Filter items for associated subject area
+          schema:
+            type: array
+            items:
+              type: string
+        - name: series
+          in: query
+          description: Filter items for associated series
+          schema:
+            type: array
+            items:
+              type: string
+        - name: publisher
+          in: query
+          description: Filter items for associated publisher
+          schema:
+            type: array
+            items:
+              type: string
+        - name: language
+          in: query
+          description: Filter items for associated language
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Book'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}':
+    get:
+      tags:
+        - book
+      summary: Get book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Book'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/authors':
+    get:
+      tags:
+        - book
+      summary: Get authors of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Copy'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/category':
+    get:
+      tags:
+        - book
+      summary: Get category of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/editors':
+    get:
+      tags:
+        - book
+      summary: Get editors of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Editor'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/language':
+    get:
+      tags:
+        - book
+      summary: Get language of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Language'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/publisher':
+    get:
+      tags:
+        - book
+      summary: Get publisher of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Publisher'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/series':
+    get:
+      tags:
+        - book
+      summary: Get series of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Series'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/subject_areas':
+    get:
+      tags:
+        - book
+      summary: Get subject areas of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SubjectArea'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/tags':
+    get:
+      tags:
+        - book
+      summary: Get tags of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/{book_id}/copies':
+    get:
+      tags:
+        - book
+      summary: Get copies of book by id
+      parameters:
+        - name: book_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Copy'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/authors':
+    get:
+      tags:
+        - book
+      summary: List authors
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Author'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/authors/{author_id}':
+    get:
+      tags:
+        - book
+      summary: Get author by id
+      parameters:
+        - name: author_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Author'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/categories':
+    get:
+      tags:
+        - book
+      summary: List categories
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Category'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/categories/{category_id}':
+    get:
+      tags:
+        - book
+      summary: Get category by id
+      parameters:
+        - name: category_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Category'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/editors':
+    get:
+      tags:
+        - book
+      summary: List editors
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Editor'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/editors/{editor_id}':
+    get:
+      tags:
+        - book
+      summary: Get editor by id
+      parameters:
+        - name: editor_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Editor'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/languages':
+    get:
+      tags:
+        - book
+      summary: List languages
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Language'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/languages/{language_id}':
+    get:
+      tags:
+        - book
+      summary: Get language by id
+      parameters:
+        - name: language_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Language'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/publishers':
+    get:
+      tags:
+        - book
+      summary: List publishers
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Publisher'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/publishers/{publisher_id}':
+    get:
+      tags:
+        - book
+      summary: Get publisher by id
+      parameters:
+        - name: publisher_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Publisher'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/series':
+    get:
+      tags:
+        - book
+      summary: List Series
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Series'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/series/{series_id}':
+    get:
+      tags:
+        - book
+      summary: Get series by id
+      parameters:
+        - name: series_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Series'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/subject_areas':
+    get:
+      tags:
+        - book
+      summary: List subject areas
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SubjectArea'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/subject_areas/{subject_area_id}':
+    get:
+      tags:
+        - book
+      summary: Get subject area by id
+      parameters:
+        - name: subject_area_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/SubjectArea'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/tags':
+    get:
+      tags:
+        - book
+      summary: List tags
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/tags/{tag_id}':
+    get:
+      tags:
+        - book
+      summary: Get tag by id
+      parameters:
+        - name: tag_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Tag'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/copies':
+    get:
+      tags:
+        - book
+      summary: List copies
+      parameters:
+        - name: before_item
+          in: query
+          description: Items before index
+          schema:
+            type: string
+        - name: after_item
+          in: query
+          description: Items after index
+          schema:
+            type: string
+        - name: items
+          in: query
+          description: Item return limit
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Copy'
+                  pagination:
+                    type: object
+                    properties:
+                      previous:
+                        type: string
+                        format: uri
+                      next:
+                        type: string
+                        format: uri
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/book/copies/{copy_id}':
+    get:
+      tags:
+        - book
+      summary: Get copy by id
+      parameters:
+        - name: copy_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                properties:
+                  data:
+                    $ref: '#/components/schemas/Copy'
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/identity/oauth/client_identifier':
+    get:
+      tags:
+        - identity
+      summary: Request the OAuth 2.0 client identifier of the application
+      responses:
+        '200':
+          description: Request successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  identifier:
+                    type: string
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/identity/oauth/authentication':
+    post:
+      tags:
+        - identity
+      summary: Request a session token with an OAuth 2.0 authorization token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                code:
+                  type: string
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+  '/identity/session/info':
+    get:
+      tags:
+        - identity
+      summary: Request information about the current session
+      responses:
+        '200':
+          description: Request successful
+        '400':
+          description: Request malformed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '401':
+          description: Client is not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '403':
+          description: Client is not allowed to see the resource
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
+        '500':
+          description: Internal error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorMessage'
 components:
-    schemas:
-        Book:
-            type: object
-            properties:
-                id: { type: integer, example: 42 }
-                code_identifier: { type: string, example: SE101 }
-                isbn:
-                    type: string
-                    minLength: 13
-                    maxLength: 13
-                    example: 1234567891011
-                issn:
-                    type: string
-                    nullable: true
-                    minLength: 8
-                    maxLength: 8
-                    example: null
-                release_date: { type: string, format: date }
-                subtitle: { type: string, nullable: true, example: null }
-                title: { type: string, example: The Rust Book }
-                category:
-                    type: object
-                    properties:
-                        id: { type: integer }
-                        name: { type: string, enum: [DH, ID, IS, PM, SE, STS] }
-                language:
-                    type: object
-                    properties:
-                        id: { type: integer }
-                        name: { type: string, example: English }
-                        iso_code:
-                            type: string
-                            minLength: 3
-                            maxLength: 3
-                            example: ang
-                publisher:
-                    type: object
-                    properties:
-                        id: { type: integer }
-                        name: { type: string, example: Nostarch Press }
-                series:
-                    type: object
-                    nullable: true
-                    properties:
-                        id: { type: integer }
-                        name: { type: string, example: Rusty Books }
-                        publisher_id: { type: integer }
-                authors:
-                    type: array
-                    items:
-                        type: object
-                        properties:
-                            id: { type: integer }
-                            first_name: { type: string, example: Ada }
-                            last_name: { type: string, example: Lovelace }
-                            isni:
-                                type: string
-                                minLength: 8
-                                maxLength: 8
-                                nullable: true
-                                example: null
-                            orcid:
-                                type: string
-                                minLength: 8
-                                maxLength: 8
-                                nullable: true
-                                example: null
-                            oclc: { type: integer, nullable: true, example: null }
-                subject_areas:
-                    type: array
-                    items:
-                        type: object
-                        properties:
-                            id: { type: integer }
-                            name: { type: string, example: Software }
-        ErrorMessage:
-            type: object
-            properties:
-                code: { type: integer }
-                msg: { type: string }
+  schemas:
+    ErrorMessage:
+      type: object
+      properties:
+        code:
+          type: integer
+        msg:
+          type: string
+
+    Book:
+      type: object
+      properties:
+        id:
+          type: string
+        code_identifier:
+          type: integer
+        isbn:
+          type: string
+          minLength: 13
+          maxLength: 13
+        issn:
+          type: string
+          nullable: true
+          minLength: 8
+          maxLength: 8
+        release_year:
+          type: integer
+        subtitle:
+          type: string
+          nullable: true
+        title:
+          type: string
+        category:
+          type: string
+          format: uri
+        language:
+          type: string
+          format: uri
+        publisher:
+          type: string
+          format: uri
+        series:
+          type: string
+          format: uri
+        authors:
+          type: array
+          items:
+            type: string
+            format: uri
+        editors:
+          type: array
+          items:
+            type: string
+            format: uri
+        subject_areas:
+          type: array
+          items:
+            type: string
+            format: uri
+        tags:
+          type: array
+          items:
+            type: string
+            format: uri
+        copies:
+          type: array
+          items:
+            type: string
+            format: uri
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Editor:
+      type: object
+      properties:
+        id:
+          type: string
+        first_name:
+          type: string
+        last_name:
+          type: string
+    Language:
+      type: object
+      properties:
+        id:
+          type: string
+        iso_code:
+          type: string
+        name:
+          type: string
+    Publisher:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Series:
+      type: object
+      properties:
+        id:
+          type: string
+        publisher:
+          type: string
+          format: uri
+        name:
+          type: string
+    SubjectArea:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Tag:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+    Copy:
+      type: object
+      properties:
+        id:
+          type: string
+        book:
+          type: string
+          format: uri
+        code_identifier_copy_id:
+          type: integer
