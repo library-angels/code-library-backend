@@ -115,16 +115,16 @@ pub struct TokenRequest {
 
 impl TokenRequest {
     pub fn new(
-        authorization_code: AuthorizationCode,
         client_identifier: ClientIdentifier,
         client_secret: ClientSecret,
+        authorization_code: AuthorizationCode,
         redirect_uri: RedirectUri,
         grant_type: GrantType,
     ) -> Self {
         TokenRequest {
-            authorization_code,
             client_identifier,
             client_secret,
+            authorization_code,
             redirect_uri,
             grant_type,
         }

@@ -163,9 +163,9 @@ impl IdentityService for IdentityServer {
 
         // Creates a TokenRequest instance
         let request = TokenRequest::new(
-            authorization_code,
             self.conf.oauth_client_identifier.clone(),
             self.conf.oauth_client_secret.clone(),
+            authorization_code,
             RedirectUri::PostMessage,
             GrantType::AuthorizationCode,
         );
