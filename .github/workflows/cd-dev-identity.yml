@@ -7,18 +7,40 @@ on:
             - "Cargo.lock"
             - "**/cd-dev-identity.yml"
 
-jobs:
-    build_deploy:
-        runs-on: ubuntu-latest
-
-        env:
+env:
             SERVICE_NAME: identity
             REPOSITORY: ${{ secrets.AWS_ECR_REGISTRY }}
             IMAGE_TAG: latest-dev
 
+jobs:
+    build:
+        name: Build
+        runs-on: ubuntu-latest
+
         steps:
             - uses: actions/checkout@v2
 
+            - name: Build Docker image
+              run: docker build -t $REPOSITORY/code-library-$SERVICE_NAME:$IMAGE_TAG -f $SERVICE_NAME/Dockerfile .
+            - name: Save Docker image
+              run: docker save $REPOSITORY/code-library-$SERVICE_NAME:$IMAGE_TAG -o code-library-$SERVICE_NAME-$GITHUB_SHA.tar
+            - uses: actions/upload-artifact@v2
+              with:
+                  name: code-library-${{ env.SERVICE_NAME }}-${{ github.sha }}
+                  path: ${{ github.workspace }}/code-library-${{ env.SERVICE_NAME }}-${{ github.sha }}.tar
+                  if-no-files-found: error
+    deploy:
+        name: Deploy    
+        runs-on: ubuntu-latest
+        needs: build
+
+        steps:
+            - uses: actions/download-artifact@v2
+              name: Download build artifact
+              with:
+                  name: code-library-${{ env.SERVICE_NAME }}-${{ github.sha }}
+            - name: Load Docker image
+              run: docker load -i code-library-$SERVICE_NAME-$GITHUB_SHA.tar
             - name: Configure AWS credentials
               uses: aws-actions/configure-aws-credentials@v1
               with:
@@ -26,10 +48,6 @@ jobs:
                   aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
                   aws-region: eu-central-1
             - name: Login to Amazon ECR
-              id: login-ecr
               uses: aws-actions/amazon-ecr-login@v1
-
-            - name: Build Docker image
-              run: docker build -t $REPOSITORY/code-library-$SERVICE_NAME:$IMAGE_TAG -f $SERVICE_NAME/Dockerfile .
             - name: Push Docker image
               run: docker push $REPOSITORY/code-library-$SERVICE_NAME:$IMAGE_TAG
