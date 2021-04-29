@@ -1,3 +1,4 @@
+name: Continuous integration
 on:
     push:
         branches-ignore:
@@ -5,35 +6,70 @@ on:
     pull_request:
 
 jobs:
-    ci:
+    format:
+        name: Format
         runs-on: ubuntu-latest
+        container: debian:buster-slim
         strategy:
             matrix:
-                rust:
-                    - { toolchain: stable, experimental: false }
-                    - { toolchain: beta, experimental: true }
-                conf: [fmt, clippy, check]
-        continue-on-error: ${{ matrix.rust.experimental }}
-
+                rust-toolchain: [beta, stable]
+        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
         steps:
+            - name: Install Rust toolchain dependencies
+              run: apt update && apt install -y wget
             - name: Install Rust toolchain
               uses: actions-rs/toolchain@v1
               with:
-                  components: rustfmt, clippy
-                  override: true
+                  toolchain: ${{ matrix.rust-toolchain }}
+                  components: rustfmt
                   profile: minimal
-                  toolchain: ${{ matrix.rust.toolchain }}
-
+                  override: true
             - uses: actions/checkout@v2
-
-            - if: matrix.conf == 'fmt'
+            - name: Format source code check
               run: cargo fmt -- --check
-            - if: matrix.conf == 'clippy'
+    linter:
+        name: Linter
+        runs-on: ubuntu-latest
+        container: debian:buster-slim
+        strategy:
+            matrix:
+                rust-toolchain: [beta, stable]
+        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
+        steps:
+            - name: Install Rust toolchain dependencies
+              run: apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev
+            - name: Install Rust toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: ${{ matrix.rust-toolchain }}
+                  components: clippy
+                  profile: minimal
+                  override: true
+            - uses: actions/checkout@v2
+            - name: Lint source code
               run: cargo clippy --all-targets --all-features -- -D warnings
-            - if: matrix.conf == 'check'
+    check:
+        name: Dependencies
+        runs-on: ubuntu-latest
+        container: debian:buster-slim
+        strategy:
+            matrix:
+                rust-toolchain: [beta, stable]
+        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
+        steps:
+            - name: Install Rust toolchain dependencies
+              run: apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev
+            - name: Install Rust toolchain
+              uses: actions-rs/toolchain@v1
+              with:
+                  toolchain: ${{ matrix.rust-toolchain }}
+                  profile: minimal
+                  override: true
+            - uses: actions/checkout@v2
+            - name: Check workspace dependencies
               run: cargo check --all-targets --all-features
-
     ci-test:
+        name: Unit and integration tests
         runs-on: ubuntu-latest
         strategy:
             matrix:
