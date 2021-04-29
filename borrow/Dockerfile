@@ -1,7 +1,6 @@
-FROM rust:alpine as builder
+FROM rust:slim-buster as builder
 
-RUN apk add gcc musl-dev postgresql-dev
-ENV RUSTFLAGS="-C target-feature=-crt-static"
+RUN apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev
 
 WORKDIR /usr/src
 COPY . .
@@ -9,10 +8,10 @@ COPY . .
 RUN cargo install --path borrow/
 
 
-FROM alpine:latest
-RUN apk --no-cache add libgcc libpq
+FROM debian:buster-slim
+RUN apt update && apt install -y libpq5
 
 COPY --from=builder /usr/local/cargo/bin/borrow /usr/local/bin/borrow
 
 EXPOSE 8080/tcp
-ENTRYPOINT [ "borrow" ]
+ENTRYPOINT ["borrow"]

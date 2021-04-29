@@ -1,7 +1,6 @@
-FROM rust:alpine as builder
+FROM rust:slim-buster as builder
 
-RUN apk add gcc musl-dev openssl-dev postgresql-dev
-ENV RUSTFLAGS="-C target-feature=-crt-static"
+RUN apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev
 
 WORKDIR /usr/src
 COPY . .
@@ -9,10 +8,10 @@ COPY . .
 RUN cargo install --path identity/
 
 
-FROM alpine:latest
-RUN apk --no-cache add libgcc libpq
+FROM debian:buster-slim
+RUN apt update && apt install -y libpq5
 
 COPY --from=builder /usr/local/cargo/bin/identity /usr/local/bin/identity
 
 EXPOSE 8080/tcp
-ENTRYPOINT [ "identity" ]
+ENTRYPOINT ["identity"]
