@@ -4,7 +4,6 @@ use std::sync::Arc;
 use chrono::NaiveDate;
 use diesel::r2d2::{ConnectionManager, Pool};
 use diesel::{prelude::*, result::Error};
-use envconfig::Envconfig;
 use uuid::Uuid;
 
 use identity::config::Configuration;
@@ -91,7 +90,7 @@ fn get_test_configuration() -> Configuration {
     set_var("OAUTH_CLIENT_SECRET", "test_oauth_client_secret");
     set_var("JWT_SECRET", "test_jwt_secret");
 
-    Configuration::init_from_env().unwrap()
+    Configuration::init().unwrap()
 }
 
 async fn setup(
@@ -105,8 +104,10 @@ async fn setup(
     (),
 > {
     let configuration = Arc::new(get_test_configuration());
-    let db_test_context =
-        DbTestContext::new(configuration.db_connection_base_url(), test_context_name);
+    let db_test_context = DbTestContext::new(
+        configuration.get_db_connection_base_url(),
+        test_context_name,
+    );
     let db_pool = Arc::new(get_db_pool(&db_test_context.get_connection_url()));
 
     Ok((configuration, db_pool, db_test_context))

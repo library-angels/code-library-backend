@@ -18,13 +18,13 @@ async fn main() -> io::Result<()> {
 
     let configuration = get_configuration();
 
-    let db_pool = get_db_pool(&configuration.db_connection_url());
+    let db_pool = get_db_pool(&configuration.get_db_connection_url());
 
     embed_migrations!();
     run_migration(embedded_migrations::run, &db_pool);
 
     let (server, addr) = get_rpc_server(
-        configuration.service_socket(),
+        configuration.get_service_socket(),
         Arc::new(configuration),
         Arc::new(db_pool),
     )
