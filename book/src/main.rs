@@ -1,7 +1,6 @@
 use std::io;
 
 use dotenv::dotenv;
-use envconfig::Envconfig;
 
 #[macro_use]
 extern crate diesel_migrations;
@@ -21,15 +20,15 @@ async fn main() -> io::Result<()> {
     log::info!("Starting service");
 
     dotenv().ok();
-    let configuration = Configuration::init_from_env().unwrap();
+    let configuration = Configuration::init().unwrap();
 
-    let database_url = configuration.db_connection_url();
+    let database_url = configuration.get_db_connection_url();
     let db_pool = db::get_db_pool(&*database_url);
 
     embed_migrations!();
     helpers::db::run_migration(embedded_migrations::run, &db_pool);
 
-    let (server, addr) = rpc_server(&configuration.service_socket(), db_pool)
+    let (server, addr) = rpc_server(&configuration.get_service_socket(), db_pool)
         .await
         .unwrap();
     log::info!("Book RPC Server started on {}", addr);

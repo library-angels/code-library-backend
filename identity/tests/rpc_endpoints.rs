@@ -3,7 +3,6 @@ use std::sync::Arc;
 
 use chrono::{Duration, Utc};
 use diesel::prelude::*;
-use envconfig::Envconfig;
 use tarpc::context;
 use uuid::Uuid;
 
@@ -101,7 +100,7 @@ fn get_test_configuration() -> Configuration {
         set_var("JWT_SECRET", "test_jwt_secret");
     }
 
-    Configuration::init_from_env().unwrap()
+    Configuration::init().unwrap()
 }
 
 async fn setup(
@@ -117,11 +116,13 @@ async fn setup(
     (),
 > {
     let configuration = Arc::new(get_test_configuration());
-    let db_test_context =
-        DbTestContext::new(configuration.db_connection_base_url(), test_context_name);
+    let db_test_context = DbTestContext::new(
+        configuration.get_db_connection_base_url(),
+        test_context_name,
+    );
     let db = Arc::new(get_db_pool(&db_test_context.get_connection_url()));
     let (server, socket) = get_rpc_server(
-        configuration.service_socket(),
+        configuration.get_service_socket(),
         configuration.clone(),
         db.clone(),
     )
