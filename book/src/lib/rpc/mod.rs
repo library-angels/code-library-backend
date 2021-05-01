@@ -61,12 +61,13 @@ mod tests {
     use super::*;
     use crate::db;
 
-    const DATABASE_URL: &str = "postgres://postgres:password@localhost";
-
     #[tokio::test]
     async fn rpc_server_binding_should_work() -> StdResult<()> {
         // Arrange
-        let db_pool = db::get_db_pool(DATABASE_URL);
+        let db_pool = db::get_db_pool(&format!(
+            "postgres://postgres:password@{}",
+            std::env::var("DB_HOST_SOCKET").unwrap()
+        ));
 
         // Act
         let _ = rpc_server(&addr(), db_pool).await?;
@@ -82,7 +83,10 @@ mod tests {
         let socket = TcpListener::bind(addr()).unwrap();
         let addr = socket.local_addr().unwrap();
 
-        let db_pool = db::get_db_pool(DATABASE_URL);
+        let db_pool = db::get_db_pool(&format!(
+            "postgres://postgres:password@{}",
+            std::env::var("DB_HOST_SOCKET").unwrap()
+        ));
 
         // Act
         let _ = rpc_server(&addr, db_pool).await.unwrap();
