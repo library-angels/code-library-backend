@@ -71,18 +71,23 @@ jobs:
     ci-test:
         name: Unit and integration tests
         runs-on: ubuntu-latest
+        container: debian:buster-slim
         strategy:
             matrix:
-                rust:
-                    - { toolchain: stable, experimental: false }
-                    - { toolchain: beta, experimental: true }
-        continue-on-error: ${{ matrix.rust.experimental }}
+                rust-toolchain: [beta, stable]
+        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
+
+        env:
+            POSTGRES_HOST: postgres # This is the name of the container label in the service section below
+            POSTGRES_USER: postgres
+            POSTGRES_SECRET: password
+            DB_HOST_SOCKET: postgres:5432
 
         services:
             postgres:
                 image: postgres:11
                 env:
-                    POSTGRES_PASSWORD: password
+                    POSTGRES_PASSWORD: ${{ env.POSTGRES_SECRET }}
                 options: >-
                     --health-cmd pg_isready
                     --health-interval 10s
@@ -90,23 +95,19 @@ jobs:
                     --health-retries 5
                 ports:
                     - 5432:5432
-        env:
-            PG_HOST: localhost
-            PG_USER: postgres
-            PG_SECRET: password
-
         steps:
+            - name: Install Rust toolchain dependencies
+              run: apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev postgresql-client dnsutils
             - name: Ping Postgres
-              run: psql postgres://$PG_USER:$PG_SECRET@$PG_HOST -l
-
+              run: psql postgres://$POSTGRES_USER:$POSTGRES_SECRET@$POSTGRES_HOST -l
             - name: Install Rust toolchain
               uses: actions-rs/toolchain@v1
               with:
-                  override: true
+                  toolchain: ${{ matrix.rust-toolchain }}
                   profile: minimal
-                  toolchain: ${{ matrix.rust.toolchain }}
-
+                  override: true
             - uses: actions/checkout@v2
-
-            - run: cargo test --all-targets --all-features
-            - run: cargo test --doc --all-features
+            - name: Run unit and integration tests
+              run: cargo test --all-targets --all-features
+            - name: Run documentation tests
+              run: cargo test --doc --all-features
