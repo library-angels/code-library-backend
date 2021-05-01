@@ -1,5 +1,6 @@
 //! These tests need the feature "test-data" being enabled in order to run
 
+use std::env;
 use tarpc::context;
 
 #[macro_use]
@@ -56,8 +57,6 @@ mod utils {
 
     use super::*;
 
-    const DATABASE_URL: &str = "postgres://postgres:password@localhost";
-
     pub async fn test_setup() -> StdResult<BookServiceClient> {
         // database
         let db_pool = db_setup()?;
@@ -71,12 +70,22 @@ mod utils {
 
     fn db_setup() -> StdResult<DbPool> {
         // create dummy database
-        let tmp_conn = PgConnection::establish(DATABASE_URL)?;
+        let tmp_conn = PgConnection::establish(&format!(
+            "postgres://postgres:password@{}",
+            env::var("DB_HOST_SOCKET").unwrap()
+        ))?;
         let db_name = Uuid::new_v4();
         diesel::sql_query(&*format!("CREATE DATABASE \"{}\";", db_name)).execute(&tmp_conn)?;
 
         // connect to dummy database
-        let database_url = format!("{}/{}", DATABASE_URL, db_name);
+        let database_url = format!(
+            "{}/{}",
+            &format!(
+                "postgres://postgres:password@{}",
+                env::var("DB_HOST_SOCKET").unwrap()
+            ),
+            db_name
+        );
         let db_pool = db::get_db_pool(&*database_url);
 
         // migrate dummy database
