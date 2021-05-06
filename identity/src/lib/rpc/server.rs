@@ -222,13 +222,13 @@ impl IdentityService for IdentityServer {
                 Utc::now(),
                 Duration::seconds(3600),
             )
-            .encode(&self.conf.jwt_secret()),
+            .encode(&self.conf.get_jwt_secret()),
         })
     }
 
     /// Returns the validity and content of a session token
     async fn session_info(self, _: context::Context, token: String) -> RpcResult<SessionInfo> {
-        match Jwt::decode(&self.conf.jwt_secret(), &token) {
+        match Jwt::decode(&self.conf.get_jwt_secret(), &token) {
             Ok(val) => Ok(val.into()),
             Err(_) => Err(Error::InvalidData),
         }

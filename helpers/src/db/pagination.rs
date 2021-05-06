@@ -33,9 +33,9 @@ pub trait Paginate: Sized + Query {
     /// #     }
     /// # }
     /// #
-    /// # let tmp_conn = PgConnection::establish(&format!("postgres://postgres:password@{}", std::env::var("DB_HOST_SOCKET").unwrap())).unwrap();
+    /// # let tmp_conn = PgConnection::establish(&format!("postgres://postgres:password@{}", std::env::var("DB_SOCKET").unwrap())).unwrap();
     /// # diesel::sql_query("CREATE DATABASE helpers_db_pagination_doc_comment;").execute(&tmp_conn);
-    /// # let conn = PgConnection::establish(&format!("postgres://postgres:password@{}/helpers_db_pagination_doc_comment", std::env::var("DB_HOST_SOCKET").unwrap())).unwrap();
+    /// # let conn = PgConnection::establish(&format!("postgres://postgres:password@{}/helpers_db_pagination_doc_comment", std::env::var("DB_SOCKET").unwrap())).unwrap();
     /// # diesel::sql_query("CREATE TABLE A(id SERIAL PRIMARY KEY);").execute(&conn);
     /// #
     /// use helpers::db::pagination::Paginate;

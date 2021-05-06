@@ -81,7 +81,7 @@ jobs:
             POSTGRES_HOST: postgres # This is the name of the container label in the service section below
             POSTGRES_USER: postgres
             POSTGRES_SECRET: password
-            DB_HOST_SOCKET: postgres:5432
+            DB_SOCKET: postgres:5432
 
         services:
             postgres:
