@@ -4,7 +4,8 @@ This is the API service of the CODE Library backend.
 The purpose of this service is to provide an interface for interacting with the backend services.
 It exposes a REST-API, which is used by clients to access the services of the library.
 
-For more detailed information about the REST API, refer to [`REST-API.md`](./REST-API.md).
+For more detailed information about the REST API, refer to [`REST-API.yml`](./REST-API.yml).
+The REST API documentation uses the [Open API](https://www.openapis.org) specification.
 
 # 1. Service Execution
 
