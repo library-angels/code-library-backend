@@ -72,7 +72,7 @@ mod utils {
         // create dummy database
         let tmp_conn = PgConnection::establish(&format!(
             "postgres://postgres:password@{}",
-            env::var("DB_HOST_SOCKET").unwrap()
+            env::var("DB_SOCKET").unwrap()
         ))?;
         let db_name = Uuid::new_v4();
         diesel::sql_query(&*format!("CREATE DATABASE \"{}\";", db_name)).execute(&tmp_conn)?;
@@ -82,7 +82,7 @@ mod utils {
             "{}/{}",
             &format!(
                 "postgres://postgres:password@{}",
-                env::var("DB_HOST_SOCKET").unwrap()
+                env::var("DB_SOCKET").unwrap()
             ),
             db_name
         );

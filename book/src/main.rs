@@ -1,13 +1,11 @@
 use std::io;
 
-use dotenv::dotenv;
-
 #[macro_use]
 extern crate diesel_migrations;
 
 use book::{db, rpc_server};
 
-use book::config::Configuration;
+use book::config::get_configuration;
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -19,8 +17,7 @@ async fn main() -> io::Result<()> {
     env_logger::init();
     log::info!("Starting service");
 
-    dotenv().ok();
-    let configuration = Configuration::init().unwrap();
+    let configuration = get_configuration();
 
     let database_url = configuration.get_db_connection_url();
     let db_pool = db::get_db_pool(&*database_url);

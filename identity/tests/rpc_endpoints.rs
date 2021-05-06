@@ -416,7 +416,7 @@ async fn session_info_valid_token() {
     let result = client
         .session_info(
             context::current(),
-            token.encode(&configuration.jwt_secret()),
+            token.encode(&configuration.get_jwt_secret()),
         )
         .await
         .unwrap();
@@ -458,7 +458,7 @@ async fn session_info_invalid_token() {
     let result = client
         .session_info(
             context::current(),
-            token.encode(&(configuration.jwt_secret() + "abc")),
+            token.encode(&(configuration.get_jwt_secret() + "abc")),
         )
         .await
         .unwrap();

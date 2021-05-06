@@ -66,7 +66,7 @@ mod tests {
         // Arrange
         let db_pool = db::get_db_pool(&format!(
             "postgres://postgres:password@{}",
-            std::env::var("DB_HOST_SOCKET").unwrap()
+            std::env::var("DB_SOCKET").unwrap()
         ));
 
         // Act
@@ -85,7 +85,7 @@ mod tests {
 
         let db_pool = db::get_db_pool(&format!(
             "postgres://postgres:password@{}",
-            std::env::var("DB_HOST_SOCKET").unwrap()
+            std::env::var("DB_SOCKET").unwrap()
         ));
 
         // Act

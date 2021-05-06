@@ -23,7 +23,6 @@ dependencies = [
  "chrono",
  "dotenv",
  "env_logger",
- "envconfig",
  "futures",
  "helpers",
  "http",
@@ -344,26 +343,6 @@ dependencies = [
  "log",
  "regex",
  "termcolor",
-]
-
-[[package]]
-name = "envconfig"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c0ef0470da909709515ab175d5d12f1b20932f758f731589e1ff198561ab9ca"
-dependencies = [
- "envconfig_derive",
-]
-
-[[package]]
-name = "envconfig_derive"
-version = "0.9.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3ca7511366e70d25663dbc2501911beae6064d51687214794efd2d8f5ad73440"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
 ]
 
 [[package]]

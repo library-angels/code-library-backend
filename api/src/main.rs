@@ -1,7 +1,4 @@
-use dotenv::dotenv;
-use envconfig::Envconfig;
-
-use api::config::Configuration;
+use api::config::get_configuration;
 
 #[tokio::main]
 async fn main() {
@@ -13,13 +10,16 @@ async fn main() {
     env_logger::init();
     log::info!("Starting service");
 
-    dotenv().ok();
-    let conf = Configuration::init_from_env().unwrap();
-    let addr = conf.service_socket();
-    let book_addr = conf.book_socket;
-    let identity_addr = conf.identity_socket;
+    let configuration = get_configuration();
 
-    let server = api::server(book_addr, identity_addr).bind(addr);
-    log::info!("API Server started on {}", addr);
+    let server = api::server(
+        configuration.get_book_socket(),
+        configuration.get_identity_socket(),
+    )
+    .bind(configuration.get_service_socket());
+    log::info!(
+        "API Server started on {}",
+        configuration.get_service_socket()
+    );
     server.await
 }
