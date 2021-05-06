@@ -71,12 +71,6 @@ Execute `docker build -f <service>/Dockerfile -t code-library-<service> .` comma
 All development has to happen inside of separate branches. Every branch name is prefixed with its purpose of creation.
 The used prefixes are the same as the Github labels for pull requests.
 The `master` branch is protected and requires pull request and an approval of at least one reviewer.
-The used merge method is rebasing.
-
-### 3.1 Git Hooks
-
-It is recommended to use the provided Git hooks in the `.githooks` directory, to assure the compliance with project guidelines.
-The hooks can be activated for the local Git repository with `git config --local core.hooksPath ".githooks"`.
 
 ## 4. Contributors
 
