@@ -23,7 +23,11 @@ type TcpTransport<T, U> =
     Transport<TcpStream, ClientMessage<T>, Response<U>, Json<ClientMessage<T>, Response<U>>>;
 
 pub async fn rpc_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
-    BookServiceClient::new(Config::default(), tcp::connect(addr, Json::default).await?).spawn()
+    Ok(BookServiceClient::new(
+        Config::default(),
+        tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
+    )
+    .spawn())
 }
 
 pub async fn rpc_server(

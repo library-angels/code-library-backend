@@ -36,9 +36,9 @@ pub async fn get_rpc_server(
 }
 
 pub async fn get_rpc_client(addr: SocketAddr) -> std::io::Result<IdentityServiceClient> {
-    IdentityServiceClient::new(
+    Ok(IdentityServiceClient::new(
         Config::default(),
         tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
     )
-    .spawn()
+    .spawn())
 }
