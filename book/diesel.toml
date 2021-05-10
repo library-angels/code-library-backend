@@ -1,2 +1,0 @@
-[print_schema]
-file = "src/lib/db/schema.rs"

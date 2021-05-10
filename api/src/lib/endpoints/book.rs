@@ -1,84 +1,18 @@
 use std::{convert::Infallible, net::SocketAddr};
 
-use tarpc::context;
+use uuid::Uuid;
 use warp::Reply;
 
-use book::models::Error;
-
-use self::models::*;
 use crate::filters::authorization::Session;
-use crate::response;
 
 pub async fn get_book_by_id(
     _: Session,
-    addr: SocketAddr,
-    id: u32,
+    _addr: SocketAddr,
+    _id: Uuid,
 ) -> Result<impl Reply, Infallible> {
-    if let Ok(client) = book::rpc_client(&addr).await {
-        if let Ok(rpc_result) = client.get_book(context::current(), id).await {
-            match rpc_result {
-                Ok(book) => return Ok(response::okay_with_json(&book)),
-                Err(Error::NotFound) => return Ok(response::not_found("BOOK_ID_NOT_FOUND")),
-                _ => {}
-            }
-        }
-    }
-    Ok(response::internal_server_error())
+    Ok(warp::reply())
 }
 
-pub async fn list_books(
-    _: Session,
-    addr: SocketAddr,
-    query_params: models::QueryParams,
-) -> Result<impl Reply, Infallible> {
-    let QueryParams {
-        page,
-        page_size,
-        category,
-    } = query_params;
-    if let Ok(client) = book::rpc_client(&addr).await {
-        if let Ok(rpc_result) = client
-            .list_books(
-                context::current(),
-                page.unwrap_or(1),
-                page_size.unwrap_or(10),
-                category,
-            )
-            .await
-        {
-            match rpc_result {
-                Ok(res) => {
-                    let (book_list, num_pages) = res;
-                    return Ok(response::okay_with_json(&BookList {
-                        book_list,
-                        num_pages,
-                    }));
-                }
-                Err(Error::InvalidData) => {
-                    return Ok(response::bad_request("INVALID_QUERY_PARAMS"))
-                }
-                _ => {}
-            }
-        }
-    }
-    Ok(response::internal_server_error())
-}
-
-mod models {
-    use serde::{Deserialize, Serialize};
-
-    use book::models::Book;
-
-    #[derive(Debug, Deserialize)]
-    pub struct QueryParams {
-        pub page: Option<u32>,
-        pub page_size: Option<u32>,
-        pub category: Option<String>,
-    }
-
-    #[derive(Debug, Serialize)]
-    pub struct BookList {
-        pub book_list: Vec<Book>,
-        pub num_pages: u32,
-    }
+pub async fn list_books(_: Session, _book_addr: SocketAddr) -> Result<impl Reply, Infallible> {
+    Ok(warp::reply())
 }

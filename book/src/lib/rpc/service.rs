@@ -1,11 +1,10 @@
-use super::models::{Book, RpcResult};
+use uuid::Uuid;
+
+use super::models::Book;
+use helpers::rpc::RpcResult;
 
 #[tarpc::service]
 pub trait BookService {
-    async fn get_book(book_id: u32) -> RpcResult<Book>;
-    async fn list_books(
-        page: u32,
-        page_size: u32,
-        category: Option<String>,
-    ) -> RpcResult<(Vec<Book>, u32)>;
+    async fn get_book(id: Uuid) -> RpcResult<Book>;
+    async fn list_books() -> RpcResult<Vec<Book>>;
 }

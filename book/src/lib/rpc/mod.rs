@@ -17,7 +17,6 @@ use tokio_serde::formats::Json;
 
 use self::server::BookServer;
 use self::service::{BookService, BookServiceClient};
-use crate::db::DbPool;
 
 type TcpTransport<T, U> =
     Transport<TcpStream, ClientMessage<T>, Response<U>, Json<ClientMessage<T>, Response<U>>>;
@@ -30,10 +29,7 @@ pub async fn rpc_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
     .spawn())
 }
 
-pub async fn rpc_server(
-    addr: &SocketAddr,
-    db_pool: DbPool,
-) -> io::Result<(impl Future<Output = ()>, SocketAddr)> {
+pub async fn rpc_server(addr: &SocketAddr) -> io::Result<(impl Future<Output = ()>, SocketAddr)> {
     const CHANNEL_PER_IP: u32 = 10;
     const MAX_CURRENT_CHANNEL: usize = 10;
 
@@ -47,7 +43,7 @@ pub async fn rpc_server(
         .map(BaseChannel::with_defaults)
         .max_channels_per_key(CHANNEL_PER_IP, keymaker)
         .map(move |channel| {
-            let server = BookServer::new(db_pool.clone());
+            let server = BookServer::default();
             channel.requests().execute(server.serve())
         })
         .buffer_unordered(MAX_CURRENT_CHANNEL)
