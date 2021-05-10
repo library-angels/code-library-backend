@@ -135,7 +135,6 @@ dependencies = [
  "tarpc",
  "tokio 1.6.0",
  "tokio-serde",
- "uuid",
 ]
 
 [[package]]
