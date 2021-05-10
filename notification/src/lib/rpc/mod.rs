@@ -35,9 +35,9 @@ pub async fn get_rpc_server(
 }
 
 pub async fn get_rpc_client(addr: SocketAddr) -> std::io::Result<NotificationServiceClient> {
-    NotificationServiceClient::new(
+    Ok(NotificationServiceClient::new(
         Config::default(),
         tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
     )
-    .spawn()
+    .spawn())
 }
