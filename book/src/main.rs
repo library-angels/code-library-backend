@@ -1,9 +1,6 @@
 use std::io;
 
-#[macro_use]
-extern crate diesel_migrations;
-
-use book::{db, rpc_server};
+use book::rpc_server;
 
 use book::config::get_configuration;
 
@@ -19,13 +16,7 @@ async fn main() -> io::Result<()> {
 
     let configuration = get_configuration();
 
-    let database_url = configuration.get_db_connection_url();
-    let db_pool = db::get_db_pool(&*database_url);
-
-    embed_migrations!();
-    helpers::db::run_migration(embedded_migrations::run, &db_pool);
-
-    let (server, addr) = rpc_server(&configuration.get_service_socket(), db_pool)
+    let (server, addr) = rpc_server(&configuration.get_service_socket())
         .await
         .unwrap();
     log::info!("Book RPC Server started on {}", addr);

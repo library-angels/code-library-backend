@@ -34,6 +34,7 @@ dependencies = [
  "tarpc",
  "tokio 1.6.0",
  "tokio-serde",
+ "uuid",
  "warp",
 ]
 
@@ -124,8 +125,6 @@ name = "book"
 version = "0.1.0"
 dependencies = [
  "chrono",
- "diesel",
- "diesel_migrations",
  "dotenv",
  "env_logger",
  "futures",
@@ -135,6 +134,7 @@ dependencies = [
  "tarpc",
  "tokio 1.6.0",
  "tokio-serde",
+ "uuid",
 ]
 
 [[package]]
