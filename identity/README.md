@@ -17,6 +17,11 @@ Depending on if the service is run locally or inside a Docker container the spec
 For running it locally, please refer to your shells documentation on how to specify them.
 For Docker, the environment variables can be passed to `docker run` with the `-e` argument.
 
+For configuration during development the use of an environment configuration file is supported.
+This file has the name `.env` and must contain the environment variables for configuration.
+The service will automatically look for such a file in the work directory and apply it.
+The configuration from the `.env` file will superseed the configuration specified on the command line.
+
 Variables with a value in the default column are only required to set if the value needs to be changed.
 
 | Variable name             | Default          | Data type         | Description                                                       |
