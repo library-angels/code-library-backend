@@ -1,9 +1,10 @@
+DROP TABLE copies;
+DROP TABLE books_tags;
 DROP TABLE books_subject_areas;
-DROP TABLE books_series;
+DROP TABLE books_editors;
 DROP TABLE books_authors;
-
 DROP TABLE books;
-
+DROP TABLE tags;
 DROP TABLE subject_areas;
 DROP TABLE series;
 DROP TABLE publishers;
