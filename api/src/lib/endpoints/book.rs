@@ -6,7 +6,7 @@ use warp::Reply;
 use book::models::Error;
 
 use self::models::*;
-use crate::middleware::session::Session;
+use crate::filters::authorization::Session;
 use crate::response;
 
 pub async fn get_book_by_id(
