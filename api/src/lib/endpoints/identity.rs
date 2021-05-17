@@ -65,7 +65,7 @@ pub async fn create_oauth_authentication(
 
 pub async fn get_session_info(
     addr: SocketAddr,
-    session: crate::middleware::session::Session,
+    session: crate::filters::authorization::Session,
 ) -> Result<impl Reply, Infallible> {
     let client = match get_rpc_client(addr).await {
         Ok(val) => val,

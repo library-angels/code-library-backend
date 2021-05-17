@@ -1,3 +1,5 @@
+pub mod authorization;
+
 use std::net::SocketAddr;
 use warp::{filters::BoxedFilter, Filter};
 

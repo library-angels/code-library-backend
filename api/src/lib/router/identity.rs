@@ -1,4 +1,7 @@
-use crate::{endpoints::identity::*, filters::identity_filter, middleware::session::authorization};
+use crate::{
+    endpoints::identity::*,
+    filters::{authorization::authorization, identity_filter},
+};
 use std::net::SocketAddr;
 use warp::{filters::BoxedFilter, Filter, Reply};
 

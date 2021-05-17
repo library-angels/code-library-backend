@@ -1,4 +1,7 @@
-use crate::{endpoints::book::*, filters::book_filter, middleware::session::authorization};
+use crate::{
+    endpoints::book::*,
+    filters::{authorization::authorization, book_filter},
+};
 use std::net::SocketAddr;
 use warp::{filters::BoxedFilter, Filter, Reply};
 
