@@ -4,7 +4,7 @@ mod root;
 
 use std::net::SocketAddr;
 
-use crate::middleware::rejection::handle_rejection;
+use crate::filters::rejection::handle_rejection;
 
 use warp::{filters::BoxedFilter, Filter, Reply};
 

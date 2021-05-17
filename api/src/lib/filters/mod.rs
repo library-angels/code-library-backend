@@ -1,4 +1,5 @@
 pub mod authorization;
+pub mod rejection;
 
 use std::net::SocketAddr;
 use warp::{filters::BoxedFilter, Filter};
