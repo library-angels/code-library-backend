@@ -4,6 +4,7 @@ use warp::{filters::BoxedFilter, Reply, Server};
 
 pub mod config;
 mod endpoints;
+mod filters;
 mod middleware;
 mod response;
 mod router;
