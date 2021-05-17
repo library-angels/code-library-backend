@@ -22,4 +22,14 @@ impl From<DBError> for Error {
     }
 }
 
+impl From<sqlx::Error> for Error {
+    fn from(e: sqlx::Error) -> Self {
+        log::debug!("{}", e);
+        match e {
+            sqlx::Error::RowNotFound => Error::NotFound,
+            _ => Error::InternalError,
+        }
+    }
+}
+
 pub type RpcResult<T> = Result<T, Error>;

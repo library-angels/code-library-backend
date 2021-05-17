@@ -1,6 +1,6 @@
 use std::io;
 
-use book::{config::get_configuration, db::init_db_pool, rpc_server};
+use book::{config::get_configuration, db::init_db_pool, init_rpc_server};
 
 #[tokio::main]
 async fn main() -> io::Result<()> {
@@ -31,7 +31,7 @@ async fn main() -> io::Result<()> {
         }
     }
 
-    let (server, addr) = rpc_server(&configuration.get_service_socket()).await?;
+    let (server, addr) = init_rpc_server(&configuration.get_service_socket(), db_pool).await?;
     log::info!("Book RPC Server started on {}", addr);
     server.await;
 
