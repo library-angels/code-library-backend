@@ -21,7 +21,7 @@ use self::service::{BookService, BookServiceClient};
 type TcpTransport<T, U> =
     Transport<TcpStream, ClientMessage<T>, Response<U>, Json<ClientMessage<T>, Response<U>>>;
 
-pub async fn rpc_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
+pub async fn init_rpc_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
     Ok(BookServiceClient::new(
         Config::default(),
         tarpc::serde_transport::tcp::connect(addr, Json::default).await?,
@@ -29,7 +29,10 @@ pub async fn rpc_client(addr: &SocketAddr) -> io::Result<BookServiceClient> {
     .spawn())
 }
 
-pub async fn rpc_server(addr: &SocketAddr) -> io::Result<(impl Future<Output = ()>, SocketAddr)> {
+pub async fn init_rpc_server(
+    addr: &SocketAddr,
+    db_pool: crate::db::DbPool,
+) -> io::Result<(impl Future<Output = ()>, SocketAddr)> {
     const CHANNEL_PER_IP: u32 = 10;
     const MAX_CURRENT_CHANNEL: usize = 10;
 
@@ -43,7 +46,7 @@ pub async fn rpc_server(addr: &SocketAddr) -> io::Result<(impl Future<Output = (
         .map(BaseChannel::with_defaults)
         .max_channels_per_key(CHANNEL_PER_IP, keymaker)
         .map(move |channel| {
-            let server = BookServer::default();
+            let server = BookServer::new(db_pool.clone());
             channel.requests().execute(server.serve())
         })
         .buffer_unordered(MAX_CURRENT_CHANNEL)
