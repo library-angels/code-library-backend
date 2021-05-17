@@ -1,4 +1,4 @@
-use crate::middleware::rejection;
+use super::rejection;
 
 use std::net::SocketAddr;
 
