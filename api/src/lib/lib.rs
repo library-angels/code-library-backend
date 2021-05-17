@@ -9,5 +9,5 @@ mod response;
 mod router;
 
 pub fn server(book_addr: Addr, identity_addr: Addr) -> Server<BoxedFilter<(impl Reply,)>> {
-    warp::serve(crate::router::router(book_addr, identity_addr))
+    warp::serve(crate::router::init_router(book_addr, identity_addr))
 }
