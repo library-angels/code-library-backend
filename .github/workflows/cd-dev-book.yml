@@ -6,6 +6,7 @@ on:
             - "book/**"
             - "Cargo.lock"
             - "**/cd-dev-book.yml"
+            - "helpers/**"
 
 env:
             SERVICE_NAME: book

@@ -6,6 +6,7 @@ on:
             - "notification/**"
             - "Cargo.lock"
             - "**/cd-dev-notification.yml"
+            - "helpers/**"
 
 env:
             SERVICE_NAME: notification

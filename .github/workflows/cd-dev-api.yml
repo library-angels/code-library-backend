@@ -6,6 +6,7 @@ on:
             - "api/**"
             - "Cargo.lock"
             - "**/cd-dev-api.yml"
+            - "helpers/**"
 
 env:
             SERVICE_NAME: api
