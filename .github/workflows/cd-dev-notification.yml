@@ -8,7 +8,7 @@ on:
             - "**/cd-dev-notification.yml"
 
 env:
-            SERVICE_NAME: api
+            SERVICE_NAME: notification
             REPOSITORY: ${{ secrets.AWS_ECR_REGISTRY }}
             IMAGE_TAG: latest-dev
 
