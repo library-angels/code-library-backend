@@ -6,6 +6,7 @@ on:
             - "identity/**"
             - "Cargo.lock"
             - "**/cd-dev-identity.yml"
+            - "helpers/**"
 
 env:
             SERVICE_NAME: identity

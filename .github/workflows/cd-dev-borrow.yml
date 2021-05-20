@@ -6,6 +6,7 @@ on:
             - "borrow/**"
             - "Cargo.lock"
             - "**/cd-dev-borrow.yml"
+            - "helpers/**"
 
 env:
             SERVICE_NAME: borrow
