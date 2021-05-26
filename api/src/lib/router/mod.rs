@@ -4,7 +4,7 @@ mod root;
 
 use std::net::SocketAddr;
 
-use crate::filters::rejection::handle_rejection;
+use crate::filters::rejection::rejection;
 
 use warp::{filters::BoxedFilter, Filter, Reply};
 
@@ -12,6 +12,6 @@ pub fn init_router(book_addr: SocketAddr, identity_addr: SocketAddr) -> BoxedFil
     root::root()
         .or(identity::identity(identity_addr))
         .or(book::book(book_addr))
-        .recover(handle_rejection)
+        .recover(rejection)
         .boxed()
 }
