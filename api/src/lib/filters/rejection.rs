@@ -9,7 +9,7 @@ pub struct NotAuthenticated;
 
 impl reject::Reject for NotAuthenticated {}
 
-pub async fn handle_rejection(err: Rejection) -> Result<impl Reply, Infallible> {
+pub async fn rejection(err: Rejection) -> Result<impl Reply, Infallible> {
     let reply = if err.is_not_found() {
         response::not_found("NOT_FOUND")
     } else if let Some(_not_authenticated) = err.find::<NotAuthenticated>() {
