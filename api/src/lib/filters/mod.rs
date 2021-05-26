@@ -1,5 +1,5 @@
 pub mod authorization;
-pub mod pagination_filter;
+pub mod pagination;
 pub mod rejection;
 
 use std::net::SocketAddr;

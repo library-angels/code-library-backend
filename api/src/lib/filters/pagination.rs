@@ -10,7 +10,7 @@ struct PaginationFilter {
     items: Option<i64>,
 }
 
-pub fn pagination_filter() -> impl Filter<Extract = (PageFilter,), Error = Rejection> + Clone {
+pub fn pagination() -> impl Filter<Extract = (PageFilter,), Error = Rejection> + Clone {
     warp::query::<PaginationFilter>().and_then(|pagination_filter: PaginationFilter| async move {
         if pagination_filter.after.is_some() && pagination_filter.before.is_some() {
             return Err(warp::reject::not_found());
