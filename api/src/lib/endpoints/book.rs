@@ -5,28 +5,22 @@ use uuid::Uuid;
 use warp::Reply;
 
 use book::init_rpc_client;
-use helpers::{rpc::Error, types::PageFilter};
+use helpers::{filters, rpc::Error};
 
 use crate::response;
 
-pub async fn get_books(
-    addr: SocketAddr,
-    page_filter: PageFilter,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_books(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(books) = client.get_books(context::current(), page_filter).await {
+        if let Ok(books) = client.get_books(context::current(), page).await {
             return Ok(response::okay_with_json(&books));
         }
     }
     Ok(response::internal_server_error())
 }
 
-pub async fn get_authors(
-    addr: SocketAddr,
-    page_filter: PageFilter,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_authors(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(authors) = client.get_authors(context::current(), page_filter).await {
+        if let Ok(authors) = client.get_authors(context::current(), page).await {
             return Ok(response::okay_with_json(&authors));
         }
     }
@@ -35,34 +29,28 @@ pub async fn get_authors(
 
 pub async fn get_categories(
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(categories) = client.get_categories(context::current(), page_filter).await {
+        if let Ok(categories) = client.get_categories(context::current(), page).await {
             return Ok(response::okay_with_json(&categories));
         }
     }
     Ok(response::internal_server_error())
 }
 
-pub async fn get_copies(
-    addr: SocketAddr,
-    page_filter: PageFilter,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_copies(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(copies) = client.get_copies(context::current(), page_filter).await {
+        if let Ok(copies) = client.get_copies(context::current(), page).await {
             return Ok(response::okay_with_json(&copies));
         }
     }
     Ok(response::internal_server_error())
 }
 
-pub async fn get_editors(
-    addr: SocketAddr,
-    page_filter: PageFilter,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_editors(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(editors) = client.get_editors(context::current(), page_filter).await {
+        if let Ok(editors) = client.get_editors(context::current(), page).await {
             return Ok(response::okay_with_json(&editors));
         }
     }
@@ -71,10 +59,10 @@ pub async fn get_editors(
 
 pub async fn get_languages(
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(languages) = client.get_languages(context::current(), page_filter).await {
+        if let Ok(languages) = client.get_languages(context::current(), page).await {
             return Ok(response::okay_with_json(&languages));
         }
     }
@@ -83,22 +71,19 @@ pub async fn get_languages(
 
 pub async fn get_publishers(
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(publishers) = client.get_publishers(context::current(), page_filter).await {
+        if let Ok(publishers) = client.get_publishers(context::current(), page).await {
             return Ok(response::okay_with_json(&publishers));
         }
     }
     Ok(response::internal_server_error())
 }
 
-pub async fn get_series(
-    addr: SocketAddr,
-    page_filter: PageFilter,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_series(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(series) = client.get_series(context::current(), page_filter).await {
+        if let Ok(series) = client.get_series(context::current(), page).await {
             return Ok(response::okay_with_json(&series));
         }
     }
@@ -107,22 +92,19 @@ pub async fn get_series(
 
 pub async fn get_subject_areas(
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(subject_areas) = client
-            .get_subject_areas(context::current(), page_filter)
-            .await
-        {
+        if let Ok(subject_areas) = client.get_subject_areas(context::current(), page).await {
             return Ok(response::okay_with_json(&subject_areas));
         }
     }
     Ok(response::internal_server_error())
 }
 
-pub async fn get_tags(addr: SocketAddr, page_filter: PageFilter) -> Result<impl Reply, Infallible> {
+pub async fn get_tags(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(tags) = client.get_tags(context::current(), page_filter).await {
+        if let Ok(tags) = client.get_tags(context::current(), page).await {
             return Ok(response::okay_with_json(&tags));
         }
     }
@@ -264,11 +246,11 @@ pub async fn get_tag_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Inf
 pub async fn get_authors_by_book_id(
     id: Uuid,
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(authors) = client
-            .get_authors_by_book_id(context::current(), id, page_filter)
+            .get_authors_by_book_id(context::current(), id, page)
             .await
         {
             return Ok(response::okay_with_json(&authors));
@@ -289,11 +271,11 @@ pub async fn get_category_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl 
 pub async fn get_copies_by_book_id(
     id: Uuid,
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(copies) = client
-            .get_copies_by_book_id(context::current(), id, page_filter)
+            .get_copies_by_book_id(context::current(), id, page)
             .await
         {
             return Ok(response::okay_with_json(&copies));
@@ -305,11 +287,11 @@ pub async fn get_copies_by_book_id(
 pub async fn get_editors_by_book_id(
     id: Uuid,
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(editors) = client
-            .get_editors_by_book_id(context::current(), id, page_filter)
+            .get_editors_by_book_id(context::current(), id, page)
             .await
         {
             return Ok(response::okay_with_json(&editors));
@@ -354,11 +336,11 @@ pub async fn get_series_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Re
 pub async fn get_subject_areas_by_book_id(
     id: Uuid,
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(authors) = client
-            .get_subject_areas_by_book_id(context::current(), id, page_filter)
+            .get_subject_areas_by_book_id(context::current(), id, page)
             .await
         {
             return Ok(response::okay_with_json(&authors));
@@ -370,11 +352,11 @@ pub async fn get_subject_areas_by_book_id(
 pub async fn get_tags_by_book_id(
     id: Uuid,
     addr: SocketAddr,
-    page_filter: PageFilter,
+    page: filters::Page,
 ) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(tags) = client
-            .get_tags_by_book_id(context::current(), id, page_filter)
+            .get_tags_by_book_id(context::current(), id, page)
             .await
         {
             return Ok(response::okay_with_json(&tags));
