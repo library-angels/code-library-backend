@@ -753,7 +753,7 @@ pub(crate) fn get_book_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_books(page: filters::Page) -> SelectStatement {
+pub(crate) fn get_books(page: filters::Page, book: filters::Book) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Books::Id,
@@ -770,24 +770,66 @@ pub(crate) fn get_books(page: filters::Page) -> SelectStatement {
         .from_subquery(
             Query::select()
                 .columns(vec![
-                    schema::Books::Id,
-                    schema::Books::CodeIdentifier,
-                    schema::Books::Isbn,
-                    schema::Books::Issn,
-                    schema::Books::ReleaseYear,
-                    schema::Books::Edition,
-                    schema::Books::Pages,
-                    schema::Books::Subtitle,
-                    schema::Books::Title,
-                    schema::Books::Description,
+                    (schema::Books::Table, schema::Books::Id),
+                    (schema::Books::Table, schema::Books::CodeIdentifier),
+                    (schema::Books::Table, schema::Books::Isbn),
+                    (schema::Books::Table, schema::Books::Issn),
+                    (schema::Books::Table, schema::Books::ReleaseYear),
+                    (schema::Books::Table, schema::Books::Edition),
+                    (schema::Books::Table, schema::Books::Pages),
+                    (schema::Books::Table, schema::Books::Subtitle),
+                    (schema::Books::Table, schema::Books::Title),
+                    (schema::Books::Table, schema::Books::Description),
                 ])
                 .from(schema::Books::Table)
+                .inner_join(
+                    schema::Categories::Table,
+                    Expr::tbl(schema::Books::Table, schema::Books::CategoryId)
+                        .equals(schema::Categories::Table, schema::Categories::Id),
+                )
+                .inner_join(
+                    schema::Publishers::Table,
+                    Expr::tbl(schema::Books::Table, schema::Books::PublisherId)
+                        .equals(schema::Publishers::Table, schema::Publishers::Id),
+                )
+                .left_join(
+                    schema::Series::Table,
+                    Expr::tbl(schema::Books::Table, schema::Books::SeriesId)
+                        .equals(schema::Series::Table, schema::Series::Id),
+                )
+                .left_join(
+                    schema::BooksTags::Table,
+                    Expr::tbl(schema::Books::Table, schema::Books::Id)
+                        .equals(schema::BooksTags::Table, schema::BooksTags::BookId),
+                )
+                .left_join(
+                    schema::Tags::Table,
+                    Expr::tbl(schema::BooksTags::Table, schema::BooksTags::TagId)
+                        .equals(schema::Tags::Table, schema::Tags::Id),
+                )
+                .and_where_option(book.get_categories().map(|categories| {
+                    Expr::tbl(schema::Categories::Table, schema::Categories::Name).is_in(categories)
+                }))
+                .and_where_option(book.get_publishers().map(|publishers| {
+                    Expr::tbl(schema::Publishers::Table, schema::Publishers::Name).is_in(publishers)
+                }))
+                .and_where_option(book.get_series().map(|series| {
+                    Expr::tbl(schema::Series::Table, schema::Series::Name).is_in(series)
+                }))
+                .and_where_option(
+                    book.get_tags()
+                        .map(|tags| Expr::tbl(schema::Tags::Table, schema::Tags::Name).is_in(tags)),
+                )
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Books::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Books::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Books::Table, schema::Books::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Books::Table, schema::Books::Id).lt(id)
+                    }
                 })
                 .order_by(
-                    schema::Books::Id,
+                    (schema::Books::Table, schema::Books::Id),
                     match page.get_cursor() {
                         filters::Cursor::After(_) => Order::Asc,
                         filters::Cursor::Before(_) => Order::Desc,
@@ -1549,11 +1591,12 @@ mod tests {
             filters::Cursor::After(filter_id),
             filters::Items::new(items),
         );
-        let query = get_books(page);
+        let book = filters::Book::new(None, None, None, None);
+        let query = get_books(page, book);
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM (SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM "books" WHERE "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM (SELECT "books"."id", "books"."code_identifier", "books"."isbn", "books"."issn", "books"."release_year", "books"."edition", "books"."pages", "books"."subtitle", "books"."title", "books"."description" FROM "books" INNER JOIN "categories" ON "books"."category_id" = "categories"."id" INNER JOIN "publishers" ON "books"."publisher_id" = "publishers"."id" LEFT JOIN "series" ON "books"."series_id" = "series"."id" LEFT JOIN "books_tags" ON "books"."id" = "books_tags"."book_id" LEFT JOIN "tags" ON "books_tags"."tag_id" = "tags"."id" WHERE "books"."id" > '{}' ORDER BY "books"."id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1568,11 +1611,37 @@ mod tests {
             filters::Cursor::Before(filter_id),
             filters::Items::new(items),
         );
-        let query = get_books(page);
+        let book = filters::Book::new(None, None, None, None);
+        let query = get_books(page, book);
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM (SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM "books" WHERE "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM (SELECT "books"."id", "books"."code_identifier", "books"."isbn", "books"."issn", "books"."release_year", "books"."edition", "books"."pages", "books"."subtitle", "books"."title", "books"."description" FROM "books" INNER JOIN "categories" ON "books"."category_id" = "categories"."id" INNER JOIN "publishers" ON "books"."publisher_id" = "publishers"."id" LEFT JOIN "series" ON "books"."series_id" = "series"."id" LEFT JOIN "books_tags" ON "books"."id" = "books_tags"."book_id" LEFT JOIN "tags" ON "books_tags"."tag_id" = "tags"."id" WHERE "books"."id" < '{}' ORDER BY "books"."id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                filter_id, items
+            ),
+            query.to_string(PostgresQueryBuilder)
+        );
+    }
+
+    #[test]
+    fn ut_get_books_filter_books() {
+        let filter_id = Uuid::new_v4();
+        let items = 10;
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let book = filters::Book::new(
+            Some(vec!["a".into()]),
+            Some(vec!["b".into()]),
+            Some(vec!["c".into()]),
+            Some(vec!["d".into()]),
+        );
+        let query = get_books(page, book);
+
+        assert_eq!(
+            format!(
+                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "subtitle", "title", "description" FROM (SELECT "books"."id", "books"."code_identifier", "books"."isbn", "books"."issn", "books"."release_year", "books"."edition", "books"."pages", "books"."subtitle", "books"."title", "books"."description" FROM "books" INNER JOIN "categories" ON "books"."category_id" = "categories"."id" INNER JOIN "publishers" ON "books"."publisher_id" = "publishers"."id" LEFT JOIN "series" ON "books"."series_id" = "series"."id" LEFT JOIN "books_tags" ON "books"."id" = "books_tags"."book_id" LEFT JOIN "tags" ON "books_tags"."tag_id" = "tags"."id" WHERE "categories"."name" IN ('a') AND "publishers"."name" IN ('b') AND "series"."name" IN ('c') AND "tags"."name" IN ('d') AND "books"."id" < '{}' ORDER BY "books"."id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)

@@ -9,9 +9,13 @@ use helpers::{filters, rpc::Error};
 
 use crate::response;
 
-pub async fn get_books(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
+pub async fn get_books(
+    addr: SocketAddr,
+    page: filters::Page,
+    book: filters::Book,
+) -> Result<impl Reply, Infallible> {
     if let Ok(client) = init_rpc_client(&addr).await {
-        if let Ok(books) = client.get_books(context::current(), page).await {
+        if let Ok(books) = client.get_books(context::current(), page, book).await {
             return Ok(response::okay_with_json(&books));
         }
     }
