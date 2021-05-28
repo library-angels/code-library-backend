@@ -2,7 +2,7 @@ use sea_query::{Alias, Expr, Order, Query, SelectStatement};
 use uuid::Uuid;
 
 use super::schema;
-use helpers::types::{Page, PageFilter};
+use helpers::filters;
 
 pub(crate) fn get_language_by_id(id: Uuid) -> SelectStatement {
     Query::select()
@@ -33,7 +33,7 @@ pub(crate) fn get_language_by_book_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_languages(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_languages(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Languages::Id,
@@ -48,18 +48,18 @@ pub(crate) fn get_languages(page_filter: PageFilter) -> SelectStatement {
                     schema::Languages::Name,
                 ])
                 .from(schema::Languages::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Languages::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Languages::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Languages::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Languages::Id).lt(id),
                 })
                 .order_by(
                     schema::Languages::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -88,25 +88,25 @@ pub(crate) fn get_category_by_book_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_categories(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_categories(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![schema::Categories::Id, schema::Categories::Name])
         .from_subquery(
             Query::select()
                 .columns(vec![schema::Categories::Id, schema::Categories::Name])
                 .from(schema::Categories::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Categories::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Categories::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Categories::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Categories::Id).lt(id),
                 })
                 .order_by(
                     schema::Categories::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -135,25 +135,25 @@ pub(crate) fn get_publisher_by_book_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_publishers(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_publishers(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![schema::Publishers::Id, schema::Publishers::Name])
         .from_subquery(
             Query::select()
                 .columns(vec![schema::Publishers::Id, schema::Publishers::Name])
                 .from(schema::Publishers::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Publishers::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Publishers::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Publishers::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Publishers::Id).lt(id),
                 })
                 .order_by(
                     schema::Publishers::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -190,7 +190,7 @@ pub(crate) fn get_series_by_book_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_series(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_series(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Series::Id,
@@ -205,18 +205,18 @@ pub(crate) fn get_series(page_filter: PageFilter) -> SelectStatement {
                     schema::Series::Name,
                 ])
                 .from(schema::Series::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Series::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Series::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Series::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Series::Id).lt(id),
                 })
                 .order_by(
                     schema::Series::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -232,25 +232,25 @@ pub(crate) fn get_subject_area_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_subject_areas(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_subject_areas(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![schema::SubjectAreas::Id, schema::SubjectAreas::Name])
         .from_subquery(
             Query::select()
                 .columns(vec![schema::SubjectAreas::Id, schema::SubjectAreas::Name])
                 .from(schema::SubjectAreas::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::SubjectAreas::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::SubjectAreas::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::SubjectAreas::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::SubjectAreas::Id).lt(id),
                 })
                 .order_by(
                     schema::SubjectAreas::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -258,7 +258,7 @@ pub(crate) fn get_subject_areas(page_filter: PageFilter) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_subject_areas_by_book_id(id: Uuid, page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_subject_areas_by_book_id(id: Uuid, page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![schema::SubjectAreas::Id, schema::SubjectAreas::Name])
         .from_subquery(
@@ -273,18 +273,18 @@ pub(crate) fn get_subject_areas_by_book_id(id: Uuid, page_filter: PageFilter) ->
                     ),
                 )
                 .and_where(Expr::col(schema::BooksSubjectAreas::BookId).eq(id))
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::SubjectAreas::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::SubjectAreas::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::SubjectAreas::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::SubjectAreas::Id).lt(id),
                 })
                 .order_by(
                     schema::SubjectAreas::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -300,25 +300,25 @@ pub(crate) fn get_tag_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_tags(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_tags(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![schema::Tags::Id, schema::Tags::Name])
         .from_subquery(
             Query::select()
                 .columns(vec![schema::Tags::Id, schema::Tags::Name])
                 .from(schema::Tags::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Tags::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Tags::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Tags::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Tags::Id).lt(id),
                 })
                 .order_by(
                     schema::Tags::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -326,7 +326,7 @@ pub(crate) fn get_tags(page_filter: PageFilter) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_tags_by_book_id(id: Uuid, page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_tags_by_book_id(id: Uuid, page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![schema::Tags::Id, schema::Tags::Name])
         .from_subquery(
@@ -339,18 +339,18 @@ pub(crate) fn get_tags_by_book_id(id: Uuid, page_filter: PageFilter) -> SelectSt
                         .equals(schema::Tags::Table, schema::Tags::Id),
                 )
                 .and_where(Expr::col(schema::BooksTags::BookId).eq(id))
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Tags::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Tags::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Tags::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Tags::Id).lt(id),
                 })
                 .order_by(
                     schema::Tags::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -379,7 +379,7 @@ pub(crate) fn get_author_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_authors(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_authors(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Persons::Id,
@@ -407,18 +407,18 @@ pub(crate) fn get_authors(page_filter: PageFilter) -> SelectStatement {
                     Expr::col(schema::Persons::Id)
                         .equals(schema::BooksAuthors::Table, schema::BooksAuthors::PersonId),
                 )
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
                 })
                 .order_by(
                     schema::Persons::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -426,7 +426,7 @@ pub(crate) fn get_authors(page_filter: PageFilter) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_authors_by_book_id(id: Uuid, page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_authors_by_book_id(id: Uuid, page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Persons::Id,
@@ -460,18 +460,18 @@ pub(crate) fn get_authors_by_book_id(id: Uuid, page_filter: PageFilter) -> Selec
                         .equals(schema::Books::Table, schema::Books::Id),
                 )
                 .and_where(Expr::col(schema::Books::Id).eq(id))
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
                 })
                 .order_by(
                     schema::Books::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64)
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -500,7 +500,7 @@ pub(crate) fn get_editor_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_editors(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_editors(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Persons::Id,
@@ -528,18 +528,18 @@ pub(crate) fn get_editors(page_filter: PageFilter) -> SelectStatement {
                     Expr::col(schema::Persons::Id)
                         .equals(schema::BooksEditors::Table, schema::BooksEditors::PersonId),
                 )
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
                 })
                 .order_by(
                     schema::Persons::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -547,7 +547,7 @@ pub(crate) fn get_editors(page_filter: PageFilter) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_editors_by_book_id(id: Uuid, page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_editors_by_book_id(id: Uuid, page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Persons::Id,
@@ -581,18 +581,18 @@ pub(crate) fn get_editors_by_book_id(id: Uuid, page_filter: PageFilter) -> Selec
                         .equals(schema::Books::Table, schema::Books::Id),
                 )
                 .and_where(Expr::col(schema::Books::Id).eq(id))
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
                 })
                 .order_by(
                     schema::Books::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64)
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -613,7 +613,7 @@ pub(crate) fn get_copy_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_copies(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_copies(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Copies::Id,
@@ -632,18 +632,18 @@ pub(crate) fn get_copies(page_filter: PageFilter) -> SelectStatement {
                     schema::Copies::CreatedBy,
                 ])
                 .from(schema::Copies::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Copies::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Copies::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Copies::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Copies::Id).lt(id),
                 })
                 .order_by(
                     schema::Copies::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -651,7 +651,7 @@ pub(crate) fn get_copies(page_filter: PageFilter) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_copies_by_book_id(id: Uuid, page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_copies_by_book_id(id: Uuid, page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Copies::Id,
@@ -676,18 +676,18 @@ pub(crate) fn get_copies_by_book_id(id: Uuid, page_filter: PageFilter) -> Select
                         .equals(schema::Books::Table, schema::Books::Id),
                 )
                 .and_where(Expr::col(schema::Books::Id).eq(id))
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Copies::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Copies::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Copies::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Copies::Id).lt(id),
                 })
                 .order_by(
                     schema::Copies::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -713,7 +713,7 @@ pub(crate) fn get_book_by_id(id: Uuid) -> SelectStatement {
         .to_owned()
 }
 
-pub(crate) fn get_books(page_filter: PageFilter) -> SelectStatement {
+pub(crate) fn get_books(page: filters::Page) -> SelectStatement {
     Query::select()
         .columns(vec![
             schema::Books::Id,
@@ -742,18 +742,18 @@ pub(crate) fn get_books(page_filter: PageFilter) -> SelectStatement {
                     schema::Books::Description,
                 ])
                 .from(schema::Books::Table)
-                .and_where(match page_filter.get_page() {
-                    Page::After(id) => Expr::col(schema::Books::Id).gt(id),
-                    Page::Before(id) => Expr::col(schema::Books::Id).lt(id),
+                .and_where(match page.get_cursor() {
+                    filters::Cursor::After(id) => Expr::col(schema::Books::Id).gt(id),
+                    filters::Cursor::Before(id) => Expr::col(schema::Books::Id).lt(id),
                 })
                 .order_by(
                     schema::Books::Id,
-                    match page_filter.get_page() {
-                        Page::After(_) => Order::Asc,
-                        Page::Before(_) => Order::Desc,
+                    match page.get_cursor() {
+                        filters::Cursor::After(_) => Order::Asc,
+                        filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page_filter.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64) // should this not an i64
                 .take(),
             Alias::new("t"),
         )
@@ -798,8 +798,11 @@ mod tests {
     fn ut_get_languages_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_languages(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_languages(page);
 
         assert_eq!(
             format!(
@@ -814,8 +817,11 @@ mod tests {
     fn ut_get_languages_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_languages(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_languages(page);
 
         assert_eq!(
             format!(
@@ -858,8 +864,11 @@ mod tests {
     fn ut_get_categories_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_categories(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_categories(page);
 
         assert_eq!(
             format!(
@@ -874,8 +883,11 @@ mod tests {
     fn ut_get_categories_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_categories(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_categories(page);
 
         assert_eq!(
             format!(
@@ -918,8 +930,11 @@ mod tests {
     fn ut_get_publishers_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_publishers(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_publishers(page);
 
         assert_eq!(
             format!(
@@ -934,8 +949,11 @@ mod tests {
     fn ut_get_publishers_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_publishers(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_publishers(page);
 
         assert_eq!(
             format!(
@@ -978,8 +996,11 @@ mod tests {
     fn ut_get_series_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_series(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_series(page);
 
         assert_eq!(
             format!(
@@ -994,8 +1015,11 @@ mod tests {
     fn ut_get_series_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_series(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_series(page);
 
         assert_eq!(
             format!(
@@ -1025,8 +1049,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_subject_areas_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_subject_areas_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1042,8 +1069,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_subject_areas_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_subject_areas_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1058,8 +1088,11 @@ mod tests {
     fn ut_get_subject_areas_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_subject_areas(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_subject_areas(page);
 
         assert_eq!(
             format!(
@@ -1074,8 +1107,11 @@ mod tests {
     fn ut_get_subject_areas_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_subject_areas(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_subject_areas(page);
 
         assert_eq!(
             format!(
@@ -1102,8 +1138,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_tags_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_tags_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1119,8 +1158,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_tags_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_tags_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1135,8 +1177,11 @@ mod tests {
     fn ut_get_tags_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_tags(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_tags(page);
 
         assert_eq!(
             format!(
@@ -1151,8 +1196,11 @@ mod tests {
     fn ut_get_tags_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_tags(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_tags(page);
 
         assert_eq!(
             format!(
@@ -1182,8 +1230,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_authors_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_authors_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1199,8 +1250,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_authors_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_authors_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1215,8 +1269,11 @@ mod tests {
     fn ut_get_authors_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_authors(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_authors(page);
 
         assert_eq!(
             format!(
@@ -1231,8 +1288,11 @@ mod tests {
     fn ut_get_authors_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_authors(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_authors(page);
 
         assert_eq!(
             format!(
@@ -1262,8 +1322,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_editors_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_editors_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1279,8 +1342,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_editors_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_editors_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1295,8 +1361,11 @@ mod tests {
     fn ut_get_editors_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_editors(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_editors(page);
 
         assert_eq!(
             format!(
@@ -1311,8 +1380,11 @@ mod tests {
     fn ut_get_editors_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_editors(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_editors(page);
 
         assert_eq!(
             format!(
@@ -1342,8 +1414,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_copies_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_copies_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1359,8 +1434,11 @@ mod tests {
         let book_id = Uuid::new_v4();
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_copies_by_book_id(book_id, page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_copies_by_book_id(book_id, page);
 
         assert_eq!(
             format!(
@@ -1375,8 +1453,11 @@ mod tests {
     fn ut_get_copies_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_copies(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_copies(page);
 
         assert_eq!(
             format!(
@@ -1391,8 +1472,11 @@ mod tests {
     fn ut_get_copies_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_copies(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_copies(page);
 
         assert_eq!(
             format!(
@@ -1421,8 +1505,11 @@ mod tests {
     fn ut_get_books_page_after() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::After(filter_id), items);
-        let query = get_books(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::After(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_books(page);
 
         assert_eq!(
             format!(
@@ -1437,8 +1524,11 @@ mod tests {
     fn ut_get_books_page_before() {
         let filter_id = Uuid::new_v4();
         let items = 10;
-        let page_filter = PageFilter::new(Page::Before(filter_id), items);
-        let query = get_books(page_filter);
+        let page = filters::Page::new(
+            filters::Cursor::Before(filter_id),
+            filters::Items::new(items),
+        );
+        let query = get_books(page);
 
         assert_eq!(
             format!(

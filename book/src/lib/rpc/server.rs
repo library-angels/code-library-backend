@@ -3,7 +3,7 @@ use sqlx::query_as;
 use tarpc::context::Context;
 use uuid::Uuid;
 
-use helpers::{rpc::RpcResult, types::PageFilter};
+use helpers::{filters, rpc::RpcResult};
 
 use super::models::{
     Author, Book, Category, Copy, Editor, Language, Publisher, Series, SubjectArea, Tag,
@@ -56,8 +56,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_languages(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Language>> {
-        let (query, values) = queries::get_languages(page_filter).build(PostgresQueryBuilder);
+    async fn get_languages(self, _: Context, page: filters::Page) -> RpcResult<Vec<Language>> {
+        let (query, values) = queries::get_languages(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Language>(&query), &values)
@@ -91,8 +91,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_categories(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Category>> {
-        let (query, values) = queries::get_categories(page_filter).build(PostgresQueryBuilder);
+    async fn get_categories(self, _: Context, page: filters::Page) -> RpcResult<Vec<Category>> {
+        let (query, values) = queries::get_categories(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Category>(&query), &values)
@@ -126,12 +126,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_publishers(
-        self,
-        _: Context,
-        page_filter: PageFilter,
-    ) -> RpcResult<Vec<Publisher>> {
-        let (query, values) = queries::get_publishers(page_filter).build(PostgresQueryBuilder);
+    async fn get_publishers(self, _: Context, page: filters::Page) -> RpcResult<Vec<Publisher>> {
+        let (query, values) = queries::get_publishers(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Publisher>(&query), &values)
@@ -165,8 +161,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_series(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Series>> {
-        let (query, values) = queries::get_series(page_filter).build(PostgresQueryBuilder);
+    async fn get_series(self, _: Context, page: filters::Page) -> RpcResult<Vec<Series>> {
+        let (query, values) = queries::get_series(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Series>(&query), &values)
@@ -192,9 +188,9 @@ impl BookService for BookServer {
     async fn get_subject_areas(
         self,
         _: Context,
-        page_filter: PageFilter,
+        page: filters::Page,
     ) -> RpcResult<Vec<SubjectArea>> {
-        let (query, values) = queries::get_subject_areas(page_filter).build(PostgresQueryBuilder);
+        let (query, values) = queries::get_subject_areas(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::SubjectArea>(&query), &values)
@@ -210,10 +206,10 @@ impl BookService for BookServer {
         self,
         _: Context,
         id: Uuid,
-        page_filter: PageFilter,
+        page: filters::Page,
     ) -> RpcResult<Vec<SubjectArea>> {
         let (query, values) =
-            queries::get_subject_areas_by_book_id(id, page_filter).build(PostgresQueryBuilder);
+            queries::get_subject_areas_by_book_id(id, page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::SubjectArea>(&query), &values)
@@ -236,8 +232,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_tags(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Tag>> {
-        let (query, values) = queries::get_tags(page_filter).build(PostgresQueryBuilder);
+    async fn get_tags(self, _: Context, page: filters::Page) -> RpcResult<Vec<Tag>> {
+        let (query, values) = queries::get_tags(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Tag>(&query), &values)
@@ -253,10 +249,9 @@ impl BookService for BookServer {
         self,
         _: Context,
         id: Uuid,
-        page_filter: PageFilter,
+        page: filters::Page,
     ) -> RpcResult<Vec<Tag>> {
-        let (query, values) =
-            queries::get_tags_by_book_id(id, page_filter).build(PostgresQueryBuilder);
+        let (query, values) = queries::get_tags_by_book_id(id, page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Tag>(&query), &values)
@@ -279,8 +274,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_authors(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Author>> {
-        let (query, values) = queries::get_authors(page_filter).build(PostgresQueryBuilder);
+    async fn get_authors(self, _: Context, page: filters::Page) -> RpcResult<Vec<Author>> {
+        let (query, values) = queries::get_authors(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Author>(&query), &values)
@@ -296,10 +291,9 @@ impl BookService for BookServer {
         self,
         _: Context,
         id: Uuid,
-        page_filter: PageFilter,
+        page: filters::Page,
     ) -> RpcResult<Vec<Author>> {
-        let (query, values) =
-            queries::get_authors_by_book_id(id, page_filter).build(PostgresQueryBuilder);
+        let (query, values) = queries::get_authors_by_book_id(id, page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Author>(&query), &values)
@@ -322,8 +316,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_editors(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Editor>> {
-        let (query, values) = queries::get_editors(page_filter).build(PostgresQueryBuilder);
+    async fn get_editors(self, _: Context, page: filters::Page) -> RpcResult<Vec<Editor>> {
+        let (query, values) = queries::get_editors(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Editor>(&query), &values)
@@ -339,10 +333,9 @@ impl BookService for BookServer {
         self,
         _: Context,
         id: Uuid,
-        page_filter: PageFilter,
+        page: filters::Page,
     ) -> RpcResult<Vec<Editor>> {
-        let (query, values) =
-            queries::get_editors_by_book_id(id, page_filter).build(PostgresQueryBuilder);
+        let (query, values) = queries::get_editors_by_book_id(id, page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Editor>(&query), &values)
@@ -365,8 +358,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_copies(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Copy>> {
-        let (query, values) = queries::get_copies(page_filter).build(PostgresQueryBuilder);
+    async fn get_copies(self, _: Context, page: filters::Page) -> RpcResult<Vec<Copy>> {
+        let (query, values) = queries::get_copies(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Copy>(&query), &values)
@@ -382,10 +375,9 @@ impl BookService for BookServer {
         self,
         _: Context,
         id: Uuid,
-        page_filter: PageFilter,
+        page: filters::Page,
     ) -> RpcResult<Vec<Copy>> {
-        let (query, values) =
-            queries::get_copies_by_book_id(id, page_filter).build(PostgresQueryBuilder);
+        let (query, values) = queries::get_copies_by_book_id(id, page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Copy>(&query), &values)
@@ -408,8 +400,8 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_books(self, _: Context, page_filter: PageFilter) -> RpcResult<Vec<Book>> {
-        let (query, values) = queries::get_books(page_filter).build(PostgresQueryBuilder);
+    async fn get_books(self, _: Context, page: filters::Page) -> RpcResult<Vec<Book>> {
+        let (query, values) = queries::get_books(page).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Book>(&query), &values)
