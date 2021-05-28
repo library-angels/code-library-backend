@@ -400,8 +400,13 @@ impl BookService for BookServer {
         )
     }
 
-    async fn get_books(self, _: Context, page: filters::Page) -> RpcResult<Vec<Book>> {
-        let (query, values) = queries::get_books(page).build(PostgresQueryBuilder);
+    async fn get_books(
+        self,
+        _: Context,
+        page: filters::Page,
+        book: filters::Book,
+    ) -> RpcResult<Vec<Book>> {
+        let (query, values) = queries::get_books(page, book).build(PostgresQueryBuilder);
 
         Ok(
             bind_query_as(query_as::<_, db_models::Book>(&query), &values)

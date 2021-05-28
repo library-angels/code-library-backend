@@ -38,5 +38,5 @@ pub trait BookService {
     async fn get_copies(page: filters::Page) -> RpcResult<Vec<Copy>>;
     async fn get_copies_by_book_id(id: Uuid, page: filters::Page) -> RpcResult<Vec<Copy>>;
     async fn get_book_by_id(id: Uuid) -> RpcResult<Book>;
-    async fn get_books(page: filters::Page) -> RpcResult<Vec<Book>>;
+    async fn get_books(page: filters::Page, book: filters::Book) -> RpcResult<Vec<Book>>;
 }

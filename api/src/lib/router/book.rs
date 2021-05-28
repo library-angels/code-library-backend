@@ -12,6 +12,7 @@ pub fn book(book_addr: SocketAddr) -> BoxedFilter<(impl Reply,)> {
             warp::path::end()
                 .and(book_service(book_addr))
                 .and(query::<filters::Page>(Config::default()))
+                .and(query::<filters::Book>(Config::default()))
                 .and(warp::get())
                 .and_then(get_books)
                 .boxed()
