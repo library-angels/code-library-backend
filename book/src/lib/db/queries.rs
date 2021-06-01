@@ -19,9 +19,9 @@ pub(crate) fn get_language_by_id(id: Uuid) -> SelectStatement {
 pub(crate) fn get_language_by_book_id(id: Uuid) -> SelectStatement {
     Query::select()
         .columns(vec![
-            schema::Languages::Id,
-            schema::Languages::IsoCode,
-            schema::Languages::Name,
+            (schema::Languages::Table, schema::Languages::Id),
+            (schema::Languages::Table, schema::Languages::IsoCode),
+            (schema::Languages::Table, schema::Languages::Name),
         ])
         .from(schema::Languages::Table)
         .inner_join(
@@ -59,7 +59,7 @@ pub(crate) fn get_languages(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -77,7 +77,10 @@ pub(crate) fn get_category_by_id(id: Uuid) -> SelectStatement {
 
 pub(crate) fn get_category_by_book_id(id: Uuid) -> SelectStatement {
     Query::select()
-        .columns(vec![schema::Categories::Id, schema::Categories::Name])
+        .columns(vec![
+            (schema::Categories::Table, schema::Categories::Id),
+            (schema::Categories::Table, schema::Categories::Name),
+        ])
         .from(schema::Categories::Table)
         .inner_join(
             schema::Books::Table,
@@ -106,7 +109,7 @@ pub(crate) fn get_categories(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -124,7 +127,10 @@ pub(crate) fn get_publisher_by_id(id: Uuid) -> SelectStatement {
 
 pub(crate) fn get_publisher_by_book_id(id: Uuid) -> SelectStatement {
     Query::select()
-        .columns(vec![schema::Publishers::Id, schema::Publishers::Name])
+        .columns(vec![
+            (schema::Publishers::Table, schema::Publishers::Id),
+            (schema::Publishers::Table, schema::Publishers::Name),
+        ])
         .from(schema::Publishers::Table)
         .inner_join(
             schema::Books::Table,
@@ -153,7 +159,7 @@ pub(crate) fn get_publishers(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -176,9 +182,9 @@ pub(crate) fn get_series_by_id(id: Uuid) -> SelectStatement {
 pub(crate) fn get_series_by_book_id(id: Uuid) -> SelectStatement {
     Query::select()
         .columns(vec![
-            schema::Series::Id,
-            schema::Series::PublisherId,
-            schema::Series::Name,
+            (schema::Series::Table, schema::Series::Id),
+            (schema::Series::Table, schema::Series::PublisherId),
+            (schema::Series::Table, schema::Series::Name),
         ])
         .from(schema::Series::Table)
         .inner_join(
@@ -186,7 +192,7 @@ pub(crate) fn get_series_by_book_id(id: Uuid) -> SelectStatement {
             Expr::tbl(schema::Series::Table, schema::Books::Id)
                 .equals(schema::Books::Table, schema::Books::SeriesId),
         )
-        .and_where(Expr::col(schema::Books::Id).eq(id))
+        .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
         .to_owned()
 }
 
@@ -216,7 +222,7 @@ pub(crate) fn get_series(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -250,7 +256,7 @@ pub(crate) fn get_subject_areas(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -263,19 +269,24 @@ pub(crate) fn get_subject_areas_by_book_id(id: Uuid, page: filters::Page) -> Sel
         .columns(vec![schema::SubjectAreas::Id, schema::SubjectAreas::Name])
         .from_subquery(
             Query::select()
-                .columns(vec![schema::SubjectAreas::Id, schema::SubjectAreas::Name])
-                .from(schema::BooksAuthors::Table)
+                .columns(vec![
+                    (schema::SubjectAreas::Table, schema::SubjectAreas::Id),
+                    (schema::SubjectAreas::Table, schema::SubjectAreas::Name),
+                ])
+                .from(schema::BooksSubjectAreas::Table)
                 .inner_join(
-                    schema::BooksSubjectAreas::Table,
-                    Expr::col(schema::SubjectAreas::Id).equals(
-                        schema::BooksSubjectAreas::Table,
-                        schema::BooksSubjectAreas::SubjectAreaId,
-                    ),
+                    schema::SubjectAreas::Table,
+                    Expr::col(schema::BooksSubjectAreas::SubjectAreaId)
+                        .equals(schema::SubjectAreas::Table, schema::SubjectAreas::Id),
                 )
                 .and_where(Expr::col(schema::BooksSubjectAreas::BookId).eq(id))
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::SubjectAreas::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::SubjectAreas::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::SubjectAreas::Table, schema::SubjectAreas::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::SubjectAreas::Table, schema::SubjectAreas::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::SubjectAreas::Id,
@@ -284,7 +295,7 @@ pub(crate) fn get_subject_areas_by_book_id(id: Uuid, page: filters::Page) -> Sel
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -318,7 +329,7 @@ pub(crate) fn get_tags(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -331,7 +342,10 @@ pub(crate) fn get_tags_by_book_id(id: Uuid, page: filters::Page) -> SelectStatem
         .columns(vec![schema::Tags::Id, schema::Tags::Name])
         .from_subquery(
             Query::select()
-                .columns(vec![schema::Tags::Id, schema::Tags::Name])
+                .columns(vec![
+                    (schema::Tags::Table, schema::Tags::Id),
+                    (schema::Tags::Table, schema::Tags::Name),
+                ])
                 .from(schema::BooksTags::Table)
                 .inner_join(
                     schema::Tags::Table,
@@ -340,8 +354,12 @@ pub(crate) fn get_tags_by_book_id(id: Uuid, page: filters::Page) -> SelectStatem
                 )
                 .and_where(Expr::col(schema::BooksTags::BookId).eq(id))
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Tags::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Tags::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Tags::Table, schema::Tags::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Tags::Table, schema::Tags::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::Tags::Id,
@@ -350,7 +368,7 @@ pub(crate) fn get_tags_by_book_id(id: Uuid, page: filters::Page) -> SelectStatem
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -361,13 +379,13 @@ pub(crate) fn get_tags_by_book_id(id: Uuid, page: filters::Page) -> SelectStatem
 pub(crate) fn get_author_by_id(id: Uuid) -> SelectStatement {
     Query::select()
         .columns(vec![
-            schema::Persons::Id,
-            schema::Persons::FirstName,
-            schema::Persons::LastName,
-            schema::Persons::DateOfBirth,
-            schema::Persons::Isni,
-            schema::Persons::Orcid,
-            schema::Persons::Oclc,
+            (schema::Persons::Table, schema::Persons::Id),
+            (schema::Persons::Table, schema::Persons::FirstName),
+            (schema::Persons::Table, schema::Persons::LastName),
+            (schema::Persons::Table, schema::Persons::DateOfBirth),
+            (schema::Persons::Table, schema::Persons::Isni),
+            (schema::Persons::Table, schema::Persons::Orcid),
+            (schema::Persons::Table, schema::Persons::Oclc),
         ])
         .from(schema::BooksAuthors::Table)
         .inner_join(
@@ -375,7 +393,7 @@ pub(crate) fn get_author_by_id(id: Uuid) -> SelectStatement {
             Expr::tbl(schema::BooksAuthors::Table, schema::BooksAuthors::PersonId)
                 .equals(schema::Persons::Table, schema::Persons::Id),
         )
-        .and_where(Expr::col(schema::Persons::Id).eq(id))
+        .and_where(Expr::tbl(schema::Persons::Table, schema::Persons::Id).eq(id))
         .to_owned()
 }
 
@@ -393,23 +411,27 @@ pub(crate) fn get_authors(page: filters::Page) -> SelectStatement {
         .from_subquery(
             Query::select()
                 .columns(vec![
-                    schema::Persons::Id,
-                    schema::Persons::FirstName,
-                    schema::Persons::LastName,
-                    schema::Persons::DateOfBirth,
-                    schema::Persons::Isni,
-                    schema::Persons::Orcid,
-                    schema::Persons::Oclc,
+                    (schema::Persons::Table, schema::Persons::Id),
+                    (schema::Persons::Table, schema::Persons::FirstName),
+                    (schema::Persons::Table, schema::Persons::LastName),
+                    (schema::Persons::Table, schema::Persons::DateOfBirth),
+                    (schema::Persons::Table, schema::Persons::Isni),
+                    (schema::Persons::Table, schema::Persons::Orcid),
+                    (schema::Persons::Table, schema::Persons::Oclc),
                 ])
                 .from(schema::BooksAuthors::Table)
                 .inner_join(
                     schema::Persons::Table,
-                    Expr::col(schema::Persons::Id)
+                    Expr::tbl(schema::Persons::Table, schema::Persons::Id)
                         .equals(schema::BooksAuthors::Table, schema::BooksAuthors::PersonId),
                 )
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::Persons::Id,
@@ -418,7 +440,7 @@ pub(crate) fn get_authors(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -440,13 +462,13 @@ pub(crate) fn get_authors_by_book_id(id: Uuid, page: filters::Page) -> SelectSta
         .from_subquery(
             Query::select()
                 .columns(vec![
-                    schema::Persons::Id,
-                    schema::Persons::FirstName,
-                    schema::Persons::LastName,
-                    schema::Persons::DateOfBirth,
-                    schema::Persons::Isni,
-                    schema::Persons::Orcid,
-                    schema::Persons::Oclc,
+                    (schema::Persons::Table, schema::Persons::Id),
+                    (schema::Persons::Table, schema::Persons::FirstName),
+                    (schema::Persons::Table, schema::Persons::LastName),
+                    (schema::Persons::Table, schema::Persons::DateOfBirth),
+                    (schema::Persons::Table, schema::Persons::Isni),
+                    (schema::Persons::Table, schema::Persons::Orcid),
+                    (schema::Persons::Table, schema::Persons::Oclc),
                 ])
                 .from(schema::BooksAuthors::Table)
                 .inner_join(
@@ -459,10 +481,14 @@ pub(crate) fn get_authors_by_book_id(id: Uuid, page: filters::Page) -> SelectSta
                     Expr::col(schema::BooksAuthors::BookId)
                         .equals(schema::Books::Table, schema::Books::Id),
                 )
-                .and_where(Expr::col(schema::Books::Id).eq(id))
+                .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::Books::Id,
@@ -482,13 +508,13 @@ pub(crate) fn get_authors_by_book_id(id: Uuid, page: filters::Page) -> SelectSta
 pub(crate) fn get_editor_by_id(id: Uuid) -> SelectStatement {
     Query::select()
         .columns(vec![
-            schema::Persons::Id,
-            schema::Persons::FirstName,
-            schema::Persons::LastName,
-            schema::Persons::DateOfBirth,
-            schema::Persons::Isni,
-            schema::Persons::Orcid,
-            schema::Persons::Oclc,
+            (schema::Persons::Table, schema::Persons::Id),
+            (schema::Persons::Table, schema::Persons::FirstName),
+            (schema::Persons::Table, schema::Persons::LastName),
+            (schema::Persons::Table, schema::Persons::DateOfBirth),
+            (schema::Persons::Table, schema::Persons::Isni),
+            (schema::Persons::Table, schema::Persons::Orcid),
+            (schema::Persons::Table, schema::Persons::Oclc),
         ])
         .from(schema::BooksEditors::Table)
         .inner_join(
@@ -496,7 +522,7 @@ pub(crate) fn get_editor_by_id(id: Uuid) -> SelectStatement {
             Expr::tbl(schema::BooksEditors::Table, schema::BooksEditors::PersonId)
                 .equals(schema::Persons::Table, schema::Persons::Id),
         )
-        .and_where(Expr::col(schema::Persons::Id).eq(id))
+        .and_where(Expr::tbl(schema::Persons::Table, schema::Persons::Id).eq(id))
         .to_owned()
 }
 
@@ -514,23 +540,27 @@ pub(crate) fn get_editors(page: filters::Page) -> SelectStatement {
         .from_subquery(
             Query::select()
                 .columns(vec![
-                    schema::Persons::Id,
-                    schema::Persons::FirstName,
-                    schema::Persons::LastName,
-                    schema::Persons::DateOfBirth,
-                    schema::Persons::Isni,
-                    schema::Persons::Orcid,
-                    schema::Persons::Oclc,
+                    (schema::Persons::Table, schema::Persons::Id),
+                    (schema::Persons::Table, schema::Persons::FirstName),
+                    (schema::Persons::Table, schema::Persons::LastName),
+                    (schema::Persons::Table, schema::Persons::DateOfBirth),
+                    (schema::Persons::Table, schema::Persons::Isni),
+                    (schema::Persons::Table, schema::Persons::Orcid),
+                    (schema::Persons::Table, schema::Persons::Oclc),
                 ])
                 .from(schema::BooksEditors::Table)
                 .inner_join(
                     schema::Persons::Table,
-                    Expr::col(schema::Persons::Id)
+                    Expr::tbl(schema::Persons::Table, schema::Persons::Id)
                         .equals(schema::BooksEditors::Table, schema::BooksEditors::PersonId),
                 )
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::Persons::Id,
@@ -539,7 +569,7 @@ pub(crate) fn get_editors(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -561,13 +591,13 @@ pub(crate) fn get_editors_by_book_id(id: Uuid, page: filters::Page) -> SelectSta
         .from_subquery(
             Query::select()
                 .columns(vec![
-                    schema::Persons::Id,
-                    schema::Persons::FirstName,
-                    schema::Persons::LastName,
-                    schema::Persons::DateOfBirth,
-                    schema::Persons::Isni,
-                    schema::Persons::Orcid,
-                    schema::Persons::Oclc,
+                    (schema::Persons::Table, schema::Persons::Id),
+                    (schema::Persons::Table, schema::Persons::FirstName),
+                    (schema::Persons::Table, schema::Persons::LastName),
+                    (schema::Persons::Table, schema::Persons::DateOfBirth),
+                    (schema::Persons::Table, schema::Persons::Isni),
+                    (schema::Persons::Table, schema::Persons::Orcid),
+                    (schema::Persons::Table, schema::Persons::Oclc),
                 ])
                 .from(schema::BooksEditors::Table)
                 .inner_join(
@@ -580,10 +610,14 @@ pub(crate) fn get_editors_by_book_id(id: Uuid, page: filters::Page) -> SelectSta
                     Expr::col(schema::BooksEditors::BookId)
                         .equals(schema::Books::Table, schema::Books::Id),
                 )
-                .and_where(Expr::col(schema::Books::Id).eq(id))
+                .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Persons::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Persons::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Persons::Table, schema::Persons::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::Books::Id,
@@ -644,7 +678,7 @@ pub(crate) fn get_copies(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -664,22 +698,26 @@ pub(crate) fn get_copies_by_book_id(id: Uuid, page: filters::Page) -> SelectStat
         .from_subquery(
             Query::select()
                 .columns(vec![
-                    schema::Copies::Id,
-                    schema::Copies::BookId,
-                    schema::Copies::CodeIdentifierCopyId,
-                    schema::Copies::CreatedAt,
-                    schema::Copies::CreatedBy,
+                    (schema::Copies::Table, schema::Copies::Id),
+                    (schema::Copies::Table, schema::Copies::BookId),
+                    (schema::Copies::Table, schema::Copies::CodeIdentifierCopyId),
+                    (schema::Copies::Table, schema::Copies::CreatedAt),
+                    (schema::Copies::Table, schema::Copies::CreatedBy),
                 ])
-                .from(schema::Copies::Table)
+                .from(schema::Books::Table)
                 .inner_join(
                     schema::Copies::Table,
-                    Expr::col(schema::Copies::BookId)
-                        .equals(schema::Books::Table, schema::Books::Id),
+                    Expr::tbl(schema::Books::Table, schema::Books::Id)
+                        .equals(schema::Copies::Table, schema::Copies::BookId),
                 )
-                .and_where(Expr::col(schema::Books::Id).eq(id))
+                .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
                 .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => Expr::col(schema::Copies::Id).gt(id),
-                    filters::Cursor::Before(id) => Expr::col(schema::Copies::Id).lt(id),
+                    filters::Cursor::After(id) => {
+                        Expr::tbl(schema::Copies::Table, schema::Copies::Id).gt(id)
+                    }
+                    filters::Cursor::Before(id) => {
+                        Expr::tbl(schema::Copies::Table, schema::Copies::Id).lt(id)
+                    }
                 })
                 .order_by(
                     schema::Copies::Id,
@@ -688,7 +726,7 @@ pub(crate) fn get_copies_by_book_id(id: Uuid, page: filters::Page) -> SelectStat
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -755,7 +793,7 @@ pub(crate) fn get_books(page: filters::Page) -> SelectStatement {
                         filters::Cursor::Before(_) => Order::Desc,
                     },
                 )
-                .limit(page.get_items() as u64) // should this not an i64
+                .limit(page.get_items() as u64)
                 .take(),
             Alias::new("t"),
         )
@@ -789,7 +827,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "iso_code", "name" FROM "languages" INNER JOIN "books" ON "languages"."id" = "books"."language_id" WHERE "id" = '{}'"#,
+                r#"SELECT "languages"."id", "languages"."iso_code", "languages"."name" FROM "languages" INNER JOIN "books" ON "languages"."id" = "books"."language_id" WHERE "id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -855,7 +893,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "name" FROM "categories" INNER JOIN "books" ON "categories"."id" = "books"."category_id" WHERE "id" = '{}'"#,
+                r#"SELECT "categories"."id", "categories"."name" FROM "categories" INNER JOIN "books" ON "categories"."id" = "books"."category_id" WHERE "id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -921,7 +959,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "name" FROM "publishers" INNER JOIN "books" ON "publishers"."id" = "books"."publisher_id" WHERE "id" = '{}'"#,
+                r#"SELECT "publishers"."id", "publishers"."name" FROM "publishers" INNER JOIN "books" ON "publishers"."id" = "books"."publisher_id" WHERE "id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -987,7 +1025,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "publisher_id", "name" FROM "series" INNER JOIN "books" ON "series"."id" = "books"."series_id" WHERE "id" = '{}'"#,
+                r#"SELECT "series"."id", "series"."publisher_id", "series"."name" FROM "series" INNER JOIN "books" ON "series"."id" = "books"."series_id" WHERE "books"."id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1059,7 +1097,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "name" FROM (SELECT "id", "name" FROM "books_authors" INNER JOIN "books_subject_areas" ON "id" = "books_subject_areas"."subject_area_id" WHERE "book_id" = '{}' AND "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "name" FROM (SELECT "subject_areas"."id", "subject_areas"."name" FROM "books_subject_areas" INNER JOIN "subject_areas" ON "subject_area_id" = "subject_areas"."id" WHERE "book_id" = '{}' AND "subject_areas"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1079,7 +1117,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "name" FROM (SELECT "id", "name" FROM "books_authors" INNER JOIN "books_subject_areas" ON "id" = "books_subject_areas"."subject_area_id" WHERE "book_id" = '{}' AND "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "name" FROM (SELECT "subject_areas"."id", "subject_areas"."name" FROM "books_subject_areas" INNER JOIN "subject_areas" ON "subject_area_id" = "subject_areas"."id" WHERE "book_id" = '{}' AND "subject_areas"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1148,7 +1186,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "name" FROM (SELECT "id", "name" FROM "books_tags" INNER JOIN "tags" ON "tag_id" = "tags"."id" WHERE "book_id" = '{}' AND "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "name" FROM (SELECT "tags"."id", "tags"."name" FROM "books_tags" INNER JOIN "tags" ON "tag_id" = "tags"."id" WHERE "book_id" = '{}' AND "tags"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1168,7 +1206,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "name" FROM (SELECT "id", "name" FROM "books_tags" INNER JOIN "tags" ON "tag_id" = "tags"."id" WHERE "book_id" = '{}' AND "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "name" FROM (SELECT "tags"."id", "tags"."name" FROM "books_tags" INNER JOIN "tags" ON "tag_id" = "tags"."id" WHERE "book_id" = '{}' AND "tags"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1220,7 +1258,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_authors" INNER JOIN "persons" ON "books_authors"."person_id" = "persons"."id" WHERE "id" = '{}'"#,
+                r#"SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_authors" INNER JOIN "persons" ON "books_authors"."person_id" = "persons"."id" WHERE "persons"."id" = '{}'"#,
                 id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1240,7 +1278,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_authors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "id" = '{}' AND "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_authors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "books"."id" = '{}' AND "persons"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1260,7 +1298,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_authors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "id" = '{}' AND "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_authors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "books"."id" = '{}' AND "persons"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1279,7 +1317,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_authors" INNER JOIN "persons" ON "id" = "books_authors"."person_id" WHERE "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_authors" INNER JOIN "persons" ON "persons"."id" = "books_authors"."person_id" WHERE "persons"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1298,7 +1336,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_authors" INNER JOIN "persons" ON "id" = "books_authors"."person_id" WHERE "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_authors" INNER JOIN "persons" ON "persons"."id" = "books_authors"."person_id" WHERE "persons"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1312,7 +1350,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_editors" INNER JOIN "persons" ON "books_editors"."person_id" = "persons"."id" WHERE "id" = '{}'"#,
+                r#"SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_editors" INNER JOIN "persons" ON "books_editors"."person_id" = "persons"."id" WHERE "persons"."id" = '{}'"#,
                 id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1332,7 +1370,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_editors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "id" = '{}' AND "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_editors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "books"."id" = '{}' AND "persons"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1352,7 +1390,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_editors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "id" = '{}' AND "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_editors" INNER JOIN "persons" ON "person_id" = "persons"."id" INNER JOIN "books" ON "book_id" = "books"."id" WHERE "books"."id" = '{}' AND "persons"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1371,7 +1409,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_editors" INNER JOIN "persons" ON "id" = "books_editors"."person_id" WHERE "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_editors" INNER JOIN "persons" ON "persons"."id" = "books_editors"."person_id" WHERE "persons"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1390,7 +1428,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM "books_editors" INNER JOIN "persons" ON "id" = "books_editors"."person_id" WHERE "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "first_name", "last_name", "date_of_birth", "isni", "orcid", "oclc" FROM (SELECT "persons"."id", "persons"."first_name", "persons"."last_name", "persons"."date_of_birth", "persons"."isni", "persons"."orcid", "persons"."oclc" FROM "books_editors" INNER JOIN "persons" ON "persons"."id" = "books_editors"."person_id" WHERE "persons"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1424,7 +1462,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM (SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM "copies" INNER JOIN "copies" ON "book_id" = "books"."id" WHERE "id" = '{}' AND "id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM (SELECT "copies"."id", "copies"."book_id", "copies"."code_identifier_copy_id", "copies"."created_at", "copies"."created_by" FROM "books" INNER JOIN "copies" ON "books"."id" = "copies"."book_id" WHERE "books"."id" = '{}' AND "copies"."id" > '{}' ORDER BY "id" ASC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1444,7 +1482,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM (SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM "copies" INNER JOIN "copies" ON "book_id" = "books"."id" WHERE "id" = '{}' AND "id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
+                r#"SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM (SELECT "copies"."id", "copies"."book_id", "copies"."code_identifier_copy_id", "copies"."created_at", "copies"."created_by" FROM "books" INNER JOIN "copies" ON "books"."id" = "copies"."book_id" WHERE "books"."id" = '{}' AND "copies"."id" < '{}' ORDER BY "id" DESC LIMIT {}) AS "t" ORDER BY "id" ASC"#,
                 book_id, filter_id, items
             ),
             query.to_string(PostgresQueryBuilder)
