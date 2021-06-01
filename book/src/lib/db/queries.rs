@@ -609,6 +609,7 @@ pub(crate) fn get_copy_by_id(id: Uuid) -> SelectStatement {
             schema::Copies::CreatedAt,
             schema::Copies::CreatedBy,
         ])
+        .from(schema::Copies::Table)
         .and_where(Expr::col(schema::Copies::Id).eq(id))
         .to_owned()
 }
@@ -709,6 +710,7 @@ pub(crate) fn get_book_by_id(id: Uuid) -> SelectStatement {
             schema::Books::Subtitle,
             schema::Books::Description,
         ])
+        .from(schema::Books::Table)
         .and_where(Expr::col(schema::Books::Id).eq(id))
         .to_owned()
 }
@@ -1402,7 +1404,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" WHERE "id" = '{}'"#,
+                r#"SELECT "id", "book_id", "code_identifier_copy_id", "created_at", "created_by" FROM "copies" WHERE "id" = '{}'"#,
                 id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -1494,7 +1496,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "title", "subtitle", "description" WHERE "id" = '{}'"#,
+                r#"SELECT "id", "code_identifier", "isbn", "issn", "release_year", "edition", "pages", "title", "subtitle", "description" FROM "books" WHERE "id" = '{}'"#,
                 id
             ),
             query.to_string(PostgresQueryBuilder)
