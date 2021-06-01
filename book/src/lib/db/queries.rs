@@ -29,7 +29,7 @@ pub(crate) fn get_language_by_book_id(id: Uuid) -> SelectStatement {
             Expr::tbl(schema::Languages::Table, schema::Books::Id)
                 .equals(schema::Books::Table, schema::Books::LanguageId),
         )
-        .and_where(Expr::col(schema::Books::Id).eq(id))
+        .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
         .to_owned()
 }
 
@@ -87,7 +87,7 @@ pub(crate) fn get_category_by_book_id(id: Uuid) -> SelectStatement {
             Expr::tbl(schema::Categories::Table, schema::Books::Id)
                 .equals(schema::Books::Table, schema::Books::CategoryId),
         )
-        .and_where(Expr::col(schema::Books::Id).eq(id))
+        .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
         .to_owned()
 }
 
@@ -137,7 +137,7 @@ pub(crate) fn get_publisher_by_book_id(id: Uuid) -> SelectStatement {
             Expr::tbl(schema::Publishers::Table, schema::Books::Id)
                 .equals(schema::Books::Table, schema::Books::PublisherId),
         )
-        .and_where(Expr::col(schema::Books::Id).eq(id))
+        .and_where(Expr::tbl(schema::Books::Table, schema::Books::Id).eq(id))
         .to_owned()
 }
 
@@ -827,7 +827,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "languages"."id", "languages"."iso_code", "languages"."name" FROM "languages" INNER JOIN "books" ON "languages"."id" = "books"."language_id" WHERE "id" = '{}'"#,
+                r#"SELECT "languages"."id", "languages"."iso_code", "languages"."name" FROM "languages" INNER JOIN "books" ON "languages"."id" = "books"."language_id" WHERE "books"."id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -893,7 +893,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "categories"."id", "categories"."name" FROM "categories" INNER JOIN "books" ON "categories"."id" = "books"."category_id" WHERE "id" = '{}'"#,
+                r#"SELECT "categories"."id", "categories"."name" FROM "categories" INNER JOIN "books" ON "categories"."id" = "books"."category_id" WHERE "books"."id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
@@ -959,7 +959,7 @@ mod tests {
 
         assert_eq!(
             format!(
-                r#"SELECT "publishers"."id", "publishers"."name" FROM "publishers" INNER JOIN "books" ON "publishers"."id" = "books"."publisher_id" WHERE "id" = '{}'"#,
+                r#"SELECT "publishers"."id", "publishers"."name" FROM "publishers" INNER JOIN "books" ON "publishers"."id" = "books"."publisher_id" WHERE "books"."id" = '{}'"#,
                 book_id
             ),
             query.to_string(PostgresQueryBuilder)
