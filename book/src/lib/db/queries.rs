@@ -1,4 +1,4 @@
-use sea_query::{Alias, Expr, Order, Query, SelectStatement};
+use sea_query::{Alias, Cond, Expr, Order, Query, SelectStatement};
 use uuid::Uuid;
 
 use super::schema;
@@ -807,27 +807,39 @@ pub(crate) fn get_books(page: filters::Page, book: filters::Book) -> SelectState
                     Expr::tbl(schema::BooksTags::Table, schema::BooksTags::TagId)
                         .equals(schema::Tags::Table, schema::Tags::Id),
                 )
-                .and_where_option(book.get_categories().map(|categories| {
-                    Expr::tbl(schema::Categories::Table, schema::Categories::Name).is_in(categories)
-                }))
-                .and_where_option(book.get_publishers().map(|publishers| {
-                    Expr::tbl(schema::Publishers::Table, schema::Publishers::Name).is_in(publishers)
-                }))
-                .and_where_option(book.get_series().map(|series| {
-                    Expr::tbl(schema::Series::Table, schema::Series::Name).is_in(series)
-                }))
-                .and_where_option(
-                    book.get_tags()
-                        .map(|tags| Expr::tbl(schema::Tags::Table, schema::Tags::Name).is_in(tags)),
+                .cond_where(
+                    Cond::all()
+                        .add(book.get_categories().map_or(Cond::all(), |categories| {
+                            Cond::all().add(
+                                Expr::tbl(schema::Categories::Table, schema::Categories::Name)
+                                    .is_in(categories),
+                            )
+                        }))
+                        .add(book.get_publishers().map_or(Cond::all(), |publishers| {
+                            Cond::all().add(
+                                Expr::tbl(schema::Publishers::Table, schema::Publishers::Name)
+                                    .is_in(publishers),
+                            )
+                        }))
+                        .add(book.get_series().map_or(Cond::all(), |series| {
+                            Cond::all().add(
+                                Expr::tbl(schema::Series::Table, schema::Series::Name)
+                                    .is_in(series),
+                            )
+                        }))
+                        .add(book.get_tags().map_or(Cond::all(), |tags| {
+                            Cond::all()
+                                .add(Expr::tbl(schema::Tags::Table, schema::Tags::Name).is_in(tags))
+                        }))
+                        .add(Cond::all().add(match page.get_cursor() {
+                            filters::Cursor::After(id) => {
+                                Expr::tbl(schema::Books::Table, schema::Books::Id).gt(id)
+                            }
+                            filters::Cursor::Before(id) => {
+                                Expr::tbl(schema::Books::Table, schema::Books::Id).lt(id)
+                            }
+                        })),
                 )
-                .and_where(match page.get_cursor() {
-                    filters::Cursor::After(id) => {
-                        Expr::tbl(schema::Books::Table, schema::Books::Id).gt(id)
-                    }
-                    filters::Cursor::Before(id) => {
-                        Expr::tbl(schema::Books::Table, schema::Books::Id).lt(id)
-                    }
-                })
                 .order_by(
                     (schema::Books::Table, schema::Books::Id),
                     match page.get_cursor() {
