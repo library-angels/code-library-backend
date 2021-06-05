@@ -809,25 +809,25 @@ pub(crate) fn get_books(page: filters::Page, book: filters::Book) -> SelectState
                 )
                 .cond_where(
                     Cond::all()
-                        .add(book.get_categories().map_or(Cond::all(), |categories| {
+                        .add_option(book.get_categories().map(|categories| {
                             Cond::all().add(
                                 Expr::tbl(schema::Categories::Table, schema::Categories::Name)
                                     .is_in(categories),
                             )
                         }))
-                        .add(book.get_publishers().map_or(Cond::all(), |publishers| {
+                        .add_option(book.get_publishers().map(|publishers| {
                             Cond::all().add(
                                 Expr::tbl(schema::Publishers::Table, schema::Publishers::Name)
                                     .is_in(publishers),
                             )
                         }))
-                        .add(book.get_series().map_or(Cond::all(), |series| {
+                        .add_option(book.get_series().map(|series| {
                             Cond::all().add(
                                 Expr::tbl(schema::Series::Table, schema::Series::Name)
                                     .is_in(series),
                             )
                         }))
-                        .add(book.get_tags().map_or(Cond::all(), |tags| {
+                        .add_option(book.get_tags().map(|tags| {
                             Cond::all()
                                 .add(Expr::tbl(schema::Tags::Table, schema::Tags::Name).is_in(tags))
                         }))
