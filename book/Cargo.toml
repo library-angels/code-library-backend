@@ -15,7 +15,7 @@ env_logger = "0.8.3"
 futures = "0.3.15"
 helpers = { path = "../helpers" }
 log = "0.4.14"
-sea-query = { version = "0.12.1", features = ["sqlx-postgres", "with-uuid"] }
+sea-query = { version = "0.12.2", features = ["sqlx-postgres", "with-uuid"] }
 serde = { version = "1.0.126", features = ["derive"] }
 sqlx = { version = "0.5.5", features = ["chrono", "default", "postgres", "runtime-tokio-native-tls", "uuid"] }
 tarpc = { version = "0.26.2", features = ["full"] }
