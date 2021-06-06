@@ -71,6 +71,7 @@ Execute `docker build -f <service>/Dockerfile -t code-library-<service> .` comma
 All development has to happen inside of separate branches. Every branch name is prefixed with its purpose of creation.
 The used prefixes are the same as the Github labels for pull requests.
 The `master` branch is protected and requires pull request and an approval of at least one reviewer.
+The used merge method is rebasing.
 
 ## 4. Contributors
 
