@@ -21,7 +21,7 @@ dotenv = "0.15.0"
 env_logger = "0.8.3"
 futures = "0.3.15"
 helpers = { path = "../helpers" }
-hyper = { version = "0.14.8", features = ["client", "http1"] }
+hyper = { version = "0.14.9", features = ["client", "http1"] }
 hyper-tls = "0.5.0"
 jsonwebtoken = "7.2.0"
 log = "0.4.14"
