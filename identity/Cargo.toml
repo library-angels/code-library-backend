@@ -15,7 +15,7 @@ doc = false
 
 [dependencies]
 chrono = { version = "0.4.19", features = ["serde"] }
-diesel = { version = "1.4.6", features = ["chrono", "postgres", "r2d2", "uuidv07"] }
+diesel = { version = "1.4.7", features = ["chrono", "postgres", "r2d2", "uuidv07"] }
 diesel_migrations = "1.4.0"
 dotenv = "0.15.0"
 env_logger = "0.8.3"
