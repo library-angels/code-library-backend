@@ -65,7 +65,7 @@ pub struct Editor {
 pub struct Copy {
     pub id: Uuid,
     pub book_id: Uuid,
-    pub code_identifier_copy_id: i32,
+    pub copy_id: i64,
     pub created_at: DateTime<Utc>,
     pub created_by: Uuid,
 }

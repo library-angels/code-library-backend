@@ -114,10 +114,38 @@ CREATE TABLE books_tags (
 CREATE TABLE copies (
     id UUID,
     book_id UUID NOT NULL,
-    code_identifier_copy_id INTEGER NOT NULL CHECK (code_identifier_copy_id >= 0),
+    copy_id INTEGER NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE NOT NULL,
     created_by UUID NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (book_id) REFERENCES books (id) ON UPDATE CASCADE ON DELETE RESTRICT,
-    UNIQUE(book_id,code_identifier_copy_id)
+    UNIQUE(book_id,copy_id)
 );
+
+CREATE FUNCTION copies_copy_id_create_seq() RETURNS trigger AS
+  $$
+  BEGIN
+    IF EXISTS (SELECT FROM copies WHERE book_id = NEW.book_id) THEN
+      NEW.copy_id := nextval(format('copies_copy_id_%s_seq', NEW.book_id));
+      return NEW;
+    ELSE
+      EXECUTE format('CREATE SEQUENCE "copies_copy_id_%s_seq" MINVALUE 0', NEW.book_id);
+      NEW.copy_id := nextval(format('copies_copy_id_%s_seq', NEW.book_id));
+      return NEW;
+    END IF;
+  END
+  $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER copies_copy_id_create_seq BEFORE INSERT ON copies FOR EACH ROW EXECUTE PROCEDURE copies_copy_id_create_seq();
+
+CREATE FUNCTION copies_copy_id_delete_seq() RETURNS trigger AS
+  $$
+  BEGIN
+    IF NOT EXISTS (SELECT FROM copies WHERE book_id = OLD.book_id) THEN
+      EXECUTE format('DROP SEQUENCE "copies_copy_id_%s_seq"', OLD.book_id);
+    END IF;
+    RETURN OLD;
+  END
+  $$ LANGUAGE plpgsql;
+
+CREATE TRIGGER copies_copy_id_delete_seq AFTER DELETE ON copies FOR EACH ROW EXECUTE PROCEDURE copies_copy_id_delete_seq();

@@ -150,7 +150,7 @@ impl From<crate::db::models::Editor> for Editor {
 pub struct Copy {
     pub id: Uuid,
     pub book_id: Uuid,
-    pub code_identifier_copy_id: i32,
+    pub copy_id: i64,
     pub created_at: DateTime<Utc>,
     pub created_by: Uuid,
 }
@@ -160,7 +160,7 @@ impl From<crate::db::models::Copy> for Copy {
         Copy {
             id: copy.id,
             book_id: copy.book_id,
-            code_identifier_copy_id: copy.code_identifier_copy_id,
+            copy_id: copy.copy_id,
             created_at: copy.created_at,
             created_by: copy.created_by,
         }
