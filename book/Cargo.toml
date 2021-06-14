@@ -11,7 +11,7 @@ path = "src/lib/lib.rs"
 [dependencies]
 chrono = { version = "0.4.19", features = ["serde"] }
 dotenv = "0.15.0"
-env_logger = "0.8.3"
+env_logger = "0.8.4"
 futures = "0.3.15"
 helpers = { path = "../helpers" }
 log = "0.4.14"

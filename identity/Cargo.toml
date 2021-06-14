@@ -18,7 +18,7 @@ chrono = { version = "0.4.19", features = ["serde"] }
 diesel = { version = "1.4.7", features = ["chrono", "postgres", "r2d2", "uuidv07"] }
 diesel_migrations = "1.4.0"
 dotenv = "0.15.0"
-env_logger = "0.8.3"
+env_logger = "0.8.4"
 futures = "0.3.15"
 helpers = { path = "../helpers" }
 hyper = { version = "0.14.9", features = ["client", "http1"] }
