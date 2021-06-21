@@ -1,370 +1,365 @@
-use std::{convert::Infallible, net::SocketAddr};
+use std::net::SocketAddr;
 
 use tarpc::context;
 use uuid::Uuid;
-use warp::Reply;
+use warp::{reject::Rejection, Reply};
 
 use book::init_rpc_client;
 use helpers::{filters, rpc::Error};
 
-use crate::response;
+use crate::{
+    rejections::{not_found, InternalServerError},
+    responses::{json_object_reply, json_vector_reply},
+};
 
 pub async fn get_books(
     addr: SocketAddr,
     page: filters::Page,
     book: filters::Book,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(books) = client.get_books(context::current(), page, book).await {
-            return Ok(response::okay_with_json(&books));
+            return Ok(json_vector_reply(&books.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_authors(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
+pub async fn get_authors(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(authors) = client.get_authors(context::current(), page).await {
-            return Ok(response::okay_with_json(&authors));
+            return Ok(json_vector_reply(&authors.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_categories(
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(categories) = client.get_categories(context::current(), page).await {
-            return Ok(response::okay_with_json(&categories));
+            return Ok(json_vector_reply(&categories.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_copies(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
+pub async fn get_copies(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(copies) = client.get_copies(context::current(), page).await {
-            return Ok(response::okay_with_json(&copies));
+            return Ok(json_vector_reply(&copies.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_editors(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
+pub async fn get_editors(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(editors) = client.get_editors(context::current(), page).await {
-            return Ok(response::okay_with_json(&editors));
+            return Ok(json_vector_reply(&editors.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_languages(
-    addr: SocketAddr,
-    page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_languages(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(languages) = client.get_languages(context::current(), page).await {
-            return Ok(response::okay_with_json(&languages));
+            return Ok(json_vector_reply(&languages.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_publishers(
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(publishers) = client.get_publishers(context::current(), page).await {
-            return Ok(response::okay_with_json(&publishers));
+            return Ok(json_vector_reply(&publishers.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_series(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
+pub async fn get_series(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(series) = client.get_series(context::current(), page).await {
-            return Ok(response::okay_with_json(&series));
+            return Ok(json_vector_reply(&series.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_subject_areas(
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(subject_areas) = client.get_subject_areas(context::current(), page).await {
-            return Ok(response::okay_with_json(&subject_areas));
+            return Ok(json_vector_reply(&subject_areas.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_tags(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Infallible> {
+pub async fn get_tags(addr: SocketAddr, page: filters::Page) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(tags) = client.get_tags(context::current(), page).await {
-            return Ok(response::okay_with_json(&tags));
+            return Ok(json_vector_reply(&tags.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_book_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_book_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_book_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(book) => return Ok(response::okay_with_json(&book)),
-                Err(Error::NotFound) => return Ok(response::not_found("BOOK_ID_NOT_FOUND")),
+                Ok(book) => return Ok(json_object_reply(&book)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_author_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_author_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_author_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(author) => return Ok(response::okay_with_json(&author)),
-                Err(Error::NotFound) => return Ok(response::not_found("AUTHOR_ID_NOT_FOUND")),
+                Ok(author) => return Ok(json_object_reply(&author)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_category_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_category_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_category_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(category) => return Ok(response::okay_with_json(&category)),
-                Err(Error::NotFound) => return Ok(response::not_found("CATEGORY_ID_NOT_FOUND")),
+                Ok(category) => return Ok(json_object_reply(&category)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_copy_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_copy_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_copy_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(copy) => return Ok(response::okay_with_json(&copy)),
-                Err(Error::NotFound) => return Ok(response::not_found("TAG_ID_NOT_FOUND")),
+                Ok(copy) => return Ok(json_object_reply(&copy)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_editor_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_editor_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_editor_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(editor) => return Ok(response::okay_with_json(&editor)),
-                Err(Error::NotFound) => return Ok(response::not_found("EDITOR_ID_NOT_FOUND")),
+                Ok(editor) => return Ok(json_object_reply(&editor)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_language_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_language_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_language_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(language) => return Ok(response::okay_with_json(&language)),
-                Err(Error::NotFound) => return Ok(response::not_found("LANGUAGE_ID_NOT_FOUND")),
+                Ok(language) => return Ok(json_object_reply(&language)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_publisher_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_publisher_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_publisher_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(publisher) => return Ok(response::okay_with_json(&publisher)),
-                Err(Error::NotFound) => return Ok(response::not_found("PUBLISHER_ID_NOT_FOUND")),
+                Ok(publisher) => return Ok(json_object_reply(&publisher)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_series_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_series_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_series_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(series) => return Ok(response::okay_with_json(&series)),
-                Err(Error::NotFound) => return Ok(response::not_found("SERIES_ID_NOT_FOUND")),
+                Ok(series) => return Ok(json_object_reply(&series)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_subject_area_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_subject_area_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_subject_area_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(subject_area) => return Ok(response::okay_with_json(&subject_area)),
-                Err(Error::NotFound) => {
-                    return Ok(response::not_found("SUBJECT_AREA_ID_NOT_FOUND"))
-                }
+                Ok(subject_area) => return Ok(json_object_reply(&subject_area)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_tag_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_tag_by_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(rpc_result) = client.get_tag_by_id(context::current(), id).await {
             match rpc_result {
-                Ok(tag) => return Ok(response::okay_with_json(&tag)),
-                Err(Error::NotFound) => return Ok(response::not_found("TAG_ID_NOT_FOUND")),
+                Ok(tag) => return Ok(json_object_reply(&tag)),
+                Err(Error::NotFound) => return Err(not_found()),
                 _ => {}
             }
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_authors_by_book_id(
     id: Uuid,
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(authors) = client
             .get_authors_by_book_id(context::current(), id, page)
             .await
         {
-            return Ok(response::okay_with_json(&authors));
+            return Ok(json_object_reply(&authors));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_category_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_category_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(category) = client.get_category_by_book_id(context::current(), id).await {
-            return Ok(response::okay_with_json(&category));
+            return Ok(json_object_reply(&category));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_copies_by_book_id(
     id: Uuid,
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(copies) = client
             .get_copies_by_book_id(context::current(), id, page)
             .await
         {
-            return Ok(response::okay_with_json(&copies));
+            return Ok(json_object_reply(&copies));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_editors_by_book_id(
     id: Uuid,
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(editors) = client
             .get_editors_by_book_id(context::current(), id, page)
             .await
         {
-            return Ok(response::okay_with_json(&editors));
+            return Ok(json_object_reply(&editors));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_language_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_language_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(language) = client.get_language_by_book_id(context::current(), id).await {
-            return Ok(response::okay_with_json(&language));
+            return Ok(json_object_reply(&language));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_publisher_by_book_id(
-    id: Uuid,
-    addr: SocketAddr,
-) -> Result<impl Reply, Infallible> {
+pub async fn get_publisher_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(publisher) = client
             .get_publisher_by_book_id(context::current(), id)
             .await
         {
-            return Ok(response::okay_with_json(&publisher));
+            return Ok(json_object_reply(&publisher));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
-pub async fn get_series_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Infallible> {
+pub async fn get_series_by_book_id(id: Uuid, addr: SocketAddr) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(series) = client.get_series_by_book_id(context::current(), id).await {
-            return Ok(response::okay_with_json(&series));
+            return Ok(json_object_reply(&series));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_subject_areas_by_book_id(
     id: Uuid,
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(authors) = client
             .get_subject_areas_by_book_id(context::current(), id, page)
             .await
         {
-            return Ok(response::okay_with_json(&authors));
+            return Ok(json_vector_reply(&authors.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
 
 pub async fn get_tags_by_book_id(
     id: Uuid,
     addr: SocketAddr,
     page: filters::Page,
-) -> Result<impl Reply, Infallible> {
+) -> Result<impl Reply, Rejection> {
     if let Ok(client) = init_rpc_client(&addr).await {
         if let Ok(tags) = client
             .get_tags_by_book_id(context::current(), id, page)
             .await
         {
-            return Ok(response::okay_with_json(&tags));
+            return Ok(json_vector_reply(&tags.unwrap()));
         }
     }
-    Ok(response::internal_server_error())
+    Err(InternalServerError().into())
 }
