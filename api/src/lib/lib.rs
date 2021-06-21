@@ -5,7 +5,8 @@ use warp::{filters::BoxedFilter, Reply, Server};
 pub mod config;
 mod endpoints;
 mod filters;
-mod response;
+mod rejections;
+mod responses;
 mod router;
 
 pub fn server(book_addr: Addr, identity_addr: Addr) -> Server<BoxedFilter<(impl Reply,)>> {
