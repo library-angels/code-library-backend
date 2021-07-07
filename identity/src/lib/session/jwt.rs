@@ -48,7 +48,7 @@ impl Jwt {
 
     pub fn decode(secret: &str, token: &str) -> Result<Jwt, JwtError> {
         match decode::<Jwt>(
-            &token,
+            token,
             &DecodingKey::from_secret(secret.as_ref()),
             &Validation::default(),
         ) {
