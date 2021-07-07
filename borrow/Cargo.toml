@@ -23,5 +23,5 @@ helpers = { path = "../helpers" }
 log = "0.4.14"
 serde = { version = "1.0.126", features = ["derive"] }
 tarpc = { version = "0.26.2", features = ["full"] }
-tokio = { version = "1.7.1", features = ["full"] }
+tokio = { version = "1.8.1", features = ["full"] }
 tokio-serde = { version = "0.8.0", features = ["json"] }
