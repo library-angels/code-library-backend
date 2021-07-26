@@ -1733,9 +1733,9 @@ checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
 name = "sea-query"
-version = "0.12.7"
+version = "0.12.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c84277190efc1e0c566aca41522f10253486fbc7e2efe455473104bcf2c0db92"
+checksum = "9c98035e37af536c2a3ab40437ec2817b8f05ac4cc0154fdea56802e7805bf82"
 dependencies = [
  "anyhow",
  "sea-query-derive",
