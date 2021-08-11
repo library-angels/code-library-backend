@@ -1733,11 +1733,10 @@ checksum = "d29ab0c6d3fc0ee92fe66e2d99f700eab17a8d57d1c1d3b748380fb20baa78cd"
 
 [[package]]
 name = "sea-query"
-version = "0.12.9"
+version = "0.12.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "80fd453e389c77be4cb0e0a75f4aa691377f8dadb567f1701609e4282113df4b"
+checksum = "6a27d50480b8532e398785b47c57eb504706669f4f252c70600f08a7bac018ff"
 dependencies = [
- "anyhow",
  "sea-query-derive",
  "thiserror",
  "uuid",
@@ -1745,14 +1744,15 @@ dependencies = [
 
 [[package]]
 name = "sea-query-derive"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0f30d6681c05300d4d92aa3dce08585b52c775735d632bb1f16f9f68f29c832d"
+checksum = "34cdc022b4f606353fe5dc85b09713a04e433323b70163e81513b141c6ae6eb5"
 dependencies = [
  "heck",
  "proc-macro2",
  "quote",
  "syn",
+ "thiserror",
 ]
 
 [[package]]
