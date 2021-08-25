@@ -17,7 +17,7 @@ helpers = { path = "../helpers" }
 log = "0.4.14"
 sea-query = { version = "0.15.0", features = ["sqlx-postgres", "with-uuid"] }
 serde = { version = "1.0.127", features = ["derive"] }
-sqlx = { version = "0.5.6", features = ["chrono", "default", "postgres", "runtime-tokio-native-tls", "uuid"] }
+sqlx = { version = "0.5.7", features = ["chrono", "default", "postgres", "runtime-tokio-native-tls", "uuid"] }
 tarpc = { version = "0.26.2", features = ["full"] }
 tokio = { version = "1.10.0", features = ["full"] }
 tokio-serde = { version = "0.8.0", features = ["json"] }
