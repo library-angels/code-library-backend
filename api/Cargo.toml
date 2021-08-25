@@ -18,7 +18,7 @@ helpers = { path = "../helpers" }
 http = "0.2.4"
 identity = { path = "../identity" }
 log = "0.4.14"
-serde = { version = "1.0.127", features = ["derive"] }
+serde = { version = "1.0.129", features = ["derive"] }
 serde_json = "1.0.66"
 serde_qs = { version = "0.8.4", features = ["warp"] }
 tarpc = { version = "0.26.2", features = ["full"] }
