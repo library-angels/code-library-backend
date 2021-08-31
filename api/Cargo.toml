@@ -13,7 +13,7 @@ book = { path = "../book" }
 chrono = { version = "0.4.19", features = ["serde"] }
 dotenv = "0.15.0"
 env_logger = "0.9.0"
-futures = "0.3.16"
+futures = "0.3.17"
 helpers = { path = "../helpers" }
 http = "0.2.4"
 identity = { path = "../identity" }
