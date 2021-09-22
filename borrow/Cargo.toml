@@ -22,6 +22,6 @@ futures = "0.3.17"
 helpers = { path = "../helpers" }
 log = "0.4.14"
 serde = { version = "1.0.130", features = ["derive"] }
-tarpc = { version = "0.26.2", features = ["full"] }
+tarpc = { version = "0.27.0", features = ["full"] }
 tokio = { version = "1.11.0", features = ["full"] }
 tokio-serde = { version = "0.8.0", features = ["json"] }
