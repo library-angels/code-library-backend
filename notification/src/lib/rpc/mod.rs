@@ -5,7 +5,7 @@ use std::{io, net::SocketAddr, sync::Arc};
 
 use futures::{future, prelude::*};
 use tarpc::client::Config;
-use tarpc::server::{BaseChannel, Channel, Incoming};
+use tarpc::server::{incoming::Incoming, BaseChannel, Channel};
 use tokio_serde::formats::Json;
 
 use self::server::NotificationServer;
