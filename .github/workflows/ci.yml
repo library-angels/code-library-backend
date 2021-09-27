@@ -13,7 +13,6 @@ jobs:
         strategy:
             matrix:
                 rust-toolchain: [beta, stable]
-        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
         steps:
             - name: Install Rust toolchain dependencies
               run: apt update && apt install -y wget
@@ -27,6 +26,7 @@ jobs:
             - uses: actions/checkout@v2
             - name: Format source code check
               run: cargo fmt -- --check
+              continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
     linter:
         name: Linter
         runs-on: ubuntu-latest
@@ -34,7 +34,6 @@ jobs:
         strategy:
             matrix:
                 rust-toolchain: [beta, stable]
-        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
         steps:
             - name: Install Rust toolchain dependencies
               run: apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev
@@ -48,6 +47,7 @@ jobs:
             - uses: actions/checkout@v2
             - name: Lint source code
               run: cargo clippy --all-targets --all-features -- -D warnings
+              continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
     check:
         name: Dependencies
         runs-on: ubuntu-latest
@@ -55,7 +55,6 @@ jobs:
         strategy:
             matrix:
                 rust-toolchain: [beta, stable]
-        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
         steps:
             - name: Install Rust toolchain dependencies
               run: apt update && apt install -y wget gcc pkg-config libssl-dev libpq-dev
@@ -68,6 +67,7 @@ jobs:
             - uses: actions/checkout@v2
             - name: Check workspace dependencies
               run: cargo check --all-targets --all-features
+              continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
     ci-test:
         name: Unit and integration tests
         runs-on: ubuntu-latest
@@ -75,7 +75,6 @@ jobs:
         strategy:
             matrix:
                 rust-toolchain: [beta, stable]
-        continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
 
         env:
             POSTGRES_HOST: postgres # This is the name of the container label in the service section below
@@ -109,5 +108,7 @@ jobs:
             - uses: actions/checkout@v2
             - name: Run unit and integration tests
               run: cargo test --all-targets --all-features
+              continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
             - name: Run documentation tests
               run: cargo test --doc --all-features
+              continue-on-error: ${{ matrix.rust-toolchain == 'beta' }}
