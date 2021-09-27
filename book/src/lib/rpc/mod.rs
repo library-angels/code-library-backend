@@ -9,7 +9,7 @@ use futures::{future, prelude::*};
 use tarpc::{
     client::Config,
     serde_transport::{tcp, Transport},
-    server::{BaseChannel, Channel, Incoming},
+    server::{incoming::Incoming, BaseChannel, Channel},
     ClientMessage, Response,
 };
 use tokio::net::TcpStream;
