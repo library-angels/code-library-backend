@@ -15,7 +15,7 @@ dotenv = "0.15.0"
 env_logger = "0.9.0"
 futures = "0.3.17"
 helpers = { path = "../helpers" }
-http = "0.2.5"
+http = "0.2.6"
 identity = { path = "../identity" }
 log = "0.4.14"
 serde = { version = "1.0.130", features = ["derive"] }
