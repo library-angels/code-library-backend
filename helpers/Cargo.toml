@@ -8,6 +8,6 @@ edition = "2018"
 diesel = { version = "1.4.8", features = ["postgres", "r2d2"] }
 diesel_migrations = "1.4.0"
 log = "0.4.14"
-serde = { version = "1.0.130", features = ["derive"] }
+serde = { version = "1.0.133", features = ["derive"] }
 sqlx = { version = "0.5.7", features = ["runtime-tokio-native-tls"] }
 uuid = { version = "0.8.2", features = ["serde"] }
