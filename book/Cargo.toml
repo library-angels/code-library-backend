@@ -19,7 +19,7 @@ sea-query = { version = "0.18.0", features = ["sqlx-postgres", "with-uuid"] }
 serde = { version = "1.0.130", features = ["derive"] }
 sqlx = { version = "0.5.7", features = ["chrono", "default", "postgres", "runtime-tokio-native-tls", "uuid"] }
 tarpc = { version = "0.27.2", features = ["full"] }
-tokio = { version = "1.12.0", features = ["full"] }
+tokio = { version = "1.16.1", features = ["full"] }
 tokio-serde = { version = "0.8.0", features = ["json"] }
 uuid = { version = "0.8.2", features = ["serde"] }
 
