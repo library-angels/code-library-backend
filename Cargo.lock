@@ -694,9 +694,9 @@ dependencies = [
 
 [[package]]
 name = "h2"
-version = "0.3.3"
+version = "0.3.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "825343c4eef0b63f541f8903f395dc5beb362a979b5799a84062527ef1e37726"
+checksum = "d9f1f717ddc7b2ba36df7e871fd88db79326551d3d6f1fc406fbfd28b582ff8e"
 dependencies = [
  "bytes 1.0.0",
  "fnv",
@@ -814,7 +814,7 @@ checksum = "1323096b05d41827dadeaee54c9981958c0f94e670bc94ed80037d1a7b8b186b"
 dependencies = [
  "bytes 1.0.0",
  "fnv",
- "itoa",
+ "itoa 0.4.7",
 ]
 
 [[package]]
@@ -829,9 +829,9 @@ dependencies = [
 
 [[package]]
 name = "httparse"
-version = "1.5.1"
+version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "acd94fdbe1d4ff688b67b04eee2e17bd50995534a61539e45adfefb45e5e5503"
+checksum = "9100414882e15fb7feccb4897e5f0ff0ff1ca7d1a86a23208ada4d7a18e6c6c4"
 
 [[package]]
 name = "httpdate"
@@ -847,9 +847,9 @@ checksum = "3c1ad908cc71012b7bea4d0c53ba96a8cba9962f048fa68d143376143d863b7a"
 
 [[package]]
 name = "hyper"
-version = "0.14.13"
+version = "0.14.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15d1cfb9e4f68655fa04c01f59edb405b6074a0f7118ea881e5026e4a1cd8593"
+checksum = "043f0e083e9901b6cc658a77d1eb86f4fc650bbb977a4337dd63192826aa85dd"
 dependencies = [
  "bytes 1.0.0",
  "futures-channel",
@@ -860,7 +860,7 @@ dependencies = [
  "http-body",
  "httparse",
  "httpdate",
- "itoa",
+ "itoa 1.0.1",
  "pin-project-lite",
  "socket2 0.4.0",
  "tokio",
@@ -950,6 +950,12 @@ name = "itoa"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dd25036021b0de88a0aff6b850051563c6516d0bf53f8638938edbb9de732736"
+
+[[package]]
+name = "itoa"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1aab8fc367588b89dcee83ab0fd66b72b50b72fa1904d7095045ace2b0c81c35"
 
 [[package]]
 name = "js-sys"
@@ -1826,7 +1832,7 @@ version = "1.0.68"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0f690853975602e1bfe1ccbf50504d67174e3bcf340f23b5ea9992e0587a52d8"
 dependencies = [
- "itoa",
+ "itoa 0.4.7",
  "ryu",
  "serde",
 ]
@@ -1852,7 +1858,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "edfa57a7f8d9c1d260a549e7224100f6c43d43f9103e06dd8b4095a9b2b43ce9"
 dependencies = [
  "form_urlencoded",
- "itoa",
+ "itoa 0.4.7",
  "ryu",
  "serde",
 ]
@@ -2012,7 +2018,7 @@ dependencies = [
  "hashlink",
  "hex",
  "hmac",
- "itoa",
+ "itoa 0.4.7",
  "libc",
  "log",
  "md-5",
